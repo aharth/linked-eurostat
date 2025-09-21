@@ -79,7 +79,7 @@ public class Dsd {
      */
     public void convert(OutputStream out, Transformer transformer)
             throws IOException, TransformerException {
-        URL u = new URL(Main.URI_PREFIX_3 + "/dataflow/ESTAT/" + _id);
+        URL u = new URL(Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + _id);
 
         _log.info("retrieving " + u);
 

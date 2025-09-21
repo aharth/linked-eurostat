@@ -2,7 +2,7 @@
 
 All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
 
-## [2025-09-210]
+## [2025-09-21]
 - Major refactoring, current version of JDK and libraries
 
 ## [2018-10-30]

@@ -330,56 +330,56 @@ public class PageServlet extends HttpServlet {
             ch.writeCharacters(", ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/data/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_21 + "/data/" + id);
             ch.writeCharacters("SDMX (data)");
             ch.writeEndElement();
 
             ch.writeCharacters(", ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/codelist/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/structure/codelist/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX (codelist)");
             ch.writeEndElement();
 
             ch.writeCharacters(", ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/conceptscheme/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/structure/conceptscheme/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX (conceptscheme)");
             ch.writeEndElement();
 
             ch.writeCharacters(", ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/datastructure/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/structure/datastructure/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX (datastructure)");
             ch.writeEndElement();
 
             ch.writeCharacters(", ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/dataflow/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX (dataflow)");
             ch.writeEndElement();
 
             ch.writeCharacters(", ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/dataconstraint/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/structure/dataconstraint/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX (dataconstraint)");
             ch.writeEndElement();
 
             ch.writeCharacters(", ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/categoryscheme/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/structure/categoryscheme/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX (categoryscheme)");
             ch.writeEndElement();
 
             ch.writeCharacters(" and ");
 
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/categorisation/ESTAT/" + id);
+            ch.writeAttribute("href", Main.URI_PREFIX_3 + "/structure/categorisation/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX (categorisation)");
             ch.writeEndElement();
 
