@@ -312,14 +312,18 @@ public class PageServlet extends HttpServlet {
             ch.writeCharacters("RDF (data)");
             ch.writeEndElement();
 
-            ch.writeCharacters("/");
+            ch.writeCharacters(" and ");
 
             ch.writeStartElement("a");
             ch.writeAttribute("href", "../dsd/" + id);
             ch.writeCharacters("RDF (data structure definitions)");
             ch.writeEndElement();
 
-            ch.writeCharacters(" and ");
+            ch.writeEndElement();
+
+            ch.writeStartElement("p");
+
+            ch.writeCharacters("Via Eurostat: ");
 
             ch.writeStartElement("a");
             ch.writeAttribute(
