@@ -8,10 +8,10 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -40,7 +40,12 @@ public class PageServlet extends HttpServlet {
 		//OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
 
 		String id = req.getRequestURI();
-		id = id.substring("/page/".length());
+		int pageIndex = id.indexOf("/page/");
+		if (pageIndex == -1) {
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		id = id.substring(pageIndex + "/page/".length());
 
 		ServletContext ctx = getServletContext();
 
@@ -302,23 +307,70 @@ public class PageServlet extends HttpServlet {
 			ch.writeCharacters(" and ");
 
 			ch.writeStartElement("a");
-			ch.writeAttribute("href", Main.URI_PREFIX + "?file=data/" + id + ".tsv.gz");
+			ch.writeAttribute("href", Main.URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
 			ch.writeCharacters("TSV (for Excel)");
-			ch.writeEndElement();	
+			ch.writeEndElement();
+
+			ch.writeCharacters(", ");
+
+			ch.writeStartElement("a");
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/data/ESTAT/" + id);
+			ch.writeCharacters("SDMX (data)");
+			ch.writeEndElement();
+
+			ch.writeCharacters(", ");
+
+			ch.writeStartElement("a");
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/codelist/ESTAT/" + id);
+			ch.writeCharacters("SDMX (codelist)");
+			ch.writeEndElement();
+
+			ch.writeCharacters(", ");
+
+			ch.writeStartElement("a");
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/conceptscheme/ESTAT/" + id);
+			ch.writeCharacters("SDMX (conceptscheme)");
+			ch.writeEndElement();
+
+			ch.writeCharacters(", ");
+
+			ch.writeStartElement("a");
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/datastructure/ESTAT/" + id);
+			ch.writeCharacters("SDMX (datastructure)");
+			ch.writeEndElement();
+
+			ch.writeCharacters(", ");
+
+			ch.writeStartElement("a");
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/dataflow/ESTAT/" + id);
+			ch.writeCharacters("SDMX (dataflow)");
+			ch.writeEndElement();
+
+			ch.writeCharacters(", ");
+
+			ch.writeStartElement("a");
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/dataconstraint/ESTAT/" + id);
+			ch.writeCharacters("SDMX (dataconstraint)");
+			ch.writeEndElement();
+
+			ch.writeCharacters(", ");
+
+			ch.writeStartElement("a");
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/categoryscheme/ESTAT/" + id);
+			ch.writeCharacters("SDMX (categoryscheme)");
+			ch.writeEndElement();
 
 			ch.writeCharacters(" and ");
 
 			ch.writeStartElement("a");
-			ch.writeAttribute("href", Main.URI_PREFIX + "?file=data/" + id + ".sdmx.zip");
-			ch.writeCharacters("SDMX");
-			ch.writeEndElement();	
+			ch.writeAttribute("href", Main.URI_PREFIX_3 + "/categorisation/ESTAT/" + id);
+			ch.writeCharacters("SDMX (categorisation)");
+			ch.writeEndElement();
 
-			ch.writeCharacters(" and ");
-
-			ch.writeStartElement("a");
-			ch.writeAttribute("href", "http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=" + id + "&lang=en");
-			ch.writeCharacters("Table");
-			ch.writeEndElement();	
+//			ch.writeStartElement("a");
+//			ch.writeAttribute("href", "http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=" + id + "&lang=en");
+//			ch.writeCharacters("Table");
+//			ch.writeEndElement();	
 
 //			ch.writeCharacters(" and ");
 

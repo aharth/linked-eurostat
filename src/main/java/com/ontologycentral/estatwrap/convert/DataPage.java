@@ -41,13 +41,13 @@ public class DataPage {
 		ch.writeAttribute("rdf:resource", "http://estatwrap.ontologycentral.com/table_of_contents.rdf");
 		ch.writeEndElement();		
 
-		ch.writeStartElement("foaf:maker");
-		ch.writeAttribute("rdf:resource", "http://cbasewrap.ontologycentral.com/company/ontologycentral#id");
-		ch.writeEndElement();
+//		ch.writeStartElement("foaf:maker");
+//		ch.writeAttribute("rdf:resource", "http://cbasewrap.ontologycentral.com/company/ontologycentral#id");
+//		ch.writeEndElement();
 
-		ch.writeStartElement("foaf:topic");
-		ch.writeAttribute("rdf:resource", "#ds");
-		ch.writeEndElement();
+//		ch.writeStartElement("foaf:topic");
+//		ch.writeAttribute("rdf:resource", "#ds");
+//		ch.writeEndElement();
 
 		Calendar cal = Calendar.getInstance();
 		ch.writeStartElement("dcterms:date");
@@ -57,7 +57,7 @@ public class DataPage {
 
 		ch.writeStartElement("qb:DataSet");
 		//ch.writeAttribute("rdf:about", "/id/" + id  + "#ds");    		
-		ch.writeAttribute("rdf:about", "/id/" + id  + "#ds"); 
+		ch.writeAttribute("rdf:about", "../id/" + id  + "#ds"); 
 		if (toc.containsKey(id)) {
 			ch.writeStartElement("rdfs:label");
 			ch.writeAttribute("xml:lang", "en");
@@ -79,7 +79,7 @@ public class DataPage {
 
 
 		ch.writeStartElement("qb:structure");
-		ch.writeAttribute("rdf:resource", "/dsd/" + id + "#dsd");
+		ch.writeAttribute("rdf:resource", "../dsd/" + id + "#dsd");
 		ch.writeEndElement();
 		
 		ch.writeEndElement();

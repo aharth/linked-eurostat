@@ -1,26 +1,19 @@
 
 package com.ontologycentral.estatwrap.webapp;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import com.ontologycentral.estatwrap.Main;
+import com.ontologycentral.estatwrap.convert.Dsd;
 
 @SuppressWarnings("serial")
 public class DsdServlet extends HttpServlet {
@@ -31,87 +24,35 @@ public class DsdServlet extends HttpServlet {
 		//OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
 
 		String id = req.getRequestURI();
-		id = id.substring("/dsd/".length());
+		int dsdIndex = id.indexOf("/dsd/");
+		if (dsdIndex == -1) {
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		id = id.substring(dsdIndex + "/dsd/".length());
 
 		ServletContext ctx = getServletContext();
+		Transformer t = (Transformer)ctx.getAttribute(Listener.SDMX_T);
 
-		URL u = new URL(Main.URI_PREFIX + "?file=data/" + id + ".sdmx.zip");
-
-		_log.info("retrieving " + u);
-		//System.out.println("retrieving " + _u);
+		resp.setContentType("application/rdf+xml");
+		// 1 day
+		resp.setHeader("Cache-Control", "max-age=86400");
 
 		try {
-			HttpURLConnection conn = (HttpURLConnection)u.openConnection();
-			conn.setConnectTimeout(8*1000);
-			conn.setReadTimeout(8*1000);
-
-			conn.setUseCaches(true);
-
-			conn.setRequestProperty("User-Agent", "estatwrap.ontologycentral.com");
-
-			if (conn.getResponseCode() != 200) {
-				throw new RuntimeException("lookup on " + u + " resulted HTTP in status code " + conn.getResponseCode());
-			}
-
-			InputStream is = conn.getInputStream();
-
-			String encoding = conn.getContentEncoding();
-			if (encoding == null) {
-				encoding = Listener.DEFAULT_ENCODING;
-			}
-
-			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
-
-			ZipEntry ze;
-			while((ze = zis.getNextEntry()) != null) {
-				if (ze.getName().contains("dsd.xml") ) {
-					break;
-				}
-			}
-			/*
-		StringWriter writer = new StringWriter();
-		try {
-			char[] buffer = new char[1024];
-			Reader reader = new BufferedReader(new InputStreamReader(is, encoding));
-			int n;
-			while ((n = reader.read(buffer)) != -1) {
-				writer.write(buffer, 0, n);
-			}
-		} finally {
-			is.close();			
-		}
-
-		String content = writer.getBuffer().toString();
-
-		_log.info(content);
-			 */
-			Transformer t = (Transformer)ctx.getAttribute(Listener.SDMX_T);
-
-			resp.setContentType("application/rdf+xml");
-
-			// 1 day
-    		resp.setHeader("Cache-Control", "max-age=86400");
-
-			StreamSource ssource = new StreamSource(zis);
-			StreamResult sresult = new StreamResult(os);
-
-			_log.info("lapplying xslt");
-
-			t.transform(ssource, sresult);
-
-			zis.close();
+			Dsd dsd = new Dsd(id);
+			dsd.convert(os, t);
 		} catch (TransformerException e) {
-			e.printStackTrace(); 
+			e.printStackTrace();
 			resp.sendError(500, e.getMessage());
 			return;
 		} catch (IOException e) {
-			resp.sendError(500, u + ": " + e.getMessage());
+			resp.sendError(500, "Error processing DSD for " + id + ": " + e.getMessage());
 			e.printStackTrace();
 			return;
 		} catch (RuntimeException e) {
-			resp.sendError(500, u + ": " + e.getMessage());
+			resp.sendError(500, "Error processing DSD for " + id + ": " + e.getMessage());
 			e.printStackTrace();
-			return;			
+			return;
 		}
 
 		os.close();

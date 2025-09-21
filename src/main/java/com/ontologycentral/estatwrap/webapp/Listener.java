@@ -22,9 +22,9 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.AccessedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Transformer;
@@ -88,19 +88,20 @@ public class Listener implements ServletContextListener {
 
         
 	    Map<String, String> map = null;
-	    
+
 //	    if (cache.containsKey(TOC)) {
 //	    	map = (Map<String, String>)cache.get(TOC);
 //	    }
 
 	    if (map == null) {
 	    	try {
-	    		//URL u = new URL("http://epp.eurostat.ec.europa.eu/NavTree_prod/everybody/BulkDownloadListing?sort=1&file=table_of_contents_en.txt");
-	    		URL u = new URL(Main.URI_PREFIX + "?file=table_of_contents_en.txt");
+	    		// Use new XML API endpoint instead of old text format
+	    		URL u = new URL("https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml");
 	    		HttpURLConnection conn = (HttpURLConnection)u.openConnection();
 	    		InputStream is = conn.getInputStream();
 
-	    		ToC toc = new ToC(is, null);		
+	    		// Parse XML ToC using existing ToC class (will need updating)
+	    		ToC toc = new ToC(is, "utf-8");
 	    		map = toc.convert();
 //	    		cache.put(TOC, map);
 	    	} catch (MalformedURLException e) {

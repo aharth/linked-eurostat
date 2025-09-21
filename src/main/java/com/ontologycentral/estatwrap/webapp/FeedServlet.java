@@ -20,10 +20,10 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -60,7 +60,7 @@ public class FeedServlet extends HttpServlet {
 		
 		Map<String, String> toc = (Map<String, String>)ctx.getAttribute(Listener.TOC);
 
-		URL url = new URL(Main.URI_PREFIX + "?file=table_of_contents_en.txt");
+		URL url = new URL(/*Main.URI_PREFIX +*/"?file=table_of_contents_en.txt");
 			
 		try {
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();

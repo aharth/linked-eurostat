@@ -114,7 +114,7 @@ public class Data {
     		out.writeStartElement("qb:Observation");
 
     		out.writeStartElement("qb:dataSet");
-    		out.writeAttribute("rdf:resource", "/id/" + id + "#ds");
+    		out.writeAttribute("rdf:resource", "../id/" + id + "#ds");
     		// @@@ workaround to get query processor to function
     		//out.writeAttribute("rdf:resource", id + "#ds");
 

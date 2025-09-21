@@ -7,10 +7,10 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class IdentifierServlet extends HttpServlet {
@@ -39,7 +39,12 @@ public class IdentifierServlet extends HttpServlet {
 			return;
 		}
 
-		id = id.substring("/id/".length());
+		int idIndex = id.indexOf("/id/");
+		if (idIndex == -1) {
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		id = id.substring(idIndex + "/id/".length());
 		
 //		ServletContext ctx = getServletContext();
 				
@@ -55,12 +60,12 @@ public class IdentifierServlet extends HttpServlet {
 		if (accept != null && accept.contains("application/rdf+xml")) {
 			//out.println(path + ".rdf");
 			resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
-			resp.setHeader("Location", "/data/" + id);
+			resp.setHeader("Location", "../data/" + id);
 			return;
 		} else {
 			//out.println(path + ".html");
 			resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
-			resp.setHeader("Location", "/page/" + id);
+			resp.setHeader("Location", "../page/" + id);
 			return;
 		}
 	}

@@ -11,7 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 public class Dictionary {
-	public static String PREFIX = "/dic/";
+	public static String PREFIX = "../dic/";
 	
 	Logger _log = Logger.getLogger(this.getClass().getName());
 

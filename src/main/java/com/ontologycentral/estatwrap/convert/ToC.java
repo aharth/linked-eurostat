@@ -1,71 +1,92 @@
 package com.ontologycentral.estatwrap.convert;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 public class ToC {
 	Logger _log = Logger.getLogger(this.getClass().getName());
 
-	BufferedReader _in;
+	InputStream _in;
 
 	public ToC(InputStream is, String encoding) throws IOException {
-		if (encoding == null) {
-			encoding = "ISO_8859-1";
-		}
-
-		_in = new BufferedReader(new InputStreamReader(is, encoding));
+		_in = is;
 	}
 	
 	public Map<String, String> convert() throws IOException, XMLStreamException {
 		Map<String, String> toc = new HashMap<String, String>();
-		
-		String line = null;
 
-		int rows = 0;
-		Header h = null;
-		Line l = null;
+		XMLInputFactory factory = XMLInputFactory.newInstance();
+		XMLStreamReader reader = factory.createXMLStreamReader(_in);
 
-//		if ((line = _in.readLine()) != null) {
-//			//System.out.println(line);
-//		}
-		
-		while ((line = _in.readLine()) != null) {
-			++rows;
-			line = line.trim();
-			if (line.length() <= 0) {
-				continue;
-			}
+		String currentCode = null;
+		String currentTitle = null;
+		boolean inCode = false;
+		boolean inTitle = false;
+		boolean titleIsEnglish = false;
 
-			String desc= null;
-			if (line.indexOf('\t') >= 0) {
-				desc = line.substring(1, line.indexOf('\t')-1);
-				
-				l = new Line(line);
-				
-				String type = l.getCols().get(0);
-				String code = l.getCols().get(1);
+		try {
+			while (reader.hasNext()) {
+				int event = reader.next();
 
-				if (!"folder".equals(code)) {
-					// remove "
-					type = type.substring(1, type.length()-1);
+				switch (event) {
+					case XMLStreamConstants.START_ELEMENT:
+						String localName = reader.getLocalName();
 
-					System.out.println(type);
-					System.out.println(desc);
+						if ("code".equals(localName)) {
+							inCode = true;
+						} else if ("title".equals(localName)) {
+							String language = reader.getAttributeValue(null, "language");
+							if ("en".equals(language)) {
+								inTitle = true;
+								titleIsEnglish = true;
+							} else {
+								titleIsEnglish = false;
+							}
+						}
+						break;
 
-					toc.put(type, desc.trim());
+					case XMLStreamConstants.CHARACTERS:
+						String text = reader.getText().trim();
+						if (!text.isEmpty()) {
+							if (inCode) {
+								currentCode = text;
+							} else if (inTitle && titleIsEnglish) {
+								currentTitle = text;
+							}
+						}
+						break;
+
+					case XMLStreamConstants.END_ELEMENT:
+						String endLocalName = reader.getLocalName();
+
+						if ("code".equals(endLocalName)) {
+							inCode = false;
+						} else if ("title".equals(endLocalName)) {
+							inTitle = false;
+						} else if ("leaf".equals(endLocalName)) {
+							if (currentCode != null && currentTitle != null) {
+								toc.put(currentCode, currentTitle);
+								_log.info("Added ToC entry: " + currentCode + " = " + currentTitle);
+							}
+							currentCode = null;
+							currentTitle = null;
+						}
+						break;
 				}
 			}
+		} finally {
+			reader.close();
+			_in.close();
 		}
 
-		_in.close();
-		
 		return toc;
 	}
 }

@@ -19,10 +19,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.cache.Cache;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -54,7 +54,12 @@ public class DictionaryServlet extends HttpServlet {
 		OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
 
 		String id = req.getRequestURI();
-		id = id.substring("/dic/".length());
+		int dicIndex = id.indexOf("/dic/");
+		if (dicIndex == -1) {
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		id = id.substring(dicIndex + "/dic/".length());
 
 		ServletContext ctx = getServletContext();
 		Cache cache = (Cache)ctx.getAttribute(Listener.CACHE);
@@ -70,9 +75,7 @@ public class DictionaryServlet extends HttpServlet {
 			
 			for (String lang : LANG) {
 				StringReader sr = null;
-
-				URL url = new URL(Main.URI_PREFIX + "?file=dic/" + lang + "/" + id + ".dic");
-				//URL url = new URL("http://europa.eu/estatref/download/everybody/dic/en/" + id + ".dic");
+			    URL url = new URL(Main.URI_PREFIX_3 + "/structure/codelist/ESTAT/" + id.toUpperCase() + "/?compress=true&format=TSV&formatVersion=2.0");
 
 				System.out.println("looking up " + url);
 

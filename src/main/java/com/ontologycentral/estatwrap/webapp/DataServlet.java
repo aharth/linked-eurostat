@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -46,11 +46,15 @@ public class DataServlet extends HttpServlet {
 		//OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
 
 		String id = req.getRequestURI();
-		id = id.substring("/data/".length());
+		int dataIndex = id.indexOf("/data/");
+		if (dataIndex == -1) {
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		id = id.substring(dataIndex + "/data/".length());
 
 		ServletContext ctx = getServletContext();
-
-		URL url = new URL(Main.URI_PREFIX + "?file=data/" + id + ".tsv.gz");
+		URL url = new URL(Main.URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
 
 		try {
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();

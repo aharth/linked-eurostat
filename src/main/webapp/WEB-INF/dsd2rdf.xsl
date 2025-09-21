@@ -11,16 +11,14 @@
    xmlns:qb="http://purl.org/linked-data/cube#"
    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
    xmlns:foaf="http://xmlns.com/foaf/0.1/"
-   xmlns:sdmx="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message"
-   xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common"
-   xmlns:compact="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/compact"
-   xmlns:cross="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/cross"
-   xmlns:generic="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/generic"
-   xmlns:query="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/query"
-   xmlns:structure="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/structure"
-   xmlns:utility="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/utility"
+   xmlns:m="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+   xmlns:s="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
+   xmlns:c="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
+   xmlns:sdmx="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+   xmlns:common="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
+   xmlns:structure="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message SDMXMessage.xsd"
+   xsi:schemaLocation="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message SDMXMessage.xsd"
    version='1.0'>
 
   <xsl:output method='xml' encoding='utf-8'/>
@@ -28,7 +26,7 @@
   <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
   <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
-  <xsl:template match='sdmx:Structure'>
+  <xsl:template match='m:Structure | sdmx:Structure'>
     <rdf:RDF>
       <rdf:Description rdf:about="">
 	<rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
@@ -76,7 +74,7 @@
 	</qb:component>
 	-->
 
-	<xsl:for-each select="sdmx:CodeLists/structure:CodeList">
+	<xsl:for-each select="sdmx:CodeLists/structure:CodeList | m:Structures/s:Codelists/s:Codelist">
 	  <qb:component>
 	    <rdf:Description>
 	      <xsl:choose>
@@ -141,25 +139,25 @@
     </rdf:RDF>
   </xsl:template>
 
-  <xsl:template match='sdmx:Header'>
+  <xsl:template match='sdmx:Header | m:Header'>
     <rdf:Description rdf:about="#header">
       <xsl:apply-templates/>
     </rdf:Description>
   </xsl:template>
 
-  <xsl:template match='sdmx:ID'>
+  <xsl:template match='sdmx:ID | m:ID'>
     <dcterms:identifier><xsl:value-of select="."/></dcterms:identifier>
   </xsl:template>
 
-  <xsl:template match='sdmx:Prepared'>
+  <xsl:template match='sdmx:Prepared | m:Prepared'>
     <dcterms:date><xsl:value-of select="."/></dcterms:date>
   </xsl:template>
 
-  <xsl:template match='sdmx:CodeLists'>
+  <xsl:template match='sdmx:CodeLists | s:Codelists'>
     <xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match='structure:CodeList'>
+  <xsl:template match='structure:CodeList | s:Codelist'>
 <!--    <xsl:if test="@id != 'CL_GEO'"> -->
       <skos:ConceptScheme>
 	<xsl:attribute name="rdf:about">#<xsl:value-of select="translate(@id, $uppercase, $lowercase)"/></xsl:attribute>
@@ -169,14 +167,14 @@
 <!--    </xsl:if> -->
   </xsl:template>
 
-  <xsl:template match='structure:Name|structure:Description'>
+  <xsl:template match='structure:Name|structure:Description|c:Name|c:Description'>
     <rdfs:label>
       <xsl:attribute name="xml:lang"><xsl:value-of select="@xml:lang"/></xsl:attribute>
       <xsl:value-of select="."/>
     </rdfs:label>
   </xsl:template>
 
-  <xsl:template match='structure:Code'>
+  <xsl:template match='structure:Code | s:Code'>
     <skos:hasTopConcept>
       <skos:Concept>
 	<!--

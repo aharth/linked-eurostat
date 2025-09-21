@@ -24,18 +24,20 @@
 
     <p>
       <a href="http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&dir=dic%2Fen">List of dictionary files at Eurostat</a>.
+
+    Or rather: <a href="https://ec.europa.eu/eurostat/api/dissemination/files/inventory?type=codelist">Inventory of code lists</a>.
     </p>
 
     <p>
-      Nearby: <a href="http://ontologycentral.com/2009/01/eurostat/">about the Eurostat wrapper</a>, <a href="https://github.com/bkaempgen/linked-eurostat">code at Github</a>.
+      Nearby: <a href="http://ontologycentral.com/2009/01/eurostat/">about the Eurostat wrapper</a>, <a href="https://github.com/aharth/linked-eurostat">code at Github</a>.
     </p>
     
     <h2>Some Example Datasets</h2>
     
     <dl>
-      <dt><a href="/id/tec00114">/id/tec00114</a></dt>
+      <dt><a href="./id/tec00114">./id/tec00114</a></dt>
       <dd>GDP per capita in PPS</dd>
-      <dt><a href="/id/tec00115">/id/tec00115</a></dt>
+      <dt><a href="./id/tec00115">./id/tec00115</a></dt>
       <dd>Real GDP growth rate - volume</dd>
       <!--
       <dt><a href="/id/tps00001">/id/tps00001</a></dt>
@@ -43,13 +45,13 @@
       <dt><a href="/id/tsdec450">/id/tsdec450</a></dt>
       <dd>Unemployment rate, by sex</dd>
 -->
-      <dt><a href="./id/tespn020">/id/tespn020</a></dt>
+      <dt><a href="./id/tespn020">./id/tespn020</a></dt>
       <dd>Median relative income of elderly people</dd>
-      <dt><a href="./id/sdg_12_30">/id/sdg_12_30</a></dt>
+      <dt><a href="./id/sdg_12_30">./id/sdg_12_30</a></dt>
       <dd>Average CO2 emissions per km from new passenger cars</dd>
-      <dt><a href="/id/urb_cpop1">/id/urb_cpop1</a></dt>
+      <dt><a href="./id/urb_cpop1">./id/urb_cpop1</a></dt>
       <dd>Population on 1 January by age groups and sex - cities and greater cities</dd>
-      <dt><a href="/id/nama_10_pe">/id/nama_10_pe</a></dt>
+      <dt><a href="./id/nama_10_pe">./id/nama_10_pe</a></dt>
       <dd>Population and employment</dd>
       <!--
       <dt><a href="/id/tec00118">/id/tec00118</a></dt>
@@ -60,106 +62,29 @@
     <h2>Some Example Dictionaries</h2>
 
     <dl>
-      <dt><a href="/dic/geo">/dic/geo</a></dt>
+      <dt><a href="./dic/geo">./dic/geo</a></dt>
       <dd>Geographical identifiers (mostly <a href="https://en.wikipedia.org/wiki/Nomenclature_of_Territorial_Units_for_Statistics">NUTS</a>)</dd>
-      <dt><a href="/dic/cities">/dic/cities</a></dt>
+      <dt><a href="./dic/cities">./dic/cities</a></dt>
       <dd>Geographical identifiers for Urban Audit statistics</dd>
-      <dt><a href="/dic/metroreg">/dic/metroreg</a></dt>
+      <dt><a href="./dic/metroreg">./dic/metroreg</a></dt>
       <dd>Geographical identifiers for metropolitan area statistics</dd>
     </dl>
     <dl>
-      <dt><a href="/dic/na_item">/dic/na_item</a></dt>
+      <dt><a href="./dic/na_item">./dic/na_item</a></dt>
       <dd>Indicators</dd>
-      <dt><a href="/dic/sex">/dic/sex</a></dt>
+      <dt><a href="./dic/sex">./dic/sex</a></dt>
       <dd>Sex</dd>
-      <dt><a href="/dic/unit">/dic/unit</a></dt>
+      <dt><a href="./dic/unit">./dic/unit</a></dt>
       <dd>Unit</dd>
     </dl>
     
-    <h2>News</h2>
-    
-    
-    <dl>
-      <dt>2018-10-30</dt>
-      <dd>Eurostat moved to https</dd>
+    <h2>Documentation</h2>
 
-      <dt>2018-01-20</dt>
-      <dd>Enable caching on HTTP requests to Eurostat.</dd>
-
-      <dt>2017-08-03</dt>
-      <dd>Removed external link to geo codelist.</dd>
-
-      <dt>2017-06-22</dt>
-      <dd>Unicode fix, more links to dictionary files.</dd>
-
-      <dt>2017-01-27</dt>
-      <dd>Minor fixes, project mavenised.</dd>
-
-      <dt>2017-01-02</dt>
-      <dd>Reduced truncation.</dd>
-
-      <dt>2016-07-14</dt>
-      <dd>Moved to updated SPARQL processing endpoint.</dd>
-
-      <dt>2013-09-21</dt>
-      <dd>Adapted modeling closer towards <a href="http://www.w3.org/TR/vocab-data-cube/">RDF Data Cube specification</a></dd>
-    
-      <dt>2012-09-22</dt>
-      <dd>Updated TOC, changed links to statistics, links to eurostat.linked-statistics.org (forked from here) dictionary files</dd>
-
-      <dt>2011-10-20</dt>
-      <dd>Remove wrongly specified geo skos concepts</dd>
-
-      <dt>2011-09-02</dt>
-      <dd>Restriction to 8 columns and 8192 rows</dd>
-
-      <dt>2011-08-25</dt>
-      <dd>Extended restriction to 8 columns (which will likely be the time dimension in most cases) and 16384 rows, and added a warning if file is truncated</dd>
-
-      <dt>2011-08-14</dt>
-      <dd>Corrected typo: qs:dataSet instead of qs:dataset</dd>
-
-      <dt>2011-07-24</dt>
-      <dd>Corrected property URIs in DSD to lowercase, added <a href="feed.rdf">feed with last change date</a></dd>
-
-      <dt>2011-07-21</dt>
-      <dd>Added sameAs links to <a href="http://nuts.psi.enakting.org/">NUTS (from the EnAKTing project)</a> in <a href="/dic/geo">dic/geo</a></dd>
-
-      <dt>2011-05-26</dt>
-      <dd>Added sameAs links to <a href="http://nuts.geovocab.org/">NUTS (with geometries)</a> in <a href="/dic/geo">dic/geo</a></dd>
-
-      <dt>2011-02-12</dt>
-      <dd>Time dimension now also with dcterms:date; minor bugfixes; added measures/dimensions list</dd>
-
-      <dt>2011-02-10</dt>
-      <dd>Fixed changed Eurostat URI for table of contents</dd>
-    
-      <dt>2011-01-21</dt>
-      <dd>Added RDF Data Cube vocab data structure definitions (under /dsd/{id}), added de and fr labels to dictionary files</dd>
-      
-      <dt>2010-12-16</dt>
-      <dd>Data adheres to the RDF Data Cube vocab; visualisations work on the new data.</dd>
-      
-      <dt>2010-09-25</dt>
-      <dd>Added <a href="dic/nace_r2">NACE</a> mappings to European Union data</dd>
-      
-      <dt>2010-09-24</dt>
-      <dd>Added restriction to 16 columns and 1024 rows due to GAE resource limitations</dd>
-      
-      <dt>2010-09-23</dt>
-      <dd>Added ToC and <a href="dic/geo">geographical</a> mappings to European Union data and UN FAO</dd>
-      
-      <dt>2010-09-16</dt>
-      <dd>Added dataset description to <a href="http://www.ckan.net/package/linked-eurostat">CKAN</a></dd>
-      
-      <dt>2010-08-24</dt>
-      <dd>Now dictionary files are correctly converted</dd>
-      
-      <dt>2010-07-21</dt>
-      <dd>Updated wrapper to Eurostat's new download scheme</dd>
-    </dl>
+    <p>
+      For project updates and changes, see the <a href="https://github.com/aharth/linked-eurostat/blob/master/CHANGELOG.md">CHANGELOG</a>.
+    </p>
 
     <hr/>
-    <a href="http://ontologycentral.com/">OntologyCentral</a>, 2009-2017.
+    <a href="http://ontologycentral.com/">OntologyCentral</a>, 2009-2025.
   </body>
 </html>
