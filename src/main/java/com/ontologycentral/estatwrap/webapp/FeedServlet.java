@@ -1,5 +1,9 @@
 package com.ontologycentral.estatwrap.webapp;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,242 +23,237 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.logging.Logger;
-
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.ontologycentral.estatwrap.Main;
-
 @SuppressWarnings("serial")
 public class FeedServlet extends HttpServlet {
-	Logger _log = Logger.getLogger(this.getClass().getName());
-	
-	static SimpleDateFormat DATE_FMT = new SimpleDateFormat("dd.MM.yyyy");
-	static SimpleDateFormat DATE_ISO = new SimpleDateFormat("yyyy-MM-dd");
+    Logger _log = Logger.getLogger(this.getClass().getName());
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		if (req.getServerName().contains("estatwrap.appspot.com")) {
-			try {
-				URI re = new URI("http://estatwrap.ontologycentral.com/" + req.getRequestURI());
-				re = re.normalize();
-				resp.sendRedirect(re.toString());
-			} catch (URISyntaxException e) {
-				resp.sendError(500, e.getMessage());
-			}
-			return;
-		}
+    static SimpleDateFormat DATE_FMT = new SimpleDateFormat("dd.MM.yyyy");
+    static SimpleDateFormat DATE_ISO = new SimpleDateFormat("yyyy-MM-dd");
 
-		resp.setContentType("application/rdf+xml");
-//		resp.setContentType("text/html");
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if (req.getServerName().contains("estatwrap.appspot.com")) {
+            try {
+                URI re = new URI("http://estatwrap.ontologycentral.com/" + req.getRequestURI());
+                re = re.normalize();
+                resp.sendRedirect(re.toString());
+            } catch (URISyntaxException e) {
+                resp.sendError(500, e.getMessage());
+            }
+            return;
+        }
 
-		//OutputStream os = resp.getOutputStream();
-		//OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
-		PrintWriter pw = resp.getWriter();
+        resp.setContentType("application/rdf+xml");
+        //		resp.setContentType("text/html");
 
-		ServletContext ctx = getServletContext();
-		
-		Map<String, String> toc = (Map<String, String>)ctx.getAttribute(Listener.TOC);
+        // OutputStream os = resp.getOutputStream();
+        // OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
+        PrintWriter pw = resp.getWriter();
 
-		URL url = new URL(/*Main.URI_PREFIX +*/"?file=table_of_contents_en.txt");
-			
-		try {
-			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-			InputStream is = conn.getInputStream();
+        ServletContext ctx = getServletContext();
 
-			if (conn.getResponseCode() != 200) {
-				resp.sendError(conn.getResponseCode());
-			}
+        Map<String, String> toc = (Map<String, String>) ctx.getAttribute(Listener.TOC);
 
-			String encoding = conn.getContentEncoding();
-			if (encoding == null) {
-				encoding = Listener.DEFAULT_ENCODING;
-			}
+        URL url = new URL(/*Main.URI_PREFIX +*/ "?file=table_of_contents_en.txt");
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
+        try {
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            InputStream is = conn.getInputStream();
 
-			// 10 min
-			resp.setHeader("Cache-Control", "public,max-age=600");
+            if (conn.getResponseCode() != 200) {
+                resp.sendError(conn.getResponseCode());
+            }
 
-//			resp.setHeader("Cache-Control", "public");
-//			Calendar c = Calendar.getInstance();
-//			c.add(Calendar.MINUTE, 10);
-//			resp.setHeader("Expires", Listener.RFC822.format(c.getTime()));
-			//resp.setHeader("Content-Encoding", "gzip");
-			
-			Map<String, Date> map = new HashMap<String, Date>();
-			
-			String line = null;
-			while ((line = in.readLine()) != null) {
-				StringTokenizer tok = new StringTokenizer(line, "\t");
-				String code = null;
-				String date = null;
-				
-				if (tok.hasMoreTokens()) {
-					tok.nextToken();
-					if (tok.hasMoreTokens()) { 
-						code = tok.nextToken();
-						if (tok.hasMoreTokens()) {
-							if ("dataset".equals(tok.nextToken().trim())) {
-								if (tok.hasMoreTokens()) {
-									date = tok.nextToken();
-								}
-							}
-						}
-					}
-				}
-				
-				if (code != null && date != null) { // && date.trim().length() != 0) {
-					if (date.trim().length() > 0) {
-						try {
-							Date d = DATE_FMT.parse(date);
-							map.put(code, d);
-						} catch (ParseException e) {
-							e.printStackTrace();
-							_log.info(e.getMessage());
-						}
-					}
-				}
-			}
-			
-			Comparator dc =  new DateComparator(map);
-	        TreeMap<String,Date> sortedMap = new TreeMap<String, Date>(dc);
+            String encoding = conn.getContentEncoding();
+            if (encoding == null) {
+                encoding = Listener.DEFAULT_ENCODING;
+            }
 
-	        sortedMap.putAll(map);
-	        
-	        Calendar monthago = Calendar.getInstance();
-	        monthago.add(Calendar.MONTH, -1);
-	        
-	        Calendar change = Calendar.getInstance();
-	        
-			XMLOutputFactory factory = XMLOutputFactory.newInstance();
+            BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
 
-			try {
-				XMLStreamWriter ch;
+            // 10 min
+            resp.setHeader("Cache-Control", "public,max-age=600");
 
-				ch = factory.createXMLStreamWriter(pw);
+            //			resp.setHeader("Cache-Control", "public");
+            //			Calendar c = Calendar.getInstance();
+            //			c.add(Calendar.MINUTE, 10);
+            //			resp.setHeader("Expires", Listener.RFC822.format(c.getTime()));
+            // resp.setHeader("Content-Encoding", "gzip");
 
-				ch.writeStartDocument("utf-8", "1.0");
+            Map<String, Date> map = new HashMap<String, Date>();
 
-				ch.writeStartElement("rdf:RDF");
-				ch.writeNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-				ch.writeDefaultNamespace("http://purl.org/rss/1.0/");
-				ch.writeNamespace("dc", "http://purl.org/dc/elements/1.1/");
-				
-				ch.writeStartElement("channel");
-				ch.writeAttribute("rdf:about", "http://estatwrap.ontologycentral.com/");
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                StringTokenizer tok = new StringTokenizer(line, "\t");
+                String code = null;
+                String date = null;
 
-				ch.writeStartElement("title");
-				ch.writeCharacters("Linked Eurostat");
-				ch.writeEndElement();
-				
-				ch.writeStartElement("description");
-				ch.writeCharacters("Recently updated Eurostat datasets");
-				ch.writeEndElement();
-				
-				ch.writeStartElement("items");
-				ch.writeStartElement("rdf:Seq");
+                if (tok.hasMoreTokens()) {
+                    tok.nextToken();
+                    if (tok.hasMoreTokens()) {
+                        code = tok.nextToken();
+                        if (tok.hasMoreTokens()) {
+                            if ("dataset".equals(tok.nextToken().trim())) {
+                                if (tok.hasMoreTokens()) {
+                                    date = tok.nextToken();
+                                }
+                            }
+                        }
+                    }
+                }
 
-		        for (String key : sortedMap.keySet()) {
-		        	Date d = sortedMap.get(key);
-		        	
-		        	change.setTime(d);
-		        	
-		        	if (change.after(monthago)) {
-		        		ch.writeStartElement("rdf:li");
-		        		ch.writeAttribute("rdf:resource", "http://estatwrap.ontologycentral.com/id/" + key);
-		        		ch.writeEndElement();
-		        		//"'>" + toc.get(key) + "</a>: " + DATE_ISO.format(d) + "</li>").getBytes());
-		        	}
-		        }
-				ch.writeEndElement();
-				ch.writeEndElement();
-		        
-				// channel
-				ch.writeEndElement();
-				
-		        for (String key : sortedMap.keySet()) {
-		        	Date d = sortedMap.get(key);
-		        	
-		        	change.setTime(d);
-		        	
-		        	if (change.after(monthago)) {
-		        		ch.writeStartElement("item");
-		        		ch.writeAttribute("rdf:about", "http://estatwrap.ontologycentral.com/id/" + key);
+                if (code != null && date != null) { // && date.trim().length() != 0) {
+                    if (date.trim().length() > 0) {
+                        try {
+                            Date d = DATE_FMT.parse(date);
+                            map.put(code, d);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            _log.info(e.getMessage());
+                        }
+                    }
+                }
+            }
 
-		        		ch.writeStartElement("link");
-		        		ch.writeCharacters("http://estatwrap.ontologycentral.com/id/" + key);
-		        		ch.writeEndElement();
+            Comparator dc = new DateComparator(map);
+            TreeMap<String, Date> sortedMap = new TreeMap<String, Date>(dc);
 
-		        		ch.writeStartElement("title");
-		        		ch.writeCharacters(toc.get(key));
-		        		ch.writeEndElement();
-		        		
-		        		ch.writeStartElement("dc:date");
-		        		ch.writeCharacters(DATE_ISO.format(d));
-		        		ch.writeEndElement();
+            sortedMap.putAll(map);
 
-		        		ch.writeEndElement();
-		        	}
-		        }
+            Calendar monthago = Calendar.getInstance();
+            monthago.add(Calendar.MONTH, -1);
 
-				// rdf:RDF
-				ch.writeEndElement();
-				
-				ch.writeEndDocument();
+            Calendar change = Calendar.getInstance();
 
-				ch.close();
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-				_log.severe(e.getMessage());
-			}
+            XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
-//	        os.write("<h1>Recently updated datasets</h1>".getBytes());
-//	        os.write("<ul>".getBytes());
-//	        for (String key : sortedMap.keySet()) {
-//	        	Date d = sortedMap.get(key);
-//	        	
-//	        	change.setTime(d);
-//	        	
-//	        	if (change.after(monthago)) {
-//	        		os.write(("<li><a href='/id/" + key + "'>" + toc.get(key) + "</a>: " + DATE_ISO.format(d) + "</li>").getBytes());
-//	        	}
-//	        }
-//	        os.write("</ul>".getBytes());
+            try {
+                XMLStreamWriter ch;
 
-	        //os.write(sortedMap.toString().getBytes()); //(code + " " + date + "\n").getBytes()); 
+                ch = factory.createXMLStreamWriter(pw);
 
-		} catch (IOException e) {
-			resp.sendError(500, url + ": " + e.getMessage());
-			e.printStackTrace();
-			return;
-		} catch (RuntimeException e) {
-			resp.sendError(500, url + ": " + e.getMessage());
-			e.printStackTrace();
-			return;			
-		}
-	}
+                ch.writeStartDocument("utf-8", "1.0");
+
+                ch.writeStartElement("rdf:RDF");
+                ch.writeNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+                ch.writeDefaultNamespace("http://purl.org/rss/1.0/");
+                ch.writeNamespace("dc", "http://purl.org/dc/elements/1.1/");
+
+                ch.writeStartElement("channel");
+                ch.writeAttribute("rdf:about", "http://estatwrap.ontologycentral.com/");
+
+                ch.writeStartElement("title");
+                ch.writeCharacters("Linked Eurostat");
+                ch.writeEndElement();
+
+                ch.writeStartElement("description");
+                ch.writeCharacters("Recently updated Eurostat datasets");
+                ch.writeEndElement();
+
+                ch.writeStartElement("items");
+                ch.writeStartElement("rdf:Seq");
+
+                for (String key : sortedMap.keySet()) {
+                    Date d = sortedMap.get(key);
+
+                    change.setTime(d);
+
+                    if (change.after(monthago)) {
+                        ch.writeStartElement("rdf:li");
+                        ch.writeAttribute(
+                                "rdf:resource", "http://estatwrap.ontologycentral.com/id/" + key);
+                        ch.writeEndElement();
+                        // "'>" + toc.get(key) + "</a>: " + DATE_ISO.format(d) +
+                        // "</li>").getBytes());
+                    }
+                }
+                ch.writeEndElement();
+                ch.writeEndElement();
+
+                // channel
+                ch.writeEndElement();
+
+                for (String key : sortedMap.keySet()) {
+                    Date d = sortedMap.get(key);
+
+                    change.setTime(d);
+
+                    if (change.after(monthago)) {
+                        ch.writeStartElement("item");
+                        ch.writeAttribute(
+                                "rdf:about", "http://estatwrap.ontologycentral.com/id/" + key);
+
+                        ch.writeStartElement("link");
+                        ch.writeCharacters("http://estatwrap.ontologycentral.com/id/" + key);
+                        ch.writeEndElement();
+
+                        ch.writeStartElement("title");
+                        ch.writeCharacters(toc.get(key));
+                        ch.writeEndElement();
+
+                        ch.writeStartElement("dc:date");
+                        ch.writeCharacters(DATE_ISO.format(d));
+                        ch.writeEndElement();
+
+                        ch.writeEndElement();
+                    }
+                }
+
+                // rdf:RDF
+                ch.writeEndElement();
+
+                ch.writeEndDocument();
+
+                ch.close();
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+                _log.severe(e.getMessage());
+            }
+
+            //	        os.write("<h1>Recently updated datasets</h1>".getBytes());
+            //	        os.write("<ul>".getBytes());
+            //	        for (String key : sortedMap.keySet()) {
+            //	        	Date d = sortedMap.get(key);
+            //
+            //	        	change.setTime(d);
+            //
+            //	        	if (change.after(monthago)) {
+            //	        		os.write(("<li><a href='/id/" + key + "'>" + toc.get(key) + "</a>: " +
+            // DATE_ISO.format(d) + "</li>").getBytes());
+            //	        	}
+            //	        }
+            //	        os.write("</ul>".getBytes());
+
+            // os.write(sortedMap.toString().getBytes()); //(code + " " + date + "\n").getBytes());
+
+        } catch (IOException e) {
+            resp.sendError(500, url + ": " + e.getMessage());
+            e.printStackTrace();
+            return;
+        } catch (RuntimeException e) {
+            resp.sendError(500, url + ": " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+    }
 }
 
 class DateComparator implements Comparator {
-	Map _base;
-	public DateComparator(Map base) {
-		_base = base;
-	}
+    Map _base;
 
-	public int compare(Object o1, Object o2) {
-		Date d1 = (Date)_base.get(o1);
-		Date d2 = (Date)_base.get(o2);
-		
-		if (d1.getYear() != d2.getYear()) 
-			return d2.getYear() - d1.getYear();
-		if (d1.getMonth() != d2.getMonth()) 
-			return d2.getMonth() - d1.getMonth();
-		return d2.getDate() - d1.getDate();
-	}
+    public DateComparator(Map base) {
+        _base = base;
+    }
+
+    public int compare(Object o1, Object o2) {
+        Date d1 = (Date) _base.get(o1);
+        Date d2 = (Date) _base.get(o2);
+
+        if (d1.getYear() != d2.getYear()) return d2.getYear() - d1.getYear();
+        if (d1.getMonth() != d2.getMonth()) return d2.getMonth() - d1.getMonth();
+        return d2.getDate() - d1.getDate();
+    }
 }
-

@@ -1,5 +1,11 @@
 package com.ontologycentral.estatwrap.webapp;
 
+import com.ontologycentral.estatwrap.Main;
+import com.ontologycentral.estatwrap.convert.DictionaryPage;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,137 +23,135 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.cache.Cache;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.ontologycentral.estatwrap.Main;
-import com.ontologycentral.estatwrap.convert.DictionaryPage;
-
 @SuppressWarnings("serial")
 public class DictionaryServlet extends HttpServlet {
-	Logger _log = Logger.getLogger(this.getClass().getName());
+    Logger _log = Logger.getLogger(this.getClass().getName());
 
-	public static String[] LANG = { "en" } ; //, "de", "fr" } ;
+    public static String[] LANG = {"en"}; // , "de", "fr" } ;
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		if (req.getServerName().contains("estatwrap.appspot.com")) {
-			try {
-				URI re = new URI("http://estatwrap.ontologycentral.com/" + req.getRequestURI());
-				re = re.normalize();
-				resp.sendRedirect(re.toString());
-			} catch (URISyntaxException e) {
-				resp.sendError(500, e.getMessage());
-			}
-			return;
-		}
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if (req.getServerName().contains("estatwrap.appspot.com")) {
+            try {
+                URI re = new URI("http://estatwrap.ontologycentral.com/" + req.getRequestURI());
+                re = re.normalize();
+                resp.sendRedirect(re.toString());
+            } catch (URISyntaxException e) {
+                resp.sendError(500, e.getMessage());
+            }
+            return;
+        }
 
-		resp.setContentType("application/rdf+xml");
+        resp.setContentType("application/rdf+xml");
 
-		OutputStream os = resp.getOutputStream();
-		OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
+        OutputStream os = resp.getOutputStream();
+        OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 
-		String id = req.getRequestURI();
-		int dicIndex = id.indexOf("/dic/");
-		if (dicIndex == -1) {
-			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-			return;
-		}
-		id = id.substring(dicIndex + "/dic/".length());
+        String id = req.getRequestURI();
+        int dicIndex = id.indexOf("/dic/");
+        if (dicIndex == -1) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        id = id.substring(dicIndex + "/dic/".length());
 
-		ServletContext ctx = getServletContext();
-		Cache cache = (Cache)ctx.getAttribute(Listener.CACHE);
+        ServletContext ctx = getServletContext();
+        Cache cache = (Cache) ctx.getAttribute(Listener.CACHE);
 
-		List<Reader> rli = new ArrayList<Reader>();
+        List<Reader> rli = new ArrayList<Reader>();
 
-		XMLStreamWriter ch = null;
+        XMLStreamWriter ch = null;
 
-		try {
-			XMLOutputFactory factory = (XMLOutputFactory)ctx.getAttribute(Listener.FACTORY);
+        try {
+            XMLOutputFactory factory = (XMLOutputFactory) ctx.getAttribute(Listener.FACTORY);
 
-			ch = factory.createXMLStreamWriter(osw);
-			
-			for (String lang : LANG) {
-				StringReader sr = null;
-			    URL url = new URL(Main.URI_PREFIX_3 + "/structure/codelist/ESTAT/" + id.toUpperCase() + "/?compress=true&format=TSV&formatVersion=2.0");
+            ch = factory.createXMLStreamWriter(osw);
 
-				System.out.println("looking up " + url);
+            for (String lang : LANG) {
+                StringReader sr = null;
+                URL url =
+                        new URL(
+                                Main.URI_PREFIX_3
+                                        + "/structure/codelist/ESTAT/"
+                                        + id.toUpperCase()
+                                        + "/?compress=true&format=TSV&formatVersion=2.0");
 
-				if (cache.containsKey(url)) {
-					_log.log(Level.INFO, "Accessing cache: {0}", url);
-					sr = new StringReader((String)cache.get(url));
-				} else {
-					_log.log(Level.INFO, "Accessing URI: {0}", url);					
+                System.out.println("looking up " + url);
 
-					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-					InputStream is = conn.getInputStream();
+                if (cache.containsKey(url)) {
+                    _log.log(Level.INFO, "Accessing cache: {0}", url);
+                    sr = new StringReader((String) cache.get(url));
+                } else {
+                    _log.log(Level.INFO, "Accessing URI: {0}", url);
 
-					if (conn.getResponseCode() != 200) {
-						resp.sendError(conn.getResponseCode());
-						return;
-					}
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    InputStream is = conn.getInputStream();
 
-					String encoding = conn.getContentEncoding();
-					if (encoding == null) {
-						encoding = Listener.DEFAULT_ENCODING;
-					}
+                    if (conn.getResponseCode() != 200) {
+                        resp.sendError(conn.getResponseCode());
+                        return;
+                    }
 
-					BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
-					String l;
-					StringBuilder sb = new StringBuilder();
+                    String encoding = conn.getContentEncoding();
+                    if (encoding == null) {
+                        encoding = Listener.DEFAULT_ENCODING;
+                    }
 
-					while ((l = in.readLine()) != null) {
-						sb.append(l);
-						sb.append('\n');
-					}
-					in.close();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
+                    String l;
+                    StringBuilder sb = new StringBuilder();
 
-					String str = sb.toString();
-					sr = new StringReader(str);
+                    while ((l = in.readLine()) != null) {
+                        sb.append(l);
+                        sb.append('\n');
+                    }
+                    in.close();
 
-					try {
-						cache.put(url, str);
-					} catch (RuntimeException e) {
-						_log.info(e.getMessage());
-					}
-				}
+                    String str = sb.toString();
+                    sr = new StringReader(str);
 
-				rli.add(sr);
-			}
+                    try {
+                        cache.put(url, str);
+                    } catch (RuntimeException e) {
+                        _log.info(e.getMessage());
+                    }
+                }
 
-			// 1 day
-    		resp.setHeader("Cache-Control", "public,max-age=86400");
-//			resp.setHeader("Cache-Control", "public");
-//			Calendar c = Calendar.getInstance();
-//			c.add(Calendar.DATE, 1);
-//			resp.setHeader("Expires", Listener.RFC822.format(c.getTime()));
+                rli.add(sr);
+            }
 
-			DictionaryPage.convert(ch, id, rli, LANG, (Set<String>)ctx.getAttribute(Listener.NUTS));
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-			resp.sendError(500, e.getMessage());
-			return;
-		} catch (IOException e) {
-			e.printStackTrace();
-			resp.sendError(500, e.getMessage());
-			return;
-		} finally {
-			if (ch != null) {
-				try {
-					ch.close();
-				} catch (XMLStreamException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-		}
-		
-		os.close();
-	}
+            // 1 day
+            resp.setHeader("Cache-Control", "public,max-age=86400");
+            //			resp.setHeader("Cache-Control", "public");
+            //			Calendar c = Calendar.getInstance();
+            //			c.add(Calendar.DATE, 1);
+            //			resp.setHeader("Expires", Listener.RFC822.format(c.getTime()));
+
+            DictionaryPage.convert(
+                    ch, id, rli, LANG, (Set<String>) ctx.getAttribute(Listener.NUTS));
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+            resp.sendError(500, e.getMessage());
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            resp.sendError(500, e.getMessage());
+            return;
+        } finally {
+            if (ch != null) {
+                try {
+                    ch.close();
+                } catch (XMLStreamException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
+
+        os.close();
+    }
 }

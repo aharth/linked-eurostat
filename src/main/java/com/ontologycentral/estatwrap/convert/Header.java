@@ -5,56 +5,56 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 class Header {
-	List<String> _dim1 = new ArrayList<String>();
-	String _dim2;
-	List<String> _cols;
+    List<String> _dim1 = new ArrayList<String>();
+    String _dim2;
+    List<String> _cols;
 
-	public Header(String line) {
-		List<String> cols = new ArrayList<String>();
-		
-		//System.out.println(line);
+    public Header(String line) {
+        List<String> cols = new ArrayList<String>();
 
-		StringTokenizer st = new StringTokenizer(line, "\t");
-		while (st.hasMoreTokens()) {
-			cols.add(st.nextToken().trim());
-		}
+        // System.out.println(line);
 
-		String legend = (String)cols.get(0);
+        StringTokenizer st = new StringTokenizer(line, "\t");
+        while (st.hasMoreTokens()) {
+            cols.add(st.nextToken().trim());
+        }
 
-		_cols = cols.subList(1, cols.size());
+        String legend = (String) cols.get(0);
 
-		int mark = legend.indexOf("\\");
-		String dim1 = legend.substring(0, mark);
-		_dim2 = legend.substring(mark + 1);
+        _cols = cols.subList(1, cols.size());
 
-		st = new StringTokenizer(dim1, ",");
-		while (st.hasMoreTokens()) {
-			String tok = st.nextToken().trim();
-			_dim1.add(tok);
-		}
-	}
+        int mark = legend.indexOf("\\");
+        String dim1 = legend.substring(0, mark);
+        _dim2 = legend.substring(mark + 1);
 
-	public List<String> getCols() {
-		return _cols;
-	}
+        st = new StringTokenizer(dim1, ",");
+        while (st.hasMoreTokens()) {
+            String tok = st.nextToken().trim();
+            _dim1.add(tok);
+        }
+    }
 
-	public List<String> getDim1() {
-		return _dim1;
-	}
+    public List<String> getCols() {
+        return _cols;
+    }
 
-	public String getDim2() {
-		return _dim2;
-	}
+    public List<String> getDim1() {
+        return _dim1;
+    }
 
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
+    public String getDim2() {
+        return _dim2;
+    }
 
-		sb.append(_dim1);
-		sb.append("\\");
-		sb.append(_dim2);
-		sb.append(":");
-		sb.append(_cols);
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
 
-		return sb.toString();
-	}
+        sb.append(_dim1);
+        sb.append("\\");
+        sb.append(_dim2);
+        sb.append(":");
+        sb.append(_cols);
+
+        return sb.toString();
+    }
 }
