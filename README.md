@@ -27,20 +27,3 @@ TSV data/tag00038.tsv.gz now at
 https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tag00038/?format=TSV&compressed=true
 
 
-
-
-## Contributors
-
-* Andreas Harth
-* Benedikt Kämpgen
-
-## History
-
-### 2009
-* Andreas Harth created first version.
-
-### 2010 to 2014
-* Research and innovation around PlanetData project (http://www.planet-data.eu/project-description + http://wiki.planet-data.eu/web/Main_Page)
-
-### 2015
-* Automatically exported from code.google.com/p/linked-eurostat

@@ -59,9 +59,11 @@ public class Dictionary {
     }
 
     public void addMappings(XMLStreamWriter out, String id) throws IOException, XMLStreamException {
+        /*
         out.writeStartElement("owl:sameAs");
         out.writeAttribute(
                 "rdf:resource", "http://eurostat.linked-statistics.org/dic/" + _id + "#" + id);
         out.writeEndElement();
+        */
     }
 }
