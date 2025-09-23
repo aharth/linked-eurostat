@@ -37,7 +37,25 @@
 	<rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
 	<dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
 	<foaf:topic rdf:resource="#df"/>
+	<prov:wasGeneratedBy rdf:resource="#transformation"/>
       </rdf:Description>
+
+      <!-- PROV: Transformation activity -->
+      <prov:Activity rdf:about="#transformation">
+        <rdfs:label>SDMX to RDF Dataflow Transformation</rdfs:label>
+        <prov:used>
+          <xsl:attribute name="rdf:resource">https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/dataflow/ESTAT/<xsl:value-of select="//s:Dataflow/@id"/></xsl:attribute>
+        </prov:used>
+        <prov:wasAssociatedWith rdf:resource="#estatwrap"/>
+        <dcterms:date><xsl:value-of select="current-dateTime()"/></dcterms:date>
+      </prov:Activity>
+
+      <!-- PROV: Agent (estatwrap service) -->
+      <prov:SoftwareAgent rdf:about="#estatwrap">
+        <rdfs:label>Linked Eurostat (estatwrap)</rdfs:label>
+        <foaf:homepage rdf:resource="http://estatwrap.ontologycentral.com/"/>
+        <dcterms:description>Service for converting Eurostat SDMX data to RDF</dcterms:description>
+      </prov:SoftwareAgent>
 
       <!--
 	  The dimension components serve to identify the observations. A set of values for all the dimension components is sufficient to identify a single observation. Examples of dimensions include the time to which the observation applies, or a geographic region which the observation covers.
@@ -236,6 +254,12 @@
       <!-- Process names and descriptions -->
       <xsl:apply-templates select="c:Name"/>
       <xsl:apply-templates select="c:Description"/>
+
+      <!-- PROV: Derived from original SDMX source -->
+      <prov:wasDerivedFrom>
+        <xsl:attribute name="rdf:resource">https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/dataflow/ESTAT/<xsl:value-of select="@id"/></xsl:attribute>
+      </prov:wasDerivedFrom>
+      <prov:wasGeneratedBy rdf:resource="#transformation"/>
 
       <!-- Link to data structure -->
       <xsl:if test="s:Structure">

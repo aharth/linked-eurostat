@@ -7,6 +7,7 @@
    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+   xmlns:prov="http://www.w3.org/ns/prov#"
    xmlns:m="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message"
    xmlns:s="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/structure"
    xmlns:c="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/common"
@@ -21,7 +22,25 @@
         <rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
         <dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
         <foaf:topic rdf:resource="#cl"/>
+        <prov:wasGeneratedBy rdf:resource="#transformation"/>
       </rdf:Description>
+
+      <!-- PROV: Transformation activity -->
+      <prov:Activity rdf:about="#transformation">
+        <rdfs:label>SDMX to RDF Codelist Transformation</rdfs:label>
+        <prov:used>
+          <xsl:attribute name="rdf:resource">https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/codelist/ESTAT/<xsl:value-of select="//s:Codelist/@id"/></xsl:attribute>
+        </prov:used>
+        <prov:wasAssociatedWith rdf:resource="#estatwrap"/>
+        <dcterms:date><xsl:value-of select="current-dateTime()"/></dcterms:date>
+      </prov:Activity>
+
+      <!-- PROV: Agent (estatwrap service) -->
+      <prov:SoftwareAgent rdf:about="#estatwrap">
+        <rdfs:label>Linked Eurostat (estatwrap)</rdfs:label>
+        <foaf:homepage rdf:resource="http://estatwrap.ontologycentral.com/"/>
+        <dcterms:description>Service for converting Eurostat SDMX data to RDF</dcterms:description>
+      </prov:SoftwareAgent>
 
       <!-- Process codelists -->
       <xsl:apply-templates select="m:Structures/s:Codelists"/>
@@ -63,6 +82,12 @@
       <!-- Process names and descriptions -->
       <xsl:apply-templates select="c:Name"/>
       <xsl:apply-templates select="c:Description"/>
+
+      <!-- PROV: Derived from original SDMX source -->
+      <prov:wasDerivedFrom>
+        <xsl:attribute name="rdf:resource">https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/codelist/ESTAT/<xsl:value-of select="@id"/></xsl:attribute>
+      </prov:wasDerivedFrom>
+      <prov:wasGeneratedBy rdf:resource="#transformation"/>
 
       <!-- Process codes -->
       <xsl:apply-templates select="s:Code"/>
