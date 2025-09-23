@@ -2,8 +2,11 @@ package com.ontologycentral.estatwrap;
 
 import com.ontologycentral.estatwrap.convert.Data;
 import com.ontologycentral.estatwrap.convert.DataPage;
-import com.ontologycentral.estatwrap.convert.Dictionary;
-import com.ontologycentral.estatwrap.convert.Dsd;
+import com.ontologycentral.estatwrap.convert.Cl;
+import com.ontologycentral.estatwrap.convert.Cs;
+import com.ontologycentral.estatwrap.convert.Dc;
+import com.ontologycentral.estatwrap.convert.Df;
+import com.ontologycentral.estatwrap.convert.Ds;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -53,13 +56,27 @@ public class Main {
         idO.setArgs(1);
         options.addOption(idO);
 
-        Option dicO = new Option("d", "name of Eurostat dic (e.g., freq)");
-        dicO.setArgs(1);
-        options.addOption(dicO);
 
-        Option dsdO = new Option("s", "name of Eurostat dataset for DSD (e.g., tag00038)");
-        dsdO.setArgs(1);
-        options.addOption(dsdO);
+
+        Option csO = new Option("cs", "name of Eurostat concept scheme for CS (e.g., tag00038)");
+        csO.setArgs(1);
+        options.addOption(csO);
+
+        Option clO = new Option("cl", "name of Eurostat code list for CL (e.g., FREQ)");
+        clO.setArgs(1);
+        options.addOption(clO);
+
+        Option dsO = new Option("ds", "name of Eurostat dataset for data structure (e.g., tag00038)");
+        dsO.setArgs(1);
+        options.addOption(dsO);
+
+        Option dfO = new Option("df", "name of Eurostat dataset for dataflow (e.g., tag00038)");
+        dfO.setArgs(1);
+        options.addOption(dfO);
+
+        Option dcO = new Option("dc", "name of Eurostat dataset for data constraint (e.g., tag00038)");
+        dcO.setArgs(1);
+        options.addOption(dcO);
 
         Option helpO = new Option("h", "help", false, "print help");
         options.addOption(helpO);
@@ -70,8 +87,8 @@ public class Main {
         try {
             cmd = parser.parse(options, args);
 
-            if (!(cmd.hasOption("i") || cmd.hasOption("d") || cmd.hasOption("s"))) {
-                throw new ParseException("specify either -i, -d, or -s");
+            if (!(cmd.hasOption("i") || cmd.hasOption("cs") || cmd.hasOption("cl") || cmd.hasOption("ds") || cmd.hasOption("df") || cmd.hasOption("dc"))) {
+                throw new ParseException("specify either -i, -cs, -cl, -ds, -df, or -dc");
             }
         } catch (ParseException e) {
             System.err.println("***ERROR: " + e.getClass() + ": " + e.getMessage());
@@ -105,75 +122,106 @@ public class Main {
         if (cmd.hasOption("i")) {
             id = cmd.getOptionValue("i");
             url = new URL(URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
-        } else if (cmd.hasOption("d")) {
-            id = cmd.getOptionValue("d");
-            url =
-                    new URL(
-                            URI_PREFIX_3
-                                    + "/structure/codelist/ESTAT/"
-                                    + id.toUpperCase()
-                                    + "/?compress=true&format=TSV&formatVersion=2.0");
-        } else if (cmd.hasOption("s")) {
-            id = cmd.getOptionValue("s");
-            // DSD will be handled separately, no URL needed here
-            url = null;
+        } else if (cmd.hasOption("cs")) {
+            id = cmd.getOptionValue("cs");
+            url = new URL(Main.URI_PREFIX_3 + "/structure/conceptscheme/ESTAT/" + id);
+        } else if (cmd.hasOption("cl")) {
+            id = cmd.getOptionValue("cl");
+            url = new URL(Main.URI_PREFIX_3 + "/structure/codelist/ESTAT/" + id.toUpperCase());
+        } else if (cmd.hasOption("ds")) {
+            id = cmd.getOptionValue("ds");
+            url = new URL(Main.URI_PREFIX_3 + "/structure/datastructure/ESTAT/" + id);
+        } else if (cmd.hasOption("df")) {
+            id = cmd.getOptionValue("df");
+            url = new URL(Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id);
+        } else if (cmd.hasOption("dc")) {
+            id = cmd.getOptionValue("dc");
+            url = new URL(Main.URI_PREFIX_3 + "/structure/dataconstraint/ESTAT/" + id);
         }
 
-        // Handle DSD separately since it uses different processing
-        if (cmd.hasOption("s")) {
+        // Handle data and dictionary processing
+        System.out.println(url);
+
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        InputStream is = null;
+
+        if (url.toString().contains("compressed=true")
+                || url.toString().contains("compress=true")) {
+            is = new GZIPInputStream(conn.getInputStream());
+        } else {
+            is = conn.getInputStream();
+        }
+        if (conn.getResponseCode() != 200) {
+            throw new IOException("Response code: " + conn.getResponseCode());
+        }
+
+        String encoding = "UTF-8"; // Default to UTF-8 for SDMX API responses
+        String contentType = conn.getContentType();
+        if (contentType != null && contentType.contains("charset=")) {
+            encoding = contentType.substring(contentType.indexOf("charset=") + 8);
+            if (encoding.contains(";")) {
+                encoding = encoding.substring(0, encoding.indexOf(";"));
+            }
+        }
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
+
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        XMLStreamWriter ch = factory.createXMLStreamWriter(out, "utf-8");
+
+        if (cmd.hasOption("i")) {
+            DataPage.convert(ch, new HashMap<String, String>(), id, in);
+        } else if (cmd.hasOption("cs")) {
             try {
-                Dsd dsd = new Dsd(id);
-                // For Main.java, we need to provide the XSLT path.
-                // Assuming dsd2rdf.xsl is available in the classpath or current directory
-                String xslPath = "src/main/webapp/WEB-INF/dsd2rdf.xsl";
-                dsd.convert(out, xslPath);
+                Cs cs = new Cs();
+                String xslPath = "src/main/webapp/WEB-INF/cs2rdf.xsl";
+                cs.convert(in, out, xslPath);
             } catch (Exception e) {
-                System.err.println("Error processing DSD for " + id + ": " + e.getMessage());
+                System.err.println("Error processing CS for " + id + ": " + e.getMessage());
                 e.printStackTrace();
             }
-        } else {
-            // Handle data and dictionary processing
-            System.out.println(url);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            InputStream is = null;
-
-            if (url.toString().contains("compressed=true")
-                    || url.toString().contains("compress=true")) {
-                is = new GZIPInputStream(conn.getInputStream());
-            } else {
-                is = conn.getInputStream();
+        } else if (cmd.hasOption("cl")) {
+            try {
+                Cl cl = new Cl();
+                String xslPath = "src/main/webapp/WEB-INF/cl2rdf.xsl";
+                cl.convert(in, out, xslPath);
+            } catch (Exception e) {
+                System.err.println("Error processing CL for " + id + ": " + e.getMessage());
+                e.printStackTrace();
             }
-            if (conn.getResponseCode() != 200) {
-                throw new IOException("Response code: " + conn.getResponseCode());
+        } else if (cmd.hasOption("ds")) {
+            try {
+                Ds ds = new Ds();
+                String xslPath = "src/main/webapp/WEB-INF/ds2rdf.xsl";
+                ds.convert(in, out, xslPath);
+            } catch (Exception e) {
+                System.err.println("Error processing DS for " + id + ": " + e.getMessage());
+                e.printStackTrace();
             }
-
-            String encoding = conn.getContentEncoding();
-            if (encoding == null) {
-                encoding = "ISO-8859-1";
+        } else if (cmd.hasOption("df")) {
+            try {
+                Df df = new Df();
+                String xslPath = "src/main/webapp/WEB-INF/df2rdf.xsl";
+                df.convert(in, out, xslPath);
+            } catch (Exception e) {
+                System.err.println("Error processing DF for " + id + ": " + e.getMessage());
+                e.printStackTrace();
             }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
-
-            XMLOutputFactory factory = XMLOutputFactory.newInstance();
-
-            XMLStreamWriter ch = factory.createXMLStreamWriter(out, "utf-8");
-
-            if (cmd.hasOption("i")) {
-                DataPage.convert(ch, new HashMap<String, String>(), id, in);
-            } else if (cmd.hasOption("d")) {
-                if ("geo".equals(id)) {
-                    System.err.println("not supported right now");
-                } else {
-                    Dictionary dict = new Dictionary(in, id);
-                    dict.convert(ch, id);
-                }
+        } else if (cmd.hasOption("dc")) {
+            try {
+                Dc dc = new Dc();
+                String xslPath = "src/main/webapp/WEB-INF/dc2rdf.xsl";
+                dc.convert(in, out, xslPath);
+            } catch (Exception e) {
+                System.err.println("Error processing DC for " + id + ": " + e.getMessage());
+                e.printStackTrace();
             }
-
-            ch.close();
         }
+        ch.close();
 
         out.close();
+        in.close();
     }
 }

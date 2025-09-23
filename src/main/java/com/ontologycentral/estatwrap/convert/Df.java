@@ -11,18 +11,18 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * Download and convert DSD (Data Structure Definition) files.
+ * Download and convert DF (Data Flow) files.
  *
  * @author aharth
  */
-public class Dsd {
+public class Df {
     Logger _log = Logger.getLogger(this.getClass().getName());
 
     /**
-     * Convert DSD to RDF using XSLT transformation
+     * Convert Data Flow to RDF using XSLT transformation
      *
      * @param out Output stream to write the RDF to
-     * @param xslPath Path to the XSLT stylesheet (e.g., "/WEB-INF/dsd2rdf.xsl")
+     * @param xslPath Path to the XSLT stylesheet (e.g., "/WEB-INF/df2rdf.xsl")
      * @throws IOException
      * @throws TransformerException
      */
@@ -38,12 +38,12 @@ public class Dsd {
         StreamSource ssource = new StreamSource(in);
         StreamResult sresult = new StreamResult(out);
 
-        _log.info("applying XSLT transformation");
+        _log.info("applying XSLT transformation for dataflow");
         t.transform(ssource, sresult);
     }
 
     /**
-     * Convert DSD to RDF using provided transformer
+     * Convert Data Flow to RDF using provided transformer
      *
      * @param out Output stream to write the RDF to
      * @param transformer Pre-configured XSLT transformer
@@ -55,7 +55,7 @@ public class Dsd {
         StreamSource ssource = new StreamSource(in);
         StreamResult sresult = new StreamResult(out);
 
-        _log.info("applying XSLT transformation");
+        _log.info("applying XSLT transformation for dataflow");
         transformer.transform(ssource, sresult);
     }
 }

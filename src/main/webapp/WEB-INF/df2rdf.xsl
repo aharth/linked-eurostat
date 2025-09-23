@@ -15,6 +15,7 @@
    xmlns:adms="http://www.w3.org/ns/adms#"
    xmlns:owl="http://www.w3.org/2002/07/owl#"
    xmlns:void="http://rdfs.org/ns/void#"
+   xmlns:prov="http://www.w3.org/ns/prov#"
    xmlns:m="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message"
    xmlns:s="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/structure"
    xmlns:c="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/common"
@@ -35,7 +36,7 @@
       <rdf:Description rdf:about="">
 	<rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
 	<dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
-	<foaf:topic rdf:resource="#ds"/>
+	<foaf:topic rdf:resource="#df"/>
       </rdf:Description>
 
       <!--

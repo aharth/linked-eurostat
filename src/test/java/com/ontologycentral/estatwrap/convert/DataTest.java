@@ -18,7 +18,7 @@ public class DataTest extends TestCase {
     public void testData() throws Exception {
         String id = "teimf040"; // "dt_oth_3d51_03"; //"earn_ses_actrl";
 
-        URL url = new URL(Main.URI_PREFIX + "?file=data/" + id + ".tsv.gz");
+        URL url = new URL(Main.URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
         // URL url = new URL("http://europa.eu/estatref/download/everybody/data/" + id + ".tsv.gz");
 
         _log.log(Level.INFO, "{0}", url);

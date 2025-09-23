@@ -1,7 +1,7 @@
 package com.ontologycentral.estatwrap.webapp;
 
 import com.ontologycentral.estatwrap.Main;
-import com.ontologycentral.estatwrap.convert.Dsd;
+import com.ontologycentral.estatwrap.convert.Df;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,8 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -21,70 +19,72 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
 @SuppressWarnings("serial")
-public class DsdServlet extends HttpServlet {
+public class DfServlet extends HttpServlet {
     Logger _log = Logger.getLogger(this.getClass().getName());
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         OutputStream os = resp.getOutputStream();
-        // OutputStreamWriter osw = new OutputStreamWriter(os , "UTF-8");
 
         String id = req.getRequestURI();
-        int dsdIndex = id.indexOf("/dsd/");
-        if (dsdIndex == -1) {
+        int dfIndex = id.indexOf("/df/");
+        if (dfIndex == -1) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        id = id.substring(dsdIndex + "/dsd/".length());
+        id = id.substring(dfIndex + "/df/".length());
 
         URL url = new URL(Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id);
 
         ServletContext ctx = getServletContext();
-        Transformer t = (Transformer) ctx.getAttribute(Listener.SDMX_T);
+        Transformer t = (Transformer) ctx.getAttribute(Listener.DF_T);
 
         resp.setContentType("application/rdf+xml");
         // 1 day
         resp.setHeader("Cache-Control", "max-age=86400");
 
         try {
-            Dsd dsd = new Dsd();
+            Df df = new Df();
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            // here, use a threshold to limit the amount of data converted (GAE limitations)
-            // conn.setConnectTimeout(8*1000);
-            // conn.setReadTimeout(8*1000);
-            // Try maximum of 60 sec for HTTP request? Maybe 55sec
             conn.setConnectTimeout(55 * 1000);
             conn.setReadTimeout(55 * 1000);
-            // Java ssems to use Cache-Control: no-cache and Pragma: no-cache - why?
-            // disable
             conn.setUseCaches(true);
 
             conn.setRequestProperty("User-Agent", "estatwrap.ontologycentral.com");
 
-            InputStream is = new GZIPInputStream(conn.getInputStream());
+            InputStream is = null;
+            if (url.toString().contains("compressed=true") || url.toString().contains("compress=true")) {
+                is = new GZIPInputStream(conn.getInputStream());
+            } else {
+                is = conn.getInputStream();
+            }
 
             if (conn.getResponseCode() != 200) {
                 resp.sendError(conn.getResponseCode());
             }
 
-            String encoding = conn.getContentEncoding();
-            if (encoding == null) {
-                encoding = Listener.DEFAULT_ENCODING;
+            String encoding = "UTF-8"; // Default to UTF-8 for SDMX API responses
+            String contentType = conn.getContentType();
+            if (contentType != null && contentType.contains("charset=")) {
+                encoding = contentType.substring(contentType.indexOf("charset=") + 8);
+                if (encoding.contains(";")) {
+                    encoding = encoding.substring(0, encoding.indexOf(";"));
+                }
             }
 
             BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
 
-            dsd.convert(in, os, t);
+            df.convert(in, os, t);
         } catch (TransformerException e) {
             e.printStackTrace();
             resp.sendError(500, e.getMessage());
             return;
         } catch (IOException e) {
-            resp.sendError(500, "Error processing DSD for " + id + ": " + e.getMessage());
+            resp.sendError(500, "Error processing dataflow for " + id + ": " + e.getMessage());
             e.printStackTrace();
             return;
         } catch (RuntimeException e) {
-            resp.sendError(500, "Error processing DSD for " + id + ": " + e.getMessage());
+            resp.sendError(500, "Error processing dataflow for " + id + ": " + e.getMessage());
             e.printStackTrace();
             return;
         }

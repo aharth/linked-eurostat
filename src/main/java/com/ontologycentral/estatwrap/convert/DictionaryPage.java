@@ -18,7 +18,7 @@ public class DictionaryPage {
         ch.writeNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
         ch.writeNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
         ch.writeNamespace("owl", "http://www.w3.org/2002/07/owl#");
-        ch.writeNamespace("foaf", "http://xmls.com/foaf/0.1/");
+        ch.writeNamespace("foaf", "http://xmlns.com/foaf/0.1/");
         ch.writeNamespace("ramon", "http://rdfdata.eionet.europa.eu/ramon/ontology/");
         ch.writeNamespace("skos", "http://www.w3.org/2004/02/skos/core#");
 

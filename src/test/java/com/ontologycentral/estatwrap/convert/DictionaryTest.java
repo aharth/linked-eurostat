@@ -13,7 +13,7 @@ public class DictionaryTest extends TestCase {
     public void testData() throws Exception {
         String id = "sex"; // "geo";
 
-        URL url = new URL(Main.URI_PREFIX + "?file=dic/en/" + id + ".dic");
+        URL url = new URL(Main.URI_PREFIX_21 + "/codelist/CL_" + id.toUpperCase() + "/?format=SDMX-ML&lang=en");
         // URL url = new URL("http://europa.eu/estatref/download/everybody/data/" + id + ".tsv.gz");
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

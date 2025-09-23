@@ -40,6 +40,11 @@ public class Listener implements ServletContextListener {
     public static String CACHE = "c";
 
     public static String SDMX_T = "sdmx";
+    public static String CS_T = "cs";
+    public static String CL_T = "cl";
+    public static String DS_T = "ds";
+    public static String DF_T = "df";
+    public static String DC_T = "dc";
 
     public static String NUTS = "nuts";
 
@@ -84,6 +89,26 @@ public class Listener implements ServletContextListener {
             Transformer t =
                     tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/dsd2rdf.xsl")));
             ctx.setAttribute(SDMX_T, t);
+
+            Transformer csT =
+                    tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/cs2rdf.xsl")));
+            ctx.setAttribute(CS_T, csT);
+
+            Transformer clT =
+                    tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/cl2rdf.xsl")));
+            ctx.setAttribute(CL_T, clT);
+
+            Transformer dsT =
+                    tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/ds2rdf.xsl")));
+            ctx.setAttribute(DS_T, dsT);
+
+            Transformer dfT =
+                    tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/df2rdf.xsl")));
+            ctx.setAttribute(DF_T, dfT);
+
+            Transformer dcT =
+                    tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/dc2rdf.xsl")));
+            ctx.setAttribute(DC_T, dcT);
         } catch (TransformerConfigurationException e) {
             _log.severe(e.getMessage());
             e.printStackTrace();

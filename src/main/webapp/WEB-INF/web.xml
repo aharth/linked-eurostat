@@ -45,6 +45,22 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<servlet-class>com.ontologycentral.estatwrap.webapp.DsdServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>cs</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.CsServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ds</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.DsServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>df</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.DfServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>dc</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.DcServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>feed</servlet-name>
 		<servlet-class>com.ontologycentral.estatwrap.webapp.FeedServlet</servlet-class>
 	</servlet>
@@ -78,6 +94,26 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 	<servlet-mapping>
 		<servlet-name>dsd</servlet-name>
 		<url-pattern>/dsd/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>cs</servlet-name>
+		<url-pattern>/cs/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ds</servlet-name>
+		<url-pattern>/ds/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>df</servlet-name>
+		<url-pattern>/df/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>dc</servlet-name>
+		<url-pattern>/dc/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

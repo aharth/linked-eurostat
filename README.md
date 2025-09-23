@@ -11,7 +11,7 @@ A data dump from 2009 can be found at http://ontologycentral.com/2009/01/eurosta
 To build the project, do:
 
 ```
-$ mvn clean package war:war -Dmaven.test.skip=true
+$ mvn clean package war:war -Dmaven.test.skip=true -Dcheckstyle.skip=true
 ```
 
 ## Command-line tool

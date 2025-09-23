@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 import javax.cache.Cache;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -89,7 +90,7 @@ public class DictionaryServlet extends HttpServlet {
                     _log.log(Level.INFO, "Accessing URI: {0}", url);
 
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    InputStream is = conn.getInputStream();
+                    InputStream is = new GZIPInputStream(conn.getInputStream());
 
                     if (conn.getResponseCode() != 200) {
                         resp.sendError(conn.getResponseCode());

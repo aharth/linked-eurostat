@@ -20,7 +20,7 @@ public class TestEncoding {
         String lang = "en";
         String id = "cities";
 
-        URL url = new URL(Main.URI_PREFIX + "?file=dic/" + lang + "/" + id + ".dic");
+        URL url = new URL(Main.URI_PREFIX_21 + "/codelist/CL_" + id.toUpperCase() + "/?format=SDMX-ML&lang=" + lang);
 
         System.out.println("looking up " + url);
 
