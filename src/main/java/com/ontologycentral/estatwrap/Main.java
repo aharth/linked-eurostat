@@ -58,23 +58,23 @@ public class Main {
 
 
 
-        Option csO = new Option("cs", "name of Eurostat concept scheme for CS (e.g., tag00038)");
+        Option csO = new Option("cs", "Eurostat dataset ID to get concept scheme as RDF (e.g., tag00038)");
         csO.setArgs(1);
         options.addOption(csO);
 
-        Option clO = new Option("cl", "name of Eurostat code list for CL (e.g., FREQ)");
+        Option clO = new Option("cl", "Eurostat code list ID to get code lists as RDF (e.g., FREQ for time frequencies, GEO for countries/regions)");
         clO.setArgs(1);
         options.addOption(clO);
 
-        Option dsO = new Option("ds", "name of Eurostat dataset for data structure (e.g., tag00038)");
+        Option dsO = new Option("ds", "Eurostat dataset ID to get data structure definition as RDF (e.g., tag00038)");
         dsO.setArgs(1);
         options.addOption(dsO);
 
-        Option dfO = new Option("df", "name of Eurostat dataset for dataflow (e.g., tag00038)");
+        Option dfO = new Option("df", "Eurostat dataset ID to get dataflow definition as RDF (e.g., tag00038)");
         dfO.setArgs(1);
         options.addOption(dfO);
 
-        Option dcO = new Option("dc", "name of Eurostat dataset for data constraint (e.g., tag00038)");
+        Option dcO = new Option("dc", "Eurostat dataset ID to get data constraint definition as RDF (e.g., tag00038)");
         dcO.setArgs(1);
         options.addOption(dcO);
 
