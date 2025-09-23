@@ -78,6 +78,10 @@ public class Main {
         dcO.setArgs(1);
         options.addOption(dcO);
 
+        Option daO = new Option("da", "Eurostat dataset ID to get data observations using SDMX 3.0 API as RDF (e.g., tag00038)");
+        daO.setArgs(1);
+        options.addOption(daO);
+
         Option helpO = new Option("h", "help", false, "print help");
         options.addOption(helpO);
 
@@ -87,8 +91,8 @@ public class Main {
         try {
             cmd = parser.parse(options, args);
 
-            if (!(cmd.hasOption("i") || cmd.hasOption("cs") || cmd.hasOption("cl") || cmd.hasOption("ds") || cmd.hasOption("df") || cmd.hasOption("dc"))) {
-                throw new ParseException("specify either -i, -cs, -cl, -ds, -df, or -dc");
+            if (!(cmd.hasOption("i") || cmd.hasOption("cs") || cmd.hasOption("cl") || cmd.hasOption("ds") || cmd.hasOption("df") || cmd.hasOption("dc") || cmd.hasOption("da"))) {
+                throw new ParseException("specify either -i, -cs, -cl, -ds, -df, -dc, or -da");
             }
         } catch (ParseException e) {
             System.err.println("***ERROR: " + e.getClass() + ": " + e.getMessage());
@@ -137,6 +141,9 @@ public class Main {
         } else if (cmd.hasOption("dc")) {
             id = cmd.getOptionValue("dc");
             url = new URL(Main.URI_PREFIX_3 + "/structure/dataconstraint/ESTAT/" + id);
+        } else if (cmd.hasOption("da")) {
+            id = cmd.getOptionValue("da");
+            url = new URL(Main.URI_PREFIX_3 + "/data/dataflow/ESTAT/" + id + "/1.0?format=tsv&compress=false");
         }
 
         // Handle data and dictionary processing
@@ -218,6 +225,8 @@ public class Main {
                 System.err.println("Error processing DC for " + id + ": " + e.getMessage());
                 e.printStackTrace();
             }
+        } else if (cmd.hasOption("da")) {
+            DataPage.convertWithSdmx3Identifiers(ch, new HashMap<String, String>(), id, in);
         }
         ch.close();
 

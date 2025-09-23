@@ -20,10 +20,10 @@ $ mvn clean package war:war -Dmaven.test.skip=true -Dcheckstyle.skip=true
 java -jar target/linked-eurostat-1.0.0-SNAPSHOT-jar-with-dependencies.jar 
 ```
 
-TSV dic/en/sex.dic now at 
-https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/codelist/ESTAT/SEX/?compress=true&format=TSV&formatVersion=2.0
+## Web application
 
-TSV data/tag00038.tsv.gz now at
-https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tag00038/?format=TSV&compressed=true
+Deploy the following web application to Apache Tomcat (or other servlet container).
 
-
+```
+target/linked-eurostat-1.0.0-SNAPSHOT.war
+```
