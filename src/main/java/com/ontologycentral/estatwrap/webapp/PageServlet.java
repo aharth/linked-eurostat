@@ -115,7 +115,7 @@ public class PageServlet extends HttpServlet {
             String query =
                     "PREFIX sdmx-measure: <http://purl.org/linked-data/sdmx/2009/measure#>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nPREFIX eus: <http://ontologycentral.com/2009/01/eurostat/ns#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX qb: <http://purl.org/linked-data/cube#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?time ?value ?geo\nFROM <http://estatwrap.ontologycentral.com/data/"
                             + id
-                            + ">\nFROM <http://estatwrap.ontologycentral.com/dic/geo>\nWHERE {\n\t?s qb:dataSet <http://estatwrap.ontologycentral.com/id/"
+                            + ">\nFROM <http://estatwrap.ontologycentral.com/cl/geo>\nWHERE {\n\t?s qb:dataSet <http://estatwrap.ontologycentral.com/id/"
                             + id
                             + "#ds> .\n\t?s dcterms:date ?time .\n\t?s eus:geo ?g .\n\t?g rdfs:label ?geo .\n\t?s sdmx-measure:obsValue ?value .\n\tFILTER (lang(?geo) = \"en\")\n}\nORDER BY ?geo";
             // String query =

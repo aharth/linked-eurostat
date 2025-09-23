@@ -37,10 +37,6 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<servlet-class>com.ontologycentral.estatwrap.webapp.DataServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>dictionary</servlet-name>
-		<servlet-class>com.ontologycentral.estatwrap.webapp.DictionaryServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>cs</servlet-name>
 		<servlet-class>com.ontologycentral.estatwrap.webapp.CsServlet</servlet-class>
 	</servlet>
@@ -86,10 +82,6 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<url-pattern>/data/*</url-pattern>
 	</servlet-mapping>
 	
-	<servlet-mapping>
-		<servlet-name>dictionary</servlet-name>
-		<url-pattern>/dic/*</url-pattern>
-	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>cs</servlet-name>

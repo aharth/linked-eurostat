@@ -39,7 +39,6 @@ public class Listener implements ServletContextListener {
     public static String TOC = "t";
     public static String CACHE = "c";
 
-    public static String SDMX_T = "sdmx";
     public static String CS_T = "cs";
     public static String CL_T = "cl";
     public static String DS_T = "ds";
@@ -86,11 +85,7 @@ public class Listener implements ServletContextListener {
         // );
 
         try {
-            Transformer t =
-                    tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/dsd2rdf.xsl")));
-            ctx.setAttribute(SDMX_T, t);
-
-            Transformer csT =
+Transformer csT =
                     tf.newTransformer(new StreamSource(ctx.getRealPath("/WEB-INF/cs2rdf.xsl")));
             ctx.setAttribute(CS_T, csT);
 

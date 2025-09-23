@@ -127,7 +127,7 @@ public class Data {
                 } else {
                     out.writeStartElement(hd1.get(j));
                     out.writeAttribute(
-                            "rdf:resource", Dictionary.PREFIX + hd1.get(j) + "#" + ld1.get(j));
+                            "rdf:resource", "Dictionary.PREFIX" + hd1.get(j) + "#" + ld1.get(j));
                     out.writeEndElement();
                 }
             }
@@ -140,7 +140,7 @@ public class Data {
             } else {
                 out.writeStartElement(h.getDim2());
                 out.writeAttribute(
-                        "rdf:resource", Dictionary.PREFIX + h.getDim2() + "#" + hcol.get(i));
+                        "rdf:resource", "Dictionary.PREFIX" + h.getDim2() + "#" + hcol.get(i));
                 out.writeEndElement();
             }
 
