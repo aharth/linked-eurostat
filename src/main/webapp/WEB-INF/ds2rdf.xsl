@@ -20,6 +20,51 @@
   <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
   <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
+  <!-- Template to convert URN to relative /cl URI -->
+  <!-- Input: urn:sdmx:org.sdmx.infomodel.codelist.Codelist=ESTAT:FREQ(3.7) -->
+  <!-- Output: ../cl/freq#cl-FREQ -->
+  <xsl:template name="urn-to-cl-uri">
+    <xsl:param name="urn"/>
+    <xsl:if test="contains($urn, '=ESTAT:')">
+      <xsl:variable name="after-estat" select="substring-after($urn, '=ESTAT:')"/>
+      <xsl:variable name="codelist-id">
+        <xsl:choose>
+          <xsl:when test="contains($after-estat, '(')">
+            <xsl:value-of select="substring-before($after-estat, '(')"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$after-estat"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:value-of select="concat('../cl/', translate($codelist-id, $uppercase, $lowercase), '#cl-', $codelist-id)"/>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Template to convert URN to relative /cs URI -->
+  <!-- Input: urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=ESTAT:TAG00038(19.0).freq -->
+  <!-- Output: ../cs/tag00038#concept-freq -->
+  <xsl:template name="urn-to-cs-uri">
+    <xsl:param name="urn"/>
+    <xsl:if test="contains($urn, '=ESTAT:')">
+      <xsl:variable name="after-estat" select="substring-after($urn, '=ESTAT:')"/>
+      <xsl:variable name="scheme-and-concept">
+        <xsl:choose>
+          <xsl:when test="contains($after-estat, '(')">
+            <xsl:variable name="after-version" select="substring-after($after-estat, ')')"/>
+            <xsl:variable name="scheme-id" select="substring-before($after-estat, '(')"/>
+            <xsl:variable name="concept-id" select="substring-after($after-version, '.')"/>
+            <xsl:value-of select="concat('../cs/', translate($scheme-id, $uppercase, $lowercase), '#concept-', $concept-id)"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="concat('../cs/', translate($after-estat, $uppercase, $lowercase))"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:value-of select="$scheme-and-concept"/>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match='m:Structure'>
     <rdf:RDF>
       <rdf:Description rdf:about="">
@@ -129,12 +174,20 @@
             </xsl:if>
             <xsl:if test="s:LocalRepresentation/s:Enumeration">
               <qb:codeList>
-                <xsl:attribute name="rdf:resource"><xsl:value-of select="s:LocalRepresentation/s:Enumeration"/></xsl:attribute>
+                <xsl:attribute name="rdf:resource">
+                  <xsl:call-template name="urn-to-cl-uri">
+                    <xsl:with-param name="urn" select="s:LocalRepresentation/s:Enumeration"/>
+                  </xsl:call-template>
+                </xsl:attribute>
               </qb:codeList>
             </xsl:if>
             <xsl:if test="s:ConceptIdentity">
               <qb:concept>
-                <xsl:attribute name="rdf:resource"><xsl:value-of select="s:ConceptIdentity"/></xsl:attribute>
+                <xsl:attribute name="rdf:resource">
+                  <xsl:call-template name="urn-to-cs-uri">
+                    <xsl:with-param name="urn" select="s:ConceptIdentity"/>
+                  </xsl:call-template>
+                </xsl:attribute>
               </qb:concept>
             </xsl:if>
           </qb:DimensionProperty>
@@ -158,12 +211,20 @@
             <rdfs:label><xsl:value-of select="@id"/></rdfs:label>
             <xsl:if test="s:LocalRepresentation/s:Enumeration">
               <qb:codeList>
-                <xsl:attribute name="rdf:resource"><xsl:value-of select="s:LocalRepresentation/s:Enumeration"/></xsl:attribute>
+                <xsl:attribute name="rdf:resource">
+                  <xsl:call-template name="urn-to-cl-uri">
+                    <xsl:with-param name="urn" select="s:LocalRepresentation/s:Enumeration"/>
+                  </xsl:call-template>
+                </xsl:attribute>
               </qb:codeList>
             </xsl:if>
             <xsl:if test="s:ConceptIdentity">
               <qb:concept>
-                <xsl:attribute name="rdf:resource"><xsl:value-of select="s:ConceptIdentity"/></xsl:attribute>
+                <xsl:attribute name="rdf:resource">
+                  <xsl:call-template name="urn-to-cs-uri">
+                    <xsl:with-param name="urn" select="s:ConceptIdentity"/>
+                  </xsl:call-template>
+                </xsl:attribute>
               </qb:concept>
             </xsl:if>
           </qb:AttributeProperty>
@@ -202,7 +263,11 @@
             </xsl:if>
             <xsl:if test="s:ConceptIdentity">
               <qb:concept>
-                <xsl:attribute name="rdf:resource"><xsl:value-of select="s:ConceptIdentity"/></xsl:attribute>
+                <xsl:attribute name="rdf:resource">
+                  <xsl:call-template name="urn-to-cs-uri">
+                    <xsl:with-param name="urn" select="s:ConceptIdentity"/>
+                  </xsl:call-template>
+                </xsl:attribute>
               </qb:concept>
             </xsl:if>
           </qb:MeasureProperty>

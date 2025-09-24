@@ -69,7 +69,7 @@
 
   <xsl:template match='s:ConceptScheme'>
     <skos:ConceptScheme>
-      <xsl:attribute name="rdf:about">#<xsl:value-of select="translate(@id, $uppercase, $lowercase)"/></xsl:attribute>
+      <xsl:attribute name="rdf:about">#cs-<xsl:value-of select="@id"/></xsl:attribute>
       <skos:notation><xsl:value-of select="@id"/></skos:notation>
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
       <xsl:if test="@version">
@@ -91,7 +91,7 @@
       <!-- Create hasTopConcept relations for each concept -->
       <xsl:for-each select="s:Concept">
         <skos:hasTopConcept>
-          <xsl:attribute name="rdf:resource">#<xsl:value-of select="@id"/></xsl:attribute>
+          <xsl:attribute name="rdf:resource">#concept-<xsl:value-of select="@id"/></xsl:attribute>
         </skos:hasTopConcept>
       </xsl:for-each>
     </skos:ConceptScheme>
@@ -109,13 +109,13 @@
 
   <xsl:template match='s:Concept'>
     <skos:Concept>
-      <xsl:attribute name="rdf:about">#<xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="rdf:about">#concept-<xsl:value-of select="@id"/></xsl:attribute>
       <skos:notation><xsl:value-of select="@id"/></skos:notation>
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
 
       <!-- Link back to the concept scheme -->
       <skos:inScheme>
-        <xsl:attribute name="rdf:resource">#<xsl:value-of select="translate(../@id, $uppercase, $lowercase)"/></xsl:attribute>
+        <xsl:attribute name="rdf:resource">#cs-<xsl:value-of select="../@id"/></xsl:attribute>
       </skos:inScheme>
 
       <!-- Generate labels in multiple languages -->

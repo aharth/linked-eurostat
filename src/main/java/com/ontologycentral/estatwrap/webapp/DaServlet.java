@@ -1,7 +1,7 @@
 package com.ontologycentral.estatwrap.webapp;
 
 import com.ontologycentral.estatwrap.Main;
-import com.ontologycentral.estatwrap.convert.DataPage;
+import com.ontologycentral.estatwrap.convert.DataSdmx3Turtle;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class DaServlet extends HttpServlet {
             return;
         }
 
-        resp.setContentType("application/rdf+xml");
+        resp.setContentType("text/turtle");
 
         OutputStream os = resp.getOutputStream();
 
@@ -86,20 +86,11 @@ public class DaServlet extends HttpServlet {
             // 10 minutes cache
             resp.setHeader("Cache-Control", "max-age=600");
 
-            XMLOutputFactory factory = (XMLOutputFactory) ctx.getAttribute(Listener.FACTORY);
             Map<String, String> toc = (Map<String, String>) ctx.getAttribute(Listener.TOC);
 
-            XMLStreamWriter ch = factory.createXMLStreamWriter(os, "utf-8");
-
-            // Convert SDMX 3.0 TSV data to RDF using SDMX 3.0 identifiers
-            DataPage.convertWithSdmx3Identifiers(ch, toc, id, in);
-
-            ch.close();
+            // Convert SDMX 3.0 TSV data to Turtle using SDMX 3.0 identifiers
+            DataSdmx3Turtle.convertWithSdmx3IdentifiersToTurtle(os, toc, id, in);
         } catch (IOException e) {
-            resp.sendError(500, url + ": " + e.getMessage());
-            e.printStackTrace();
-            return;
-        } catch (XMLStreamException e) {
             resp.sendError(500, url + ": " + e.getMessage());
             e.printStackTrace();
             return;

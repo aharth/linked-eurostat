@@ -2,6 +2,9 @@
 
 All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
 
+## [2025-09-24]
+- Fully support SDMX 3.0 XML API, removed legacy `/data/{id}` servlet
+
 ## [2025-09-23]
 - Move towards the SDMX 3.0 XML API
 

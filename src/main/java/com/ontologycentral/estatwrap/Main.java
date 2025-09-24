@@ -1,9 +1,8 @@
 package com.ontologycentral.estatwrap;
 
-import com.ontologycentral.estatwrap.convert.Data;
-import com.ontologycentral.estatwrap.convert.DataPage;
 import com.ontologycentral.estatwrap.convert.Cl;
 import com.ontologycentral.estatwrap.convert.Cs;
+import com.ontologycentral.estatwrap.convert.DataSdmx3Turtle;
 import com.ontologycentral.estatwrap.convert.Dc;
 import com.ontologycentral.estatwrap.convert.Df;
 import com.ontologycentral.estatwrap.convert.Ds;
@@ -52,9 +51,6 @@ public class Main {
         outputO.setArgs(1);
         options.addOption(outputO);
 
-        Option idO = new Option("i", "name of Eurostat id (e.g., tag00038)");
-        idO.setArgs(1);
-        options.addOption(idO);
 
 
 
@@ -117,8 +113,8 @@ public class Main {
             }
         }
 
-        Data.MAX_COLS = Integer.MAX_VALUE;
-        Data.MAX_ROWS = Integer.MAX_VALUE;
+        DataSdmx3Turtle.MAX_COLS = Integer.MAX_VALUE;
+        DataSdmx3Turtle.MAX_ROWS = Integer.MAX_VALUE;
 
         String id = null;
         URL url = null;
@@ -178,9 +174,7 @@ public class Main {
 
         XMLStreamWriter ch = factory.createXMLStreamWriter(out, "utf-8");
 
-        if (cmd.hasOption("i")) {
-            DataPage.convert(ch, new HashMap<String, String>(), id, in);
-        } else if (cmd.hasOption("cs")) {
+        if (cmd.hasOption("cs")) {
             try {
                 Cs cs = new Cs();
                 String xslPath = "src/main/webapp/WEB-INF/cs2rdf.xsl";
@@ -226,7 +220,7 @@ public class Main {
                 e.printStackTrace();
             }
         } else if (cmd.hasOption("da")) {
-            DataPage.convertWithSdmx3Identifiers(ch, new HashMap<String, String>(), id, in);
+            DataSdmx3Turtle.convertWithSdmx3Identifiers(ch, new HashMap<String, String>(), id, in);
         }
         ch.close();
 

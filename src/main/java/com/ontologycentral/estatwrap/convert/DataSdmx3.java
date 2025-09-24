@@ -11,8 +11,6 @@ import javax.xml.stream.XMLStreamWriter;
 public class DataSdmx3 {
     Logger _log = Logger.getLogger(this.getClass().getName());
 
-    public static String PREFIX = "http://ontologycentral.com/2009/01/eurostat/ns#";
-
     BufferedReader _in;
 
     // here, use a threshold to limit the amount of data converted (GAE limitations)
@@ -26,7 +24,7 @@ public class DataSdmx3 {
     }
 
     /** */
-    public void convert(XMLStreamWriter out, String id) throws IOException, XMLStreamException {
+    public void convertIsThatStillUsed(XMLStreamWriter out, String id) throws IOException, XMLStreamException {
         String line = null;
 
         int rows = 0;
@@ -81,30 +79,36 @@ public class DataSdmx3 {
                 out.writeEndElement();
 
                 for (int j = 0; j < hd1.size(); j++) {
+                    // Use namespace-prefixed element for dimension property
+                    out.writeStartElement("dim:dim-" + hd1.get(j));
                     if (hd1.get(j).equals("time")) {
+                        // time dimension contains literal temporal values
                         String time = convertTime(ld1.get(j));
-                        out.writeStartElement("dcterms:date");
                         out.writeCharacters(time);
-                        out.writeEndElement();
+                    } else if (hd1.get(j).equals("TIME_PERIOD")) {
+                        // TIME_PERIOD dimension contains literal temporal values
+                        out.writeCharacters(ld1.get(j));
                     } else {
-                        out.writeStartElement(hd1.get(j));
-                        out.writeAttribute(
-                                "rdf:resource", getSdmx3IdentifierUri(hd1.get(j), ld1.get(j)));
-                        out.writeEndElement();
+                        // Other dimensions reference code list values
+                        out.writeAttribute("rdf:resource", getSdmx3IdentifierUri(hd1.get(j), ld1.get(j)));
                     }
+                    out.writeEndElement();
                 }
 
+                // Use namespace-prefixed element for dimension property
+                out.writeStartElement("dim:dim-" + h.getDim2());
                 if (h.getDim2().equals("time")) {
+                    // time dimension contains literal temporal values
                     String time = convertTime(hcol.get(i));
-                    out.writeStartElement("dcterms:date");
                     out.writeCharacters(time);
-                    out.writeEndElement();
+                } else if (h.getDim2().equals("TIME_PERIOD")) {
+                    // TIME_PERIOD dimension contains literal temporal values
+                    out.writeCharacters(hcol.get(i));
                 } else {
-                    out.writeStartElement(h.getDim2());
-                    out.writeAttribute(
-                            "rdf:resource", getSdmx3IdentifierUri(h.getDim2(), hcol.get(i)));
-                    out.writeEndElement();
+                    // Other dimensions reference code list values
+                    out.writeAttribute("rdf:resource", getSdmx3IdentifierUri(h.getDim2(), hcol.get(i)));
                 }
+                out.writeEndElement();
 
                 // http://purl.org/linked-data/sdmx/2009/measure#obsValue
                 // do not print empty values
@@ -133,36 +137,29 @@ public class DataSdmx3 {
 
     /**
      * Generate SDMX 3.0 compatible identifier URIs using /cl, /cs, /ds, /df, /dc patterns
+     * Based on actual Eurostat SDMX API structure and available code lists
      */
     private String getSdmx3IdentifierUri(String dimension, String value) {
-        // Map dimension types to appropriate URI patterns
-        String prefix;
-        switch (dimension.toLowerCase()) {
-            case "freq":
-            case "geo":
-            case "dairyprod":
-            case "milkitem":
-            case "unit":
-            case "age":
-            case "sex":
-            case "isced11":
-            case "citizen":
-            case "c_birth":
-            case "duration":
-                // These are typically code lists
-                prefix = "../cl/";
-                break;
-            case "time_period":
-                // Time periods are special - keep as concept scheme
-                prefix = "../cs/";
-                break;
-            default:
-                // Default to code list for unknown dimensions
-                prefix = "../cl/";
-                break;
-        }
+        // For most dimensions, the code list ID is simply the lowercase dimension name
+        // Only special cases need explicit mapping
+        String codeListId = switch (dimension.toLowerCase()) {
+            case "c_birth" -> "c_birth";
+            case "na_item" -> "na_item";
+            case "ppp_cat" -> "ppp_cat";
+            case "obs_flag" -> "obs_flag";
+            case "conf_status" -> "conf_status";
+            default -> dimension.toLowerCase();
+        };
 
-        return prefix + dimension + "#" + value;
+        return "../cl/" + codeListId + "#code-" + value;
+    }
+
+    /**
+     * Generate dimension property URI from data structure definition
+     * These URIs should match the patterns used in /ds endpoint
+     */
+    private String getDimensionPropertyUri(String dataStructureId, String dimension) {
+        return "../ds/" + dataStructureId + "#dim-" + dimension;
     }
 
     /**
