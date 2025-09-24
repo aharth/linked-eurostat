@@ -1,7 +1,7 @@
 package com.ontologycentral.estatwrap.webapp;
 
 import com.ontologycentral.estatwrap.Main;
-import com.ontologycentral.estatwrap.convert.DataSdmx3Turtle;
+import com.ontologycentral.estatwrap.convert.Da;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -89,7 +89,7 @@ public class DaServlet extends HttpServlet {
             Map<String, String> toc = (Map<String, String>) ctx.getAttribute(Listener.TOC);
 
             // Convert SDMX 3.0 TSV data to Turtle using SDMX 3.0 identifiers
-            DataSdmx3Turtle.convertWithSdmx3IdentifiersToTurtle(os, toc, id, in);
+            Da.convertWithSdmx3IdentifiersToTurtle(os, toc, id, in);
         } catch (IOException e) {
             resp.sendError(500, url + ": " + e.getMessage());
             e.printStackTrace();

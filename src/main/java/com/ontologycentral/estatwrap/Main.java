@@ -2,7 +2,7 @@ package com.ontologycentral.estatwrap;
 
 import com.ontologycentral.estatwrap.convert.Cl;
 import com.ontologycentral.estatwrap.convert.Cs;
-import com.ontologycentral.estatwrap.convert.DataSdmx3Turtle;
+import com.ontologycentral.estatwrap.convert.Da;
 import com.ontologycentral.estatwrap.convert.Dc;
 import com.ontologycentral.estatwrap.convert.Df;
 import com.ontologycentral.estatwrap.convert.Ds;
@@ -113,8 +113,8 @@ public class Main {
             }
         }
 
-        DataSdmx3Turtle.MAX_COLS = Integer.MAX_VALUE;
-        DataSdmx3Turtle.MAX_ROWS = Integer.MAX_VALUE;
+        Da.MAX_COLS = Integer.MAX_VALUE;
+        Da.MAX_ROWS = Integer.MAX_VALUE;
 
         String id = null;
         URL url = null;
@@ -220,7 +220,7 @@ public class Main {
                 e.printStackTrace();
             }
         } else if (cmd.hasOption("da")) {
-            DataSdmx3Turtle.convertWithSdmx3Identifiers(ch, new HashMap<String, String>(), id, in);
+            Da.convertWithSdmx3Identifiers(ch, new HashMap<String, String>(), id, in);
         }
         ch.close();
 
