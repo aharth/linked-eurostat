@@ -227,22 +227,28 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("div");
 
             String dsdquery =
-                    "PREFIX  qb: <http://purl.org/linked-data/cube#>\n"
+                    "BASE <https://estatwrap.ontologycentral.com/>\n"
+                            + "PREFIX  qb: <http://purl.org/linked-data/cube#>\n"
                             + "SELECT *\n"
-                            + "FROM <http://estatwrap.ontologycentral.com/ds/"
+                            + "FROM <ds/"
                             + id
                             + ">\n"
                             + "WHERE {\n"
                             + "\t{\n"
-                            + "\t\t<http://estatwrap.ontologycentral.com/ds/"
+                            + "\t\t<ds/"
                             + id
-                            + "#dsd> qb:component ?c .\n"
+                            + "#ds> qb:component ?c .\n"
                             + "\t\t?c qb:measure ?m .\n"
                             + "\t} UNION {\n"
-                            + "\t\t<http://estatwrap.ontologycentral.com/ds/"
+                            + "\t\t<ds/"
                             + id
-                            + "#dsd> qb:component ?c .\n"
+                            + "#ds> qb:component ?c .\n"
                             + "\t\t?c qb:dimension ?m .\n"
+                            + "\t} UNION {\n"
+                            + "\t\t<ds/"
+                            + id
+                            + "#ds> qb:component ?c .\n"
+                            + "\t\t?c qb:attribute ?m .\n"
                             + "\t}\n"
                             + "}";
 
