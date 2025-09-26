@@ -42,6 +42,7 @@
   </xsl:template>
 
 
+
   <!-- Template to convert URN to relative /cs URI -->
   <!-- Input: urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=ESTAT:TAG00038(19.0).freq -->
   <!-- Output: ../cs/tag00038#concept-freq -->
@@ -169,7 +170,7 @@
         <qb:dimension>
           <qb:DimensionProperty>
             <xsl:attribute name="rdf:about">#dim-<xsl:value-of select="@id"/></xsl:attribute>
-            <rdfs:label><xsl:value-of select="@id"/></rdfs:label>
+            <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
             <xsl:if test="@position">
               <qb:order rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="@position"/></qb:order>
             </xsl:if>
@@ -209,7 +210,7 @@
         <qb:attribute>
           <qb:AttributeProperty>
             <xsl:attribute name="rdf:about">#attr-<xsl:value-of select="@id"/></xsl:attribute>
-            <rdfs:label><xsl:value-of select="@id"/></rdfs:label>
+            <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
             <xsl:if test="s:LocalRepresentation/s:Enumeration">
               <qb:codeList>
                 <xsl:attribute name="rdf:resource">
@@ -246,7 +247,7 @@
         <qb:measure>
           <qb:MeasureProperty>
             <xsl:attribute name="rdf:about">#measure-<xsl:value-of select="@id"/></xsl:attribute>
-            <rdfs:label><xsl:value-of select="@id"/></rdfs:label>
+            <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
             <xsl:if test="s:LocalRepresentation/s:TextFormat/@textType">
               <rdfs:range>
                 <xsl:choose>
