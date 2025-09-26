@@ -57,99 +57,7 @@
         <dcterms:description>Service for converting Eurostat SDMX data to RDF</dcterms:description>
       </prov:SoftwareAgent>
 
-      <!--
-	  The dimension components serve to identify the observations. A set of values for all the dimension components is sufficient to identify a single observation. Examples of dimensions include the time to which the observation applies, or a geographic region which the observation covers.
-	  
-	  The measure components represent the phenomenon being observed.
-	  
-	  The attribute components allow us to qualify and interpret the observed value(s). They enable specification of the units of measures, any scaling factors and metadata such as the status of the observation (e.g. estimated, provisional).
-	-->
-
-      <qb:DataStructureDefinition rdf:about="#ds">
-	<foaf:page rdf:resource=""/>
-	<qb:component>
-	  <rdf:Description>
-	    <qb:measure>
-	      <rdfs:Property rdf:about="http://purl.org/linked-data/sdmx/2009/measure#obsValue">
-	      <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
-	      </rdfs:Property>
-	    </qb:measure>
-	  </rdf:Description>
-	</qb:component>
-	<qb:component>
-	  <rdf:Description>
-	    <qb:dimension>
-	      <rdfs:Property rdf:about="http://purl.org/dc/terms/date">
-		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
-	      </rdfs:Property>
-	    </qb:dimension>
-	  </rdf:Description>
-	</qb:component>
-	
-	<xsl:for-each select="sdmx:CodeLists/structure:CodeList | m:Structures/s:Codelists/s:Codelist">
-	  <qb:component>
-	    <rdf:Description>
-	      <xsl:choose>
-		<xsl:when test="@id = 'CL_OBS_STATUS'">
-		  <qb:attribute>
-		    <qb:AttributeProperty>
-		      <xsl:attribute name="rdf:about">#attr-OBS_STATUS</xsl:attribute>
-		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-		      <qb:codeList>
-			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
-		      </qb:codeList>
-		    </qb:AttributeProperty>
-		  </qb:attribute>
-		</xsl:when>
-		<xsl:when test="@id = 'CL_FREQ'">
-		  <qb:dimension>
-		    <qb:DimensionProperty>
-		      <xsl:attribute name="rdf:about">#dim-FREQ</xsl:attribute>
-		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-		      <qb:codeList>
-			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
-		      </qb:codeList>
-		    </qb:DimensionProperty>
-		  </qb:dimension>
-		</xsl:when>
-		<xsl:when test="@id = 'CL_TIME_FORMAT'">
-		  <qb:attribute>
-		    <qb:AttributeProperty>
-		      <xsl:attribute name="rdf:about">#attr-TIME_FORMAT</xsl:attribute>
-		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-		      <qb:codeList>
-			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
-		      </qb:codeList>
-		    </qb:AttributeProperty>
-		  </qb:attribute>
-		</xsl:when>
-		<xsl:when test="@id = 'CL_GEO'">
-		  <qb:dimension>
-		    <qb:DimensionProperty>
-		      <xsl:attribute name="rdf:about">#dim-GEO</xsl:attribute>
-		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-		      <qb:codeList>
-			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
-		      </qb:codeList>
-		    </qb:DimensionProperty>
-		  </qb:dimension>
-		</xsl:when>
-		<xsl:otherwise>
-		  <qb:dimension>
-		    <qb:DimensionProperty>
-		      <xsl:attribute name="rdf:about">#dim-<xsl:value-of select="substring(@id, 4)"/></xsl:attribute>
-		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-		      <qb:codeList>
-			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
-		      </qb:codeList>
-		    </qb:DimensionProperty>
-		  </qb:dimension>
-		</xsl:otherwise>
-	      </xsl:choose>
-	    </rdf:Description>
-	  </qb:component>
-	</xsl:for-each>
-      </qb:DataStructureDefinition>
+      <!-- Note: qb:DataStructureDefinition removed - belongs in /ds/{id}, not /df/{id} -->
 
       <!-- Process dataflows -->
       <xsl:apply-templates select="m:Structures/s:Dataflows"/>
@@ -255,12 +163,7 @@
       </prov:wasDerivedFrom>
       <prov:wasGeneratedBy rdf:resource="#transformation"/>
 
-      <!-- Link to data structure -->
-      <xsl:if test="s:Structure">
-        <qb:structure>
-          <xsl:attribute name="rdf:resource"><xsl:value-of select="s:Structure"/></xsl:attribute>
-        </qb:structure>
-      </xsl:if>
+      <!-- Note: qb:structure removed - dataflows are catalog metadata, not data cubes -->
 
       <!-- Process annotations -->
       <xsl:apply-templates select="c:Annotations"/>
@@ -334,7 +237,7 @@
       <!-- Source dataset -->
       <xsl:when test="c:AnnotationType = 'DISSEMINATION_SOURCE_DATASET'">
         <dcterms:source>
-          <xsl:attribute name="rdf:resource">#df-<xsl:value-of select="c:AnnotationTitle"/></xsl:attribute>
+          <xsl:attribute name="rdf:resource">../df/<xsl:value-of select="translate(c:AnnotationTitle, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>#df</xsl:attribute>
         </dcterms:source>
       </xsl:when>
 
