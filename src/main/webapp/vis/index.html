@@ -19,17 +19,18 @@
 	
     <form action='timeline' accept-charset="utf-8" method='post' name='qform'>
       <div>
-      <textarea cols="120" rows="25" name='query'>PREFIX  dim:  &lt;../ds/tag00038#&gt;
+      <textarea cols="120" rows="25" name='query'>BASE &lt;https://estatwrap.ontologycentral.com/&gt;
+PREFIX  dim:  &lt;ds/tag00038#&gt;
 PREFIX  rdf:  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 PREFIX  qb:   &lt;http://purl.org/linked-data/cube#&gt;
 
 SELECT  ?time ?value ?geo
-FROM &lt;../da/tag00038&gt;
+FROM &lt;da/tag00038&gt;
 WHERE {
-    ?s qb:dataSet &lt;../id/tag00038#ds&gt; .
+    ?s qb:dataSet &lt;id/tag00038#ds&gt; .
     ?s dim:dim-TIME_PERIOD ?time .
     ?s dim:dim-geo ?geo .
-    ?s &lt;../ds/tag00038#measure-OBS_VALUE&gt; ?value .
+    ?s &lt;ds/tag00038#measure-OBS_VALUE&gt; ?value .
 }
 </textarea>
       </div>

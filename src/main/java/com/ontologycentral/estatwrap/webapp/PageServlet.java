@@ -113,11 +113,11 @@ public class PageServlet extends HttpServlet {
             ch.writeEndElement();
 
             String query =
-                    "PREFIX dim: <../ds/" + id + "#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX qb: <http://purl.org/linked-data/cube#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?time ?value ?geo\nFROM <../da/"
+                    "BASE <https://estatwrap.ontologycentral.com/>\nPREFIX dim: <ds/" + id + "#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX qb: <http://purl.org/linked-data/cube#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?time ?value ?geo\nFROM <da/"
                             + id
-                            + ">\nFROM <../cl/geo>\nWHERE {\n\t?s qb:dataSet <../id/"
+                            + ">\nFROM <cl/geo>\nWHERE {\n\t?s qb:dataSet <id/"
                             + id
-                            + "#ds> .\n\t?s dim:dim-TIME_PERIOD ?time .\n\t?s dim:dim-geo ?g .\n\t?g rdfs:label ?geo .\n\t?s <../ds/" + id + "#measure-OBS_VALUE> ?value .\n\tFILTER (lang(?geo) = \"en\")\n}\nORDER BY ?geo";
+                            + "#ds> .\n\t?s dim:dim-TIME_PERIOD ?time .\n\t?s dim:dim-geo ?g .\n\t?g rdfs:label ?geo .\n\t?s <ds/" + id + "#measure-OBS_VALUE> ?value .\n\tFILTER (lang(?geo) = \"en\")\n}\nORDER BY ?geo";
             // String query =
             // "PREFIX++sdmx-measure%3A+<http%3A%2F%2Fpurl.org%2Flinked-data%2Fsdmx%2F2009%2Fmeasure%23>%0D%0APREFIX++eus%3A++<http%3A%2F%2Fontologycentral.com%2F2009%2F01%2Feurostat%2Fns%23>%0D%0APREFIX++rdf%3A++<http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23>%0D%0APREFIX++qb%3A+++<http%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23>%0D%0APREFIX++rdfs%3A+<http%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23>%0D%0A%0D%0ASELECT++%3Ftime+%3Fvalue+%3Fgeo%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdata%2F" + id + ">%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdic%2Fgeo>%0D%0AWHERE+{%0D%0A++++%3Fs+qb%3Adataset+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fid%2F" + id + "%23ds>+.%0D%0A++++%3Fs+eus%3Atime+%3Ftime+.%0D%0A++++%3Fs+eus%3Ageo+%3Fg+.%0D%0A++++%3Fg+rdfs%3Alabel+%3Fgeo+.%0D%0A++++%3Fs+sdmx-measure%3AobsValue+%3Fvalue+.+FILTER+(lang(%3Fgeo)+%3D+\"en\")+}+ORDER+BY+%3Fgeo";
 
