@@ -41,6 +41,7 @@
     </xsl:if>
   </xsl:template>
 
+
   <!-- Template to convert URN to relative /cs URI -->
   <!-- Input: urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=ESTAT:TAG00038(19.0).freq -->
   <!-- Output: ../cs/tag00038#concept-freq -->

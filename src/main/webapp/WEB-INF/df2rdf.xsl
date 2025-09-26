@@ -93,7 +93,7 @@
 		<xsl:when test="@id = 'CL_OBS_STATUS'">
 		  <qb:attribute>
 		    <qb:AttributeProperty>
-		      <xsl:attribute name="rdf:about">#attr-obs_status</xsl:attribute>
+		      <xsl:attribute name="rdf:about">#attr-OBS_STATUS</xsl:attribute>
 		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 		      <qb:codeList>
 			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
@@ -104,7 +104,7 @@
 		<xsl:when test="@id = 'CL_FREQ'">
 		  <qb:dimension>
 		    <qb:DimensionProperty>
-		      <xsl:attribute name="rdf:about">#dim-freq</xsl:attribute>
+		      <xsl:attribute name="rdf:about">#dim-FREQ</xsl:attribute>
 		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 		      <qb:codeList>
 			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
@@ -115,7 +115,7 @@
 		<xsl:when test="@id = 'CL_TIME_FORMAT'">
 		  <qb:attribute>
 		    <qb:AttributeProperty>
-		      <xsl:attribute name="rdf:about">#attr-timeformat</xsl:attribute>
+		      <xsl:attribute name="rdf:about">#attr-TIME_FORMAT</xsl:attribute>
 		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 		      <qb:codeList>
 			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>
@@ -126,7 +126,7 @@
 		<xsl:when test="@id = 'CL_GEO'">
 		  <qb:dimension>
 		    <qb:DimensionProperty>
-		      <xsl:attribute name="rdf:about">#dim-geo</xsl:attribute>
+		      <xsl:attribute name="rdf:about">#dim-GEO</xsl:attribute>
 		      <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
 		      <qb:codeList>
 			<xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="@id"/></xsl:attribute>

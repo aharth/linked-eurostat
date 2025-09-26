@@ -34,9 +34,15 @@ The application provides consistent URI patterns across all endpoints:
 
 ### Parameter Definitions
 - `{id}` - Dataset identifier (e.g., `tag00038`, `tec00114`)
-- `{dim}` - Dimension name (e.g., `geo`, `time`, `freq`)
-- `{clid}` - Codelist identifier (e.g., `CL_GEO`, `CL_TIME`, `CL_FREQ`)
+- `{dim}` - Dimension name (e.g., `geo`, `time`, `freq`) - lowercase version of component ID
+- `{clid}` - Codelist identifier (e.g., `CL_GEO`, `CL_TIME`, `CL_FREQ`) - component ID with "CL_" prefix
+- `{compid}` - Component identifier (e.g., `FREQ`, `GEO`, `OBS_STATUS`, `OBS_VALUE`) - raw SDMX component ID
 - `{value}` - Code or concept value (e.g., `EU27`, `AT`, `2020`, `A` for annual frequency)
+
+**Parameter Relationships:** For a geographic dimension:
+- Component ID: `GEO` → used in `#component-GEO`, `#dim-GEO`
+- Codelist ID: `CL_GEO` → used in `#cl-CL_GEO`, codelist references
+- Dimension name: `geo` → used in `/cl/geo` URL path
 
 ### URI Structure
 
@@ -70,10 +76,10 @@ rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 - **Sub-Resources:**
   - `/cl/{dim}#code-{value}` - Individual code resources (e.g., `#code-EU27`)
   - `/cs/{id}#concept-{value}` - Individual concepts (e.g., `#concept-2020`)
-  - `/ds/{id}#component-{id}` - Data structure components (e.g., `#component-FREQ`)
-  - `/ds/{id}#dim-{id}` - Dimension properties (e.g., `#dim-GEO`)
-  - `/ds/{id}#attr-{id}` - Attribute properties (e.g., `#attr-OBS_STATUS`)
-  - `/ds/{id}#measure-{id}` - Measure properties (e.g., `#measure-OBS_VALUE`)
+  - `/ds/{id}#component-{compid}` - Data structure components (e.g., `#component-FREQ`)
+  - `/ds/{id}#dim-{compid}` - Dimension properties (e.g., `#dim-GEO`)
+  - `/ds/{id}#attr-{compid}` - Attribute properties (e.g., `#attr-OBS_STATUS`)
+  - `/ds/{id}#measure-{compid}` - Measure properties (e.g., `#measure-OBS_VALUE`)
 
 #### Special Notes
 
