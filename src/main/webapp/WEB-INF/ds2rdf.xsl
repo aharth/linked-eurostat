@@ -83,7 +83,7 @@
           <xsl:attribute name="rdf:resource">https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/datastructure/ESTAT/<xsl:value-of select="//s:DataStructure/@id"/></xsl:attribute>
         </prov:used>
         <prov:wasAssociatedWith rdf:resource="#estatwrap"/>
-        <dcterms:date><xsl:value-of select="current-dateTime()"/></dcterms:date>
+        <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="current-dateTime()"/></dcterms:date>
       </prov:Activity>
 
       <!-- PROV: Agent (estatwrap service) -->
@@ -112,7 +112,7 @@
   </xsl:template>
 
   <xsl:template match='m:Prepared'>
-    <dcterms:date><xsl:value-of select="."/></dcterms:date>
+    <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="."/></dcterms:date>
   </xsl:template>
 
   <!-- Template for DataStructures -->

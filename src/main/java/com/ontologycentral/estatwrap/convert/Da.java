@@ -360,6 +360,7 @@ public class Da {
         ch.writeEndElement();
 
         ch.writeStartElement("dcterms:date");
+        ch.writeAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#dateTime");
         ch.writeCharacters(Main.ISO8601.format(new java.util.Date()));
         ch.writeEndElement();
 
@@ -418,7 +419,7 @@ public class Da {
         writer.write("    rdfs:comment \"No guarantee of correctness! USE AT YOUR OWN RISK!\" ;\n");
         writer.write("    dcterms:publisher \"Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)\" ;\n");
         writer.write("    rdfs:seeAlso <http://estatwrap.ontologycentral.com/table_of_contents.rdf> ;\n");
-        writer.write("    dcterms:date \"" + Main.ISO8601.format(new java.util.Date()) + "\" ;\n");
+        writer.write("    dcterms:date \"" + Main.ISO8601.format(new java.util.Date()) + "\"^^xsd:dateTime ;\n");
         writer.write("    prov:wasGeneratedBy <#transformation> .\n");
         writer.write("\n");
 
@@ -440,7 +441,7 @@ public class Da {
         writer.write("    rdfs:label \"SDMX to RDF Data Transformation\" ;\n");
         writer.write("    prov:used <https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/data/dataflow/ESTAT/" + id + "/1.0?format=tsv&compress=false> ;\n");
         writer.write("    prov:wasAssociatedWith <#estatwrap> ;\n");
-        writer.write("    dcterms:date \"" + Main.ISO8601.format(new java.util.Date()) + "\" .\n");
+        writer.write("    dcterms:date \"" + Main.ISO8601.format(new java.util.Date()) + "\"^^xsd:dateTime .\n");
         writer.write("\n");
 
         writer.write("<#estatwrap>\n");

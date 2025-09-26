@@ -48,7 +48,7 @@
         <rdfs:label>Eurostat TOC XML to RDF Transformation</rdfs:label>
         <prov:used rdf:resource="https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml"/>
         <prov:wasAssociatedWith rdf:resource="#estatwrap"/>
-        <dcterms:date><xsl:value-of select="current-dateTime()"/></dcterms:date>
+        <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="current-dateTime()"/></dcterms:date>
       </prov:Activity>
 
       <!-- PROV: Agent (estatwrap service) -->
