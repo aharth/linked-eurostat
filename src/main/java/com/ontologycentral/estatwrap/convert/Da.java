@@ -388,7 +388,7 @@ public class Da {
         ch.writeEndElement();
 
         ch.writeStartElement("qb:structure");
-        ch.writeAttribute("rdf:resource", "../ds/" + id + "#dsd");
+        ch.writeAttribute("rdf:resource", "../ds/" + id + "#ds");
         ch.writeEndElement();
 
         ch.writeEndElement();

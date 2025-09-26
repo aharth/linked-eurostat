@@ -168,21 +168,34 @@
       <qb:ComponentSpecification>
         <xsl:attribute name="rdf:about">#component-<xsl:value-of select="@id"/></xsl:attribute>
         <qb:dimension>
-          <qb:DimensionProperty>
+          <qb:CodedProperty>
             <xsl:attribute name="rdf:about">#dim-<xsl:value-of select="@id"/></xsl:attribute>
             <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
             <xsl:if test="@position">
               <qb:order rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="@position"/></qb:order>
             </xsl:if>
-            <xsl:if test="s:LocalRepresentation/s:Enumeration">
-              <qb:codeList>
-                <xsl:attribute name="rdf:resource">
-                  <xsl:call-template name="urn-to-cl-uri">
-                    <xsl:with-param name="urn" select="s:LocalRepresentation/s:Enumeration"/>
-                  </xsl:call-template>
-                </xsl:attribute>
-              </qb:codeList>
-            </xsl:if>
+            <!-- Add rdfs:range based on dimension type -->
+            <xsl:choose>
+              <xsl:when test="s:LocalRepresentation/s:Enumeration">
+                <!-- Dimensions with code lists have range skos:Concept -->
+                <rdfs:range rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+                <qb:codeList>
+                  <xsl:attribute name="rdf:resource">
+                    <xsl:call-template name="urn-to-cl-uri">
+                      <xsl:with-param name="urn" select="s:LocalRepresentation/s:Enumeration"/>
+                    </xsl:call-template>
+                  </xsl:attribute>
+                </qb:codeList>
+              </xsl:when>
+              <xsl:when test="local-name() = 'TimeDimension' or @id = 'TIME_PERIOD'">
+                <!-- Time dimensions have appropriate time range -->
+                <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#gYear"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <!-- Default for other dimensions -->
+                <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+              </xsl:otherwise>
+            </xsl:choose>
             <xsl:if test="s:ConceptIdentity">
               <qb:concept>
                 <xsl:attribute name="rdf:resource">
@@ -192,7 +205,7 @@
                 </xsl:attribute>
               </qb:concept>
             </xsl:if>
-          </qb:DimensionProperty>
+          </qb:CodedProperty>
         </qb:dimension>
       </qb:ComponentSpecification>
     </qb:component>
