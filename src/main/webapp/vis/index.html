@@ -19,18 +19,17 @@
 	
     <form action='timeline' accept-charset="utf-8" method='post' name='qform'>
       <div>
-      <textarea cols="120" rows="25" name='query'>PREFIX  sdmx-measure: &lt;http://purl.org/linked-data/sdmx/2009/measure#&gt;
-PREFIX  eus:  &lt;http://ontologycentral.com/2009/01/eurostat/ns#&gt;
+      <textarea cols="120" rows="25" name='query'>PREFIX  dim:  &lt;../ds/tag00038#&gt;
 PREFIX  rdf:  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 PREFIX  qb:   &lt;http://purl.org/linked-data/cube#&gt;
 
 SELECT  ?time ?value ?geo
-FROM &lt;http://estatwrap.ontologycentral.com/data/tsieb010&gt;
+FROM &lt;../da/tag00038&gt;
 WHERE {
-    ?s qb:dataset &lt;http://estatwrap.ontologycentral.com/id/tsieb010#ds&gt; .
-    ?s eus:time ?time .
-    ?s eus:geo ?geo .
-    ?s sdmx-measure:obsValue ?value .
+    ?s qb:dataSet &lt;../id/tag00038#ds&gt; .
+    ?s dim:dim-TIME_PERIOD ?time .
+    ?s dim:dim-geo ?geo .
+    ?s &lt;../ds/tag00038#measure-OBS_VALUE&gt; ?value .
 }
 </textarea>
       </div>

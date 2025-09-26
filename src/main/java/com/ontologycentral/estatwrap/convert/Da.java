@@ -105,7 +105,7 @@ public class Da {
 
                 String val = (String) lcol.get(i).trim();
                 if (!val.equals("")) {
-                    out.writeStartElement("sdmx-measure:obsValue");
+                    out.writeStartElement("../ds/" + id + "#measure-OBS_VALUE");
                     if (isNumeric(val)) {
                         out.writeAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#decimal");
                     }
@@ -204,7 +204,7 @@ public class Da {
 
                 String val = (String) lcol.get(i).trim();
                 if (!val.equals("")) {
-                    out.write("    sdmx-measure:obsValue ");
+                    out.write("    <../ds/" + id + "#measure-OBS_VALUE> ");
                     if (isNumeric(val)) {
                         out.write("\"" + escapeString(val) + "\"^^<http://www.w3.org/2001/XMLSchema#decimal>");
                     } else {
