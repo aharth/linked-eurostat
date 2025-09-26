@@ -39,6 +39,7 @@
         <rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
         <dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
         <dcterms:title>Eurostat Table of Contents</dcterms:title>
+        <rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/data/database"/>
         <prov:wasGeneratedBy rdf:resource="#transformation"/>
       </rdf:Description>
 
@@ -87,13 +88,13 @@
       <dcterms:identifier><xsl:value-of select="nt:code"/></dcterms:identifier>
 
       <!-- Update dates -->
-      <dcterms:modified>
+      <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
         <xsl:call-template name="convert-date">
           <xsl:with-param name="date" select="nt:lastUpdate"/>
         </xsl:call-template>
       </dcterms:modified>
       <xsl:if test="nt:lastModified and nt:lastModified != nt:lastUpdate">
-        <dcterms:date>
+        <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
           <xsl:call-template name="convert-date">
             <xsl:with-param name="date" select="nt:lastModified"/>
           </xsl:call-template>
@@ -101,7 +102,7 @@
       </xsl:if>
 
       <!-- Legacy dc:date for compatibility -->
-      <dc:date>
+      <dc:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
         <xsl:call-template name="convert-date">
           <xsl:with-param name="date" select="nt:lastUpdate"/>
         </xsl:call-template>

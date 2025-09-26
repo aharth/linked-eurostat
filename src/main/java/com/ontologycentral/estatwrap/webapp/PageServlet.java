@@ -347,6 +347,13 @@ public class PageServlet extends HttpServlet {
             ch.writeCharacters("Via Eurostat: ");
 
             ch.writeStartElement("a");
+            ch.writeAttribute("href", "https://ec.europa.eu/eurostat/web/products-datasets/-/" + id);
+            ch.writeCharacters("Dataset page");
+            ch.writeEndElement();
+
+            ch.writeCharacters(", ");
+
+            ch.writeStartElement("a");
             ch.writeAttribute(
                     "href", Main.URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
             ch.writeCharacters("TSV (for Excel)");

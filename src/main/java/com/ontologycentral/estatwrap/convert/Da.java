@@ -431,6 +431,7 @@ public class Da {
         writer.write("    rdfs:seeAlso <../df/" + id + "> ;\n");
         writer.write("    rdfs:seeAlso <../dc/" + id + "> ;\n");
         writer.write("    foaf:page <> ;\n");
+        writer.write("    foaf:homepage <https://ec.europa.eu/eurostat/web/products-datasets/-/" + id + "> ;\n");
         writer.write("    qb:structure <../ds/" + id + "#ds> .\n");
         writer.write("\n");
 

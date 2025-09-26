@@ -45,6 +45,10 @@
 	    at <xsl:value-of  select="current-dateTime()"/>.
 	</p>
 
+	<p>
+	  See also: <a href="https://ec.europa.eu/eurostat/web/main/data/database">Eurostat Database</a> for interactive data browsing.
+	</p>
+
 	<xsl:apply-templates/>
       </body>
     </html>
