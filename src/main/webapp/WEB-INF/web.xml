@@ -60,6 +60,10 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<servlet-name>feed</servlet-name>
 		<servlet-class>com.ontologycentral.estatwrap.webapp.FeedServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>toc</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.TocServlet</servlet-class>
+	</servlet>
 	
 
 	<servlet-mapping>
@@ -112,6 +116,16 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 	<servlet-mapping>
 		<servlet-name>feed</servlet-name>
 		<url-pattern>/feed.rdf</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>toc</servlet-name>
+		<url-pattern>/toc.html</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>toc</servlet-name>
+		<url-pattern>/toc.rdf</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>
