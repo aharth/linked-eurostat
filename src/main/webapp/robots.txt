@@ -1,15 +1,6 @@
-User-Agent: AhrefsBot
-Disallow: /dsd/
-Disallow: /data/
-
-User-Agent: Slurp
-Disallow: /dsd/
-Disallow: /data/
-
-User-Agent: MJ12bot
-Disallow: /dsd/
-Disallow: /data/
-
 User-Agent: *
-Disallow: /dsd/
-Disallow: /data/
+Disallow: /
+Allow: /index.html
+Allow: /$
+Allow: /id/
+Allow: /page/
