@@ -212,7 +212,7 @@ public class PageServlet extends HttpServlet {
 
             String dsdquery =
                     "BASE <https://estatwrap.ontologycentral.com/>\n"
-                            + "PREFIX  qb: <http://purl.org/linked-data/cube#>\n"
+                            + "PREFIX qb: <http://purl.org/linked-data/cube#>\n"
                             + "SELECT *\n"
                             + "FROM <ds/"
                             + id
@@ -269,13 +269,6 @@ public class PageServlet extends HttpServlet {
             ch.writeEndElement();
 
             // div
-            ch.writeEndElement();
-
-            ch.writeStartElement("div");
-            ch.writeAttribute("id", "dsdprogress");
-            ch.writeStartElement("img");
-            ch.writeAttribute("src", "../vis/wait30trans.gif");
-            ch.writeEndElement();
             ch.writeEndElement();
 
             ch.writeStartElement("div");

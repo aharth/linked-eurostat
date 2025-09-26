@@ -206,11 +206,11 @@ public class SparqlServlet extends HttpServlet {
         out.println("    <form method=\"GET\" action=\"sparql\">");
         out.println("      <div>");
         out.println("      <textarea cols=\"120\" rows=\"25\" name=\"query\">BASE <https://estatwrap.ontologycentral.com/>");
-        out.println("PREFIX  dim:  <ds/tag00038#>");
-        out.println("PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
-        out.println("PREFIX  qb:   <http://purl.org/linked-data/cube#>");
+        out.println("PREFIX dim: <ds/tag00038#>");
+        out.println("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>");
+        out.println("PREFIX qb: <http://purl.org/linked-data/cube#>");
         out.println("");
-        out.println("SELECT  ?time ?value ?geo");
+        out.println("SELECT ?time ?value ?geo");
         out.println("FROM <da/tag00038>");
         out.println("WHERE {");
         out.println("    ?s qb:dataSet <id/tag00038#ds> .");
