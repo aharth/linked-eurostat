@@ -116,7 +116,8 @@
       <skos:Concept>
         <xsl:attribute name="rdf:about">#code-<xsl:value-of select="@id"/></xsl:attribute>
 
-        <skos:notation><xsl:value-of select="@id"/></skos:notation>
+        <skos:notation><xsl:value-of select="@urn"/></skos:notation>
+        <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
         <skos:inScheme>
           <xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="../@id"/></xsl:attribute>
         </skos:inScheme>

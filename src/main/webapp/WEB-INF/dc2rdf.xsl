@@ -119,14 +119,48 @@
   <!-- Template for Constraint Attachment -->
   <xsl:template match='s:ConstraintAttachment'>
     <xsl:if test="s:Dataflow">
-      <dcterms:source>
-        <xsl:attribute name="rdf:resource"><xsl:value-of select="s:Dataflow"/></xsl:attribute>
-      </dcterms:source>
+      <!-- Extract dataset ID from URN like urn:sdmx:org.sdmx.infomodel.dataflow.Dataflow=ESTAT:TAG00038(1.0) -->
+      <xsl:variable name="dataflowId">
+        <xsl:choose>
+          <xsl:when test="contains(s:Dataflow, '=ESTAT:')">
+            <xsl:variable name="after-estat" select="substring-after(s:Dataflow, '=ESTAT:')"/>
+            <xsl:choose>
+              <xsl:when test="contains($after-estat, '(')">
+                <xsl:value-of select="translate(substring-before($after-estat, '('), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="translate($after-estat, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="s:Dataflow"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <dcterms:source rdf:resource="../df/{$dataflowId}#df"/>
     </xsl:if>
     <xsl:if test="s:DataStructure">
-      <qb:structure>
-        <xsl:attribute name="rdf:resource"><xsl:value-of select="s:DataStructure"/></xsl:attribute>
-      </qb:structure>
+      <!-- Extract dataset ID from URN like urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=ESTAT:TAG00038(27.0) -->
+      <xsl:variable name="dsId">
+        <xsl:choose>
+          <xsl:when test="contains(s:DataStructure, '=ESTAT:')">
+            <xsl:variable name="after-estat" select="substring-after(s:DataStructure, '=ESTAT:')"/>
+            <xsl:choose>
+              <xsl:when test="contains($after-estat, '(')">
+                <xsl:value-of select="translate(substring-before($after-estat, '('), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="translate($after-estat, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="s:DataStructure"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <qb:structure rdf:resource="../ds/{$dsId}#ds"/>
     </xsl:if>
   </xsl:template>
 
@@ -147,7 +181,7 @@
       <skos:Concept>
         <xsl:attribute name="rdf:about">#dim-<xsl:value-of select="@id"/></xsl:attribute>
         <skos:prefLabel><xsl:value-of select="@id"/></skos:prefLabel>
-        <skos:notation><xsl:value-of select="@id"/></skos:notation>
+        <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
 
         <!-- Count values for this dimension -->
         <xsl:variable name="valueCount" select="count(s:Value)"/>

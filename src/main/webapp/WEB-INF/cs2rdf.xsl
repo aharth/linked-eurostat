@@ -70,7 +70,7 @@
   <xsl:template match='s:ConceptScheme'>
     <skos:ConceptScheme>
       <xsl:attribute name="rdf:about">#cs</xsl:attribute>
-      <skos:notation><xsl:value-of select="@id"/></skos:notation>
+      <skos:notation><xsl:value-of select="@urn"/></skos:notation>
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
       <xsl:if test="@version">
         <dcterms:hasVersion><xsl:value-of select="@version"/></dcterms:hasVersion>
@@ -110,7 +110,7 @@
   <xsl:template match='s:Concept'>
     <skos:Concept>
       <xsl:attribute name="rdf:about">#concept-<xsl:value-of select="@id"/></xsl:attribute>
-      <skos:notation><xsl:value-of select="@id"/></skos:notation>
+      <skos:notation><xsl:value-of select="@urn"/></skos:notation>
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
 
       <!-- Link back to the concept scheme -->

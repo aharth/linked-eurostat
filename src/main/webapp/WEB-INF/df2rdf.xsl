@@ -181,7 +181,8 @@
 <!--    <xsl:if test="@id != 'CL_GEO'"> -->
       <skos:ConceptScheme>
 	<xsl:attribute name="rdf:about">#cl-<xsl:value-of select="@id"/></xsl:attribute>
-	<skos:notation><xsl:value-of select="@id"/></skos:notation>
+	<skos:notation><xsl:value-of select="@urn"/></skos:notation>
+	<dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
 	<xsl:apply-templates/>
       </skos:ConceptScheme>
 <!--    </xsl:if> -->
