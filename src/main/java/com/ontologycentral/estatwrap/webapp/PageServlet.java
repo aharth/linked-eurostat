@@ -143,6 +143,49 @@ public class PageServlet extends HttpServlet {
             ch.writeEndElement();
 
             ch.writeStartElement("h2");
+            ch.writeCharacters("Linked Data");
+            ch.writeEndElement();
+
+            ch.writeStartElement("ul");
+
+            ch.writeStartElement("li");
+            ch.writeStartElement("a");
+            ch.writeAttribute("href", "../da/" + id);
+            ch.writeCharacters("RDF (data observations)");
+            ch.writeEndElement();
+            ch.writeEndElement();
+
+            ch.writeStartElement("li");
+            ch.writeStartElement("a");
+            ch.writeAttribute("href", "../cs/" + id);
+            ch.writeCharacters("RDF (concept scheme)");
+            ch.writeEndElement();
+            ch.writeEndElement();
+
+            ch.writeStartElement("li");
+            ch.writeStartElement("a");
+            ch.writeAttribute("href", "../ds/" + id);
+            ch.writeCharacters("RDF (data structure)");
+            ch.writeEndElement();
+            ch.writeEndElement();
+
+            ch.writeStartElement("li");
+            ch.writeStartElement("a");
+            ch.writeAttribute("href", "../df/" + id);
+            ch.writeCharacters("RDF (dataflow)");
+            ch.writeEndElement();
+            ch.writeEndElement();
+
+            ch.writeStartElement("li");
+            ch.writeStartElement("a");
+            ch.writeAttribute("href", "../dc/" + id);
+            ch.writeCharacters("RDF (data constraint)");
+            ch.writeEndElement();
+            ch.writeEndElement();
+
+            ch.writeEndElement();
+
+            ch.writeStartElement("h2");
             ch.writeCharacters("SPARQL Queries");
             ch.writeEndElement();
 
@@ -305,42 +348,6 @@ public class PageServlet extends HttpServlet {
             ch.writeCharacters("estatwrap");
             ch.writeEndElement();
 
-            ch.writeStartElement("p");
-            ch.writeCharacters("Available as: ");
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", "../da/" + id);
-            ch.writeCharacters("RDF (data observations)");
-            ch.writeEndElement();
-
-            ch.writeCharacters(", ");
-
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", "../cs/" + id);
-            ch.writeCharacters("RDF (concept scheme)");
-            ch.writeEndElement();
-
-            ch.writeCharacters(", ");
-
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", "../ds/" + id);
-            ch.writeCharacters("RDF (data structure)");
-            ch.writeEndElement();
-
-            ch.writeCharacters(", ");
-
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", "../df/" + id);
-            ch.writeCharacters("RDF (dataflow)");
-            ch.writeEndElement();
-
-            ch.writeCharacters(", and ");
-
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", "../dc/" + id);
-            ch.writeCharacters("RDF (data constraint)");
-            ch.writeEndElement();
-
-            ch.writeEndElement();
 
             ch.writeStartElement("p");
 
