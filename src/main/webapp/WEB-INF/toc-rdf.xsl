@@ -15,6 +15,24 @@
   <xsl:output method="xml"
 	      encoding="utf-8"/>
 
+  <!-- Template to convert DD.MM.YYYY to YYYY-MM-DD -->
+  <xsl:template name="convert-date">
+    <xsl:param name="date"/>
+    <xsl:choose>
+      <xsl:when test="contains($date, '.')">
+        <xsl:variable name="day" select="substring-before($date, '.')"/>
+        <xsl:variable name="rest" select="substring-after($date, '.')"/>
+        <xsl:variable name="month" select="substring-before($rest, '.')"/>
+        <xsl:variable name="year" select="substring-after($rest, '.')"/>
+        <xsl:value-of select="concat($year, '-', format-number($month, '00'), '-', format-number($day, '00'))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$date"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template></xsl:parameter>
+</invoke>
+
   <xsl:template match="nt:tree">
     <rdf:RDF>
       <rdf:Description rdf:about="">
@@ -69,13 +87,25 @@
       <dcterms:identifier><xsl:value-of select="nt:code"/></dcterms:identifier>
 
       <!-- Update dates -->
-      <dcterms:modified><xsl:value-of select="nt:lastUpdate"/></dcterms:modified>
+      <dcterms:modified>
+        <xsl:call-template name="convert-date">
+          <xsl:with-param name="date" select="nt:lastUpdate"/>
+        </xsl:call-template>
+      </dcterms:modified>
       <xsl:if test="nt:lastModified and nt:lastModified != nt:lastUpdate">
-        <dcterms:date><xsl:value-of select="nt:lastModified"/></dcterms:date>
+        <dcterms:date>
+          <xsl:call-template name="convert-date">
+            <xsl:with-param name="date" select="nt:lastModified"/>
+          </xsl:call-template>
+        </dcterms:date>
       </xsl:if>
 
       <!-- Legacy dc:date for compatibility -->
-      <dc:date><xsl:value-of select="nt:lastUpdate"/></dc:date>
+      <dc:date>
+        <xsl:call-template name="convert-date">
+          <xsl:with-param name="date" select="nt:lastUpdate"/>
+        </xsl:call-template>
+      </dc:date>
 
       <!-- Temporal coverage -->
       <xsl:if test="nt:dataStart">
