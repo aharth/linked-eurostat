@@ -426,9 +426,12 @@ public class Da {
         writer.write("    a qb:DataSet ;\n");
         writer.write("    rdfs:comment \"Source: Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/).\" ;\n");
         writer.write("    rdfs:seeAlso <http://epp.eurostat.ec.europa.eu/portal/page/portal/about_eurostat/corporate/copyright_licence_policy> ;\n");
-        writer.write("    rdfs:seeAlso <../df/" + id + "#df-" + id + "> ;\n");
+        writer.write("    rdfs:seeAlso <../cs/" + id + "> ;\n");
+        writer.write("    rdfs:seeAlso <../ds/" + id + "> ;\n");
+        writer.write("    rdfs:seeAlso <../df/" + id + "> ;\n");
+        writer.write("    rdfs:seeAlso <../dc/" + id + "> ;\n");
         writer.write("    foaf:page <> ;\n");
-        writer.write("    qb:structure <../ds/" + id + "#dsd> .\n");
+        writer.write("    qb:structure <../ds/" + id + "#ds> .\n");
         writer.write("\n");
 
         writer.write("<#transformation>\n");

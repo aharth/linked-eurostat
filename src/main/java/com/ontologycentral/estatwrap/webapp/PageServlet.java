@@ -309,7 +309,7 @@ public class PageServlet extends HttpServlet {
             ch.writeCharacters("Available as: ");
             ch.writeStartElement("a");
             ch.writeAttribute("href", "../da/" + id);
-            ch.writeCharacters("RDF (data)");
+            ch.writeCharacters("RDF (data observations)");
             ch.writeEndElement();
 
             ch.writeCharacters(", ");

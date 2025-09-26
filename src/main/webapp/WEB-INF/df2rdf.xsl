@@ -232,7 +232,7 @@
 
   <xsl:template match='s:Dataflow'>
     <dcat:Dataset>
-      <xsl:attribute name="rdf:about">#df-<xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="rdf:about">#df</xsl:attribute>
 
       <!-- Basic identifiers -->
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>

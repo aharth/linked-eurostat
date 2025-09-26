@@ -120,7 +120,7 @@
 
   <xsl:template match='s:DataStructure'>
     <qb:DataStructureDefinition>
-      <xsl:attribute name="rdf:about">#ds-<xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="rdf:about">#ds</xsl:attribute>
 
       <!-- Basic identifiers -->
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>

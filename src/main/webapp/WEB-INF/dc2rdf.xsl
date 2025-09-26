@@ -74,7 +74,7 @@
 
   <xsl:template match='s:DataConstraint'>
     <void:Dataset>
-      <xsl:attribute name="rdf:about">#constraint-<xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="rdf:about">#constraint</xsl:attribute>
 
       <!-- Basic identifiers -->
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>

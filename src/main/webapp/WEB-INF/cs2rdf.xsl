@@ -69,7 +69,7 @@
 
   <xsl:template match='s:ConceptScheme'>
     <skos:ConceptScheme>
-      <xsl:attribute name="rdf:about">#cs-<xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="rdf:about">#cs</xsl:attribute>
       <skos:notation><xsl:value-of select="@id"/></skos:notation>
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
       <xsl:if test="@version">
@@ -115,7 +115,7 @@
 
       <!-- Link back to the concept scheme -->
       <skos:inScheme>
-        <xsl:attribute name="rdf:resource">#cs-<xsl:value-of select="../@id"/></xsl:attribute>
+        <xsl:attribute name="rdf:resource">#cs</xsl:attribute>
       </skos:inScheme>
 
       <!-- Generate labels in multiple languages -->
