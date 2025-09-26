@@ -143,11 +143,20 @@ public class PageServlet extends HttpServlet {
             ch.writeEndElement();
 
             ch.writeStartElement("h2");
-            ch.writeCharacters("Visualisations");
+            ch.writeCharacters("SPARQL Queries");
             ch.writeEndElement();
 
             ch.writeStartElement("h3");
-            ch.writeCharacters("Timeline");
+            ch.writeCharacters("Observations");
+            ch.writeEndElement();
+
+            ch.writeStartElement("div");
+
+            ch.writeStartElement("a");
+            ch.writeAttribute(
+                    "href",
+                    "../sparql?query=" + URLEncoder.encode(query, "utf-8") + "&format=tsv");
+            // "PREFIX++sdmx-measure%3A+<http%3A%2F%2Fpurl.org%2Flinked-data%2Fsdmx%2F2009%2Fmeasure%23>%0D%0APREFIX++eus%3A++<http%3A%2F%2Fontologycentral.com%2F2009%2F01%2Feurostat%2Fns%23>%0D%0APREFIX++rdf%3A++<http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23>%0D%0APREFIX++qb%3A+++<http%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23>%0D%0APREFIX++rdfs%3A+<http%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23>%0D%0A%0D%0ASELECT++%3Ftime+%3Fvalue+%3Fgeo%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdata%2F" + id + ">%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdic%2Fgeo>%0D%0AWHERE+{%0D%0A++++%3Fs+qb%3Adataset+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fid%2F" + id + "%23ds>+.%0D%0A++++%3Fs+eus%3Atime+%3Ftime+.%0D%0A++++%3Fs+eus%3Ageo+%3Fg+.%0D%0A++++%3Fg+rdfs%3Alabel+%3Fgeo+.%0D%0A++++%3Fs+sdmx-measure%3AobsValue+%3Fvalue+.+FILTER+(lang(%3Fgeo)+%3D+\"en\")+}");
             ch.writeEndElement();
 
             ch.writeStartElement("div");
@@ -165,36 +174,11 @@ public class PageServlet extends HttpServlet {
             ch.writeAttribute("id", "map");
             ch.writeEndElement();
 
-            /*
-            ch.writeStartElement("h3");
-            ch.writeCharacters("Map");
-            ch.writeEndElement();
-
-            ch.writeStartElement("div");
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", "http://demos.inf.ed.ac.uk:8836/hackday/eurostatHackday.html?query=" + URLEncoder.encode(query, "utf-8"));
-
-            ch.writeCharacters("Map visualisation (via Xi Bai)");
-            ch.writeEndElement();
-            ch.writeEndElement();
-            */
-
-            ch.writeStartElement("h2");
-            ch.writeCharacters("SPARQL Queries");
-            ch.writeEndElement();
-
-            ch.writeStartElement("h3");
-            ch.writeCharacters("Observations");
-            ch.writeEndElement();
-
-            ch.writeStartElement("div");
-
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    "http://ontologycentral.com/sparql?query=" + URLEncoder.encode(query, "utf-8"));
-            // "PREFIX++sdmx-measure%3A+<http%3A%2F%2Fpurl.org%2Flinked-data%2Fsdmx%2F2009%2Fmeasure%23>%0D%0APREFIX++eus%3A++<http%3A%2F%2Fontologycentral.com%2F2009%2F01%2Feurostat%2Fns%23>%0D%0APREFIX++rdf%3A++<http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23>%0D%0APREFIX++qb%3A+++<http%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23>%0D%0APREFIX++rdfs%3A+<http%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23>%0D%0A%0D%0ASELECT++%3Ftime+%3Fvalue+%3Fgeo%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdata%2F" + id + ">%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdic%2Fgeo>%0D%0AWHERE+{%0D%0A++++%3Fs+qb%3Adataset+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fid%2F" + id + "%23ds>+.%0D%0A++++%3Fs+eus%3Atime+%3Ftime+.%0D%0A++++%3Fs+eus%3Ageo+%3Fg+.%0D%0A++++%3Fg+rdfs%3Alabel+%3Fgeo+.%0D%0A++++%3Fs+sdmx-measure%3AobsValue+%3Fvalue+.+FILTER+(lang(%3Fgeo)+%3D+\"en\")+}");
-            ch.writeCharacters("SPARQL results");
+                    "../sparql?query=" + URLEncoder.encode(query, "utf-8") + "&format=tsv");
+            ch.writeCharacters("Solutions");
             ch.writeEndElement();
 
             ch.writeStartElement("pre");
@@ -221,7 +205,7 @@ public class PageServlet extends HttpServlet {
             ch.writeEndElement();
 
             ch.writeStartElement("h3");
-            ch.writeCharacters("Dimensions/Measures");
+            ch.writeCharacters("Dimensions/Measures/Attributes");
             ch.writeEndElement();
 
             ch.writeStartElement("div");
@@ -252,13 +236,28 @@ public class PageServlet extends HttpServlet {
                             + "\t}\n"
                             + "}";
 
+            ch.writeStartElement("div");
+            ch.writeAttribute("id", "dsdprogress");
+            ch.writeStartElement("img");
+            ch.writeAttribute("src", "../vis/wait30trans.gif");
+            ch.writeEndElement();
+            ch.writeEndElement();
+
+            ch.writeStartElement("div");
+            ch.writeAttribute("id", "dsderror");
+            ch.writeEndElement();
+
+            ch.writeStartElement("div");
+            ch.writeAttribute("id", "dsdmap");
+            ch.writeEndElement();
+
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    "http://ontologycentral.com/sparql?query="
-                            + URLEncoder.encode(dsdquery, "utf-8"));
+                    "../sparql?query="
+                            + URLEncoder.encode(dsdquery, "utf-8") + "&format=tsv");
             // "PREFIX++sdmx-measure%3A+<http%3A%2F%2Fpurl.org%2Flinked-data%2Fsdmx%2F2009%2Fmeasure%23>%0D%0APREFIX++eus%3A++<http%3A%2F%2Fontologycentral.com%2F2009%2F01%2Feurostat%2Fns%23>%0D%0APREFIX++rdf%3A++<http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23>%0D%0APREFIX++qb%3A+++<http%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23>%0D%0APREFIX++rdfs%3A+<http%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23>%0D%0A%0D%0ASELECT++%3Ftime+%3Fvalue+%3Fgeo%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdata%2F" + id + ">%0D%0AFROM+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fdic%2Fgeo>%0D%0AWHERE+{%0D%0A++++%3Fs+qb%3Adataset+<http%3A%2F%2Festatwrap.ontologycentral.com%2Fid%2F" + id + "%23ds>+.%0D%0A++++%3Fs+eus%3Atime+%3Ftime+.%0D%0A++++%3Fs+eus%3Ageo+%3Fg+.%0D%0A++++%3Fg+rdfs%3Alabel+%3Fgeo+.%0D%0A++++%3Fs+sdmx-measure%3AobsValue+%3Fvalue+.+FILTER+(lang(%3Fgeo)+%3D+\"en\")+}");
-            ch.writeCharacters("SPARQL results");
+            ch.writeCharacters("Solutions");
             ch.writeEndElement();
 
             ch.writeStartElement("pre");
@@ -298,6 +297,8 @@ public class PageServlet extends HttpServlet {
                         ch.writeEndElement();
                         ch.writeEndElement();
             */
+            ch.writeEmptyElement("hr");
+
             ch.writeStartElement("p");
             ch.writeCharacters("Source: ");
             ch.writeStartElement("a");

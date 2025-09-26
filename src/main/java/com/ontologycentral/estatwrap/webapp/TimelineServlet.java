@@ -73,7 +73,7 @@ public class TimelineServlet extends HttpServlet {
             ch.writeStartElement("script");
             ch.writeAttribute("type", "text/javascript");
             ch.writeAttribute(
-                    "src", "http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js");
+                    "src", "https://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js");
             // "http://ajax.microsoft.com/ajax/jquery/jquery-1.5.min.js");
             // ch.writeAttribute("src",
             // "http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js");

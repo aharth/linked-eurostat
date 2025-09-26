@@ -4,7 +4,7 @@ All notable changes to the Eurostat Linked Data Wrapper project will be document
 
 ## [2025-09-26]
 - Update URI patterns: simplify fragment IDs, add rdfs:seeAlso links, and fix README.md inconsistencies
-- Add production of butter (tag00038) as first example in index.html
+- Add SPARQL query interface endpoint (/sparql) with HTML form and Jena ARQ backend
 
 ## [2025-09-24]
 - Fully support SDMX 3.0 XML API, removed legacy `/data/{id}` servlet

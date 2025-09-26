@@ -64,7 +64,11 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<servlet-name>toc</servlet-name>
 		<servlet-class>com.ontologycentral.estatwrap.webapp.TocServlet</servlet-class>
 	</servlet>
-	
+	<servlet>
+		<servlet-name>sparql</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.SparqlServlet</servlet-class>
+	</servlet>
+
 
 	<servlet-mapping>
 		<servlet-name>id</servlet-name>
@@ -127,7 +131,11 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<servlet-name>toc</servlet-name>
 		<url-pattern>/toc.rdf</url-pattern>
 	</servlet-mapping>
-	
+
+	<servlet-mapping>
+		<servlet-name>sparql</servlet-name>
+		<url-pattern>/sparql</url-pattern>
+	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

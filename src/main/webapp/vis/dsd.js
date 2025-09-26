@@ -12,9 +12,9 @@ function loadDsd(querystring) {
 	query : querystring
     };
     
-    $.ajax( 
+    $.ajax(
 	{
-	    url: "http://ontologycentral.com/sparql", 
+	    url: "../sparql", 
 	    data : request, 
 	    success:  function(data) {
 		displayDsd(data);		

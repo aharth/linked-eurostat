@@ -14,7 +14,7 @@ function load(querystring) {
     
     $.ajax(
 	{
-	    url: "http://ontologycentral.com/sparql",
+	    url: "../sparql",
 	    data: request, 
 	    success : function(data) {				
 		  renderResults(data);		
