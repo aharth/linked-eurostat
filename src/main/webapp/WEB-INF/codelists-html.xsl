@@ -38,10 +38,6 @@
 	  at <xsl:value-of select="current-dateTime()"/>.
 	</p>
 
-	<p>
-	  This catalog lists all available SKOS concept schemes (codelists) in the Eurostat system.
-	  Each codelist contains standardized codes and labels for statistical dimensions.
-	</p>
 
 	<table>
 	  <thead>

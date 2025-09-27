@@ -50,11 +50,6 @@ public class PageServlet extends HttpServlet {
         // 2 h
         resp.setHeader("Cache-Control", "public,max-age=7200");
 
-        //		resp.setHeader("Cache-Control", "public");
-        //		Calendar c = Calendar.getInstance();
-        //		//c.add(Calendar.DATE, 1);
-        //		c.add(Calendar.HOUR, 2);
-        //		resp.setHeader("Expires", Listener.RFC822.format(c.getTime()));
 
         XMLOutputFactory factory = (XMLOutputFactory) ctx.getAttribute(Listener.FACTORY);
 

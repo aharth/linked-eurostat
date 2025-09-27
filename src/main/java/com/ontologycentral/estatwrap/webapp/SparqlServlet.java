@@ -48,7 +48,6 @@ public class SparqlServlet extends HttpServlet {
             // URL decode the query if needed
             queryString = URLDecoder.decode(queryString, "UTF-8");
 
-            _log.info("Executing SPARQL query: " + queryString);
 
             // Parse the SPARQL query
             Query query = QueryFactory.create(queryString);
@@ -57,18 +56,15 @@ public class SparqlServlet extends HttpServlet {
             String resolvedQueryString = queryString;
             for (String fromUri : query.getGraphURIs()) {
                 String absoluteUri = resolveUri(fromUri, req);
-                _log.info("Resolving FROM URI: " + fromUri + " -> " + absoluteUri);
                 resolvedQueryString = resolvedQueryString.replace("<" + fromUri + ">", "<" + absoluteUri + ">");
             }
             for (String namedGraphUri : query.getNamedGraphURIs()) {
                 String absoluteUri = resolveUri(namedGraphUri, req);
-                _log.info("Resolving FROM NAMED URI: " + namedGraphUri + " -> " + absoluteUri);
                 resolvedQueryString = resolvedQueryString.replace("<" + namedGraphUri + ">", "<" + absoluteUri + ">");
             }
 
             // Reparse the query with resolved URIs
             query = QueryFactory.create(resolvedQueryString);
-            _log.info("Resolved query: " + resolvedQueryString);
 
             // Go back to DatasetUtils approach since it loads data correctly
             java.util.List<String> defaultGraphList = new java.util.ArrayList<>();
@@ -77,35 +73,28 @@ public class SparqlServlet extends HttpServlet {
             // Convert relative URIs to absolute URIs for FROM clauses
             for (String fromUri : query.getGraphURIs()) {
                 String absoluteUri = resolveUri(fromUri, req);
-                _log.info("Adding default graph: " + absoluteUri);
                 defaultGraphList.add(absoluteUri);
             }
 
             // Convert relative URIs to absolute URIs for FROM NAMED clauses
             for (String namedGraphUri : query.getNamedGraphURIs()) {
                 String absoluteUri = resolveUri(namedGraphUri, req);
-                _log.info("Adding named graph: " + absoluteUri);
                 namedGraphList.add(absoluteUri);
             }
 
             Dataset dataset;
             if (!defaultGraphList.isEmpty() || !namedGraphList.isEmpty()) {
                 dataset = DatasetUtils.createDataset(defaultGraphList, namedGraphList);
-                _log.info("Created dataset using DatasetUtils with explicit graphs");
             } else {
                 dataset = DatasetFactory.create();
-                _log.info("Created empty dataset (no FROM clauses)");
             }
 
-            // Log dataset info
-            _log.info("Dataset contains " + dataset.getDefaultModel().size() + " triples in default graph");
 
             // Remove FROM clauses from query since we pre-loaded the data into the dataset
             String queryStringForExecution = resolvedQueryString;
             if (!query.getGraphURIs().isEmpty()) {
                 // Remove all FROM clauses since data is pre-loaded
                 queryStringForExecution = queryStringForExecution.replaceAll("FROM\\s+<[^>]+>", "");
-                _log.info("Removed FROM clauses for execution: " + queryStringForExecution);
             }
             Query queryForExecution = QueryFactory.create(queryStringForExecution);
 

@@ -98,7 +98,6 @@ public class CodelistsServlet extends HttpServlet {
             StreamSource source = new StreamSource(new StringReader(xmlContent));
             StreamResult result = new StreamResult(writer);
 
-            _log.log(Level.INFO, "Generating codelists catalog in {0} format", format);
             transformer.transform(source, result);
 
             xslStream.close();

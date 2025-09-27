@@ -39,9 +39,13 @@ public class Main {
     public static String URI_PREFIX_21 = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1";
     public static String URI_PREFIX_3 = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0";
 
-    public static SimpleDateFormat RFC822 =
-            new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
-    public static SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    // Thread-safe date formatters using ThreadLocal
+    public static final ThreadLocal<SimpleDateFormat> ISO8601 = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        }
+    };
 
     /** */
     public static void main(String[] args) throws IOException, XMLStreamException {

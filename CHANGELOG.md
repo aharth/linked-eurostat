@@ -4,6 +4,7 @@ All notable changes to the Eurostat Linked Data Wrapper project will be document
 
 ## [2025-09-27]
 - Add inventory of codelists (available at /codelists.html and /codelists.rdf)
+- Add RSS/RDF feed of recent dataset updates (available at /feed.rdf)
 
 ## [2025-09-26]
 - Update URI patterns: simplify fragment IDs, add rdfs:seeAlso links, and fix README.md inconsistencies

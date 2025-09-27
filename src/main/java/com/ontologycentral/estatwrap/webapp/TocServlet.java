@@ -90,7 +90,6 @@ public class TocServlet extends HttpServlet {
             StreamSource source = new StreamSource(xmlStream);
             StreamResult result = new StreamResult(writer);
 
-            _log.log(Level.INFO, "Generating table of contents in {0} format", format);
             transformer.transform(source, result);
 
             xmlStream.close();

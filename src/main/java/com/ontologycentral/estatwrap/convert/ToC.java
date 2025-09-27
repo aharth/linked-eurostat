@@ -73,7 +73,6 @@ public class ToC {
                         } else if ("leaf".equals(endLocalName)) {
                             if (currentCode != null && currentTitle != null) {
                                 toc.put(currentCode, currentTitle);
-                                _log.info("Added ToC entry: " + currentCode + " = " + currentTitle);
                             }
                             currentCode = null;
                             currentTitle = null;

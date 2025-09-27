@@ -22,7 +22,8 @@ https://ec.europa.eu/eurostat/api/dissemination/
 │       ├── conceptscheme/ESTAT/{id}              # Concept schemes
 │       └── dataconstraint/ESTAT/{id}             # Data constraints
 ├── catalogue/
-│   └── toc/xml                                   # Table of contents (dataset catalog)
+│   ├── toc/xml                                   # Table of contents (dataset catalog)
+│   └── rss/en/statistics-update.rss              # RSS feed of dataset updates
 └── files/
     └── inventory?type=codelist                   # Codelist inventory
 ```
@@ -49,6 +50,8 @@ https://ec.europa.eu/eurostat/api/dissemination/
   - → `/catalogue/toc/xml`
 - `/codelists.html` / `/codelists.rdf` - Codelists Inventory (SKOS Concept Schemes Catalog)
   - → `/files/inventory?type=codelist`
+- `/feed.rdf` - RSS/RDF Feed of Recent Dataset Update Events
+  - → `/catalogue/rss/en/statistics-update.rss`
 
 ## URI Structure Fragments
 
@@ -72,6 +75,7 @@ https://ec.europa.eu/eurostat/api/dissemination/
 - `/dc/{id}#constraint` - The data constraint resource
 - `/cl/{dim}#cl-{clid}` - The codelist scheme resource
 - `/da/{id}#ds` - The data set resource
+- `/feed.rdf#update-{id}-{timestamp}` - Dataset update event activities
 
 ### Sub-Resources
 - `/cl/{dim}#code-{value}` - Individual code resources (e.g., `#code-EU27`)
@@ -98,6 +102,7 @@ Document URIs (without fragments) are not assigned explicit RDF classes. They ar
 - `/dc/{id}#constraint` → `qb:DataConstraint`
 - `/cl/{dim}#cl-{clid}` → `skos:ConceptScheme`
 - `/da/{id}#ds` → `qb:DataSet`
+- `/feed.rdf#update-{id}-{timestamp}` → `prov:Activity`
 
 #### Sub-Resources
 - `/cl/{dim}#code-{value}` → `skos:Concept`
