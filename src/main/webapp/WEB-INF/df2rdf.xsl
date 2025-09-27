@@ -35,6 +35,15 @@
       <rdf:Description rdf:about="">
 	<rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
 	<dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
+	<rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/toc.rdf"/>
+	<rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/codelists.rdf"/>
+	<rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/feed.rdf"/>
+	<rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/help/copyright-notice"/>
+	<rdfs:seeAlso rdf:resource="../cs/{//s:Dataflow/@id}"/>
+	<rdfs:seeAlso rdf:resource="../ds/{//s:Dataflow/@id}"/>
+	<rdfs:seeAlso rdf:resource="../da/{//s:Dataflow/@id}"/>
+	<rdfs:seeAlso rdf:resource="../dc/{//s:Dataflow/@id}"/>
+	<dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
 	<foaf:topic rdf:resource="#df"/>
 	<prov:wasGeneratedBy rdf:resource="#transformation"/>
       </rdf:Description>
@@ -154,6 +163,9 @@
       <!-- Process names and descriptions -->
       <xsl:apply-templates select="c:Name"/>
       <xsl:apply-templates select="c:Description"/>
+
+      <!-- License -->
+      <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
 
       <!-- PROV: Derived from original SDMX source -->
       <prov:wasDerivedFrom>

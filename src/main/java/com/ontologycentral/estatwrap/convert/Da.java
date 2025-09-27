@@ -420,6 +420,12 @@ public class Da {
         writer.write("    rdfs:comment \"No guarantee of correctness! USE AT YOUR OWN RISK!\" ;\n");
         writer.write("    dcterms:publisher \"Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)\" ;\n");
         writer.write("    rdfs:seeAlso <http://estatwrap.ontologycentral.com/table_of_contents.rdf> ;\n");
+        writer.write("    rdfs:seeAlso <https://ec.europa.eu/eurostat/web/main/help/copyright-notice> ;\n");
+        writer.write("    rdfs:seeAlso <../cs/" + id + "> ;\n");
+        writer.write("    rdfs:seeAlso <../ds/" + id + "> ;\n");
+        writer.write("    rdfs:seeAlso <../df/" + id + "> ;\n");
+        writer.write("    rdfs:seeAlso <../dc/" + id + "> ;\n");
+        writer.write("    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;\n");
         writer.write("    dcterms:date \"" + Main.ISO8601.get().format(new java.util.Date()) + "\"^^xsd:dateTime ;\n");
         writer.write("    prov:wasGeneratedBy <#transformation> .\n");
         writer.write("\n");
@@ -427,11 +433,7 @@ public class Da {
         writer.write("<#ds>\n");
         writer.write("    a qb:DataSet ;\n");
         writer.write("    rdfs:comment \"Source: Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/).\" ;\n");
-        writer.write("    rdfs:seeAlso <http://epp.eurostat.ec.europa.eu/portal/page/portal/about_eurostat/corporate/copyright_licence_policy> ;\n");
-        writer.write("    rdfs:seeAlso <../cs/" + id + "> ;\n");
-        writer.write("    rdfs:seeAlso <../ds/" + id + "> ;\n");
-        writer.write("    rdfs:seeAlso <../df/" + id + "> ;\n");
-        writer.write("    rdfs:seeAlso <../dc/" + id + "> ;\n");
+        writer.write("    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;\n");
         writer.write("    foaf:page <> ;\n");
         writer.write("    foaf:homepage <https://ec.europa.eu/eurostat/web/products-datasets/-/" + id + "> ;\n");
         writer.write("    qb:structure <../ds/" + id + "#ds> .\n");
