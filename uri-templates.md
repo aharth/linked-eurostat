@@ -2,6 +2,26 @@
 
 This document defines the URI structure and patterns used by the Linked Eurostat application.
 
+## Upstream Eurostat API Structure
+
+The application maps to Eurostat's API which has three main branches:
+
+```
+https://ec.europa.eu/eurostat/api/dissemination/
+├── sdmx/3.0/
+│   ├── data/dataflow/ESTAT/{id}/1.0              # Actual statistical data
+│   └── structure/
+│       ├── dataflow/ESTAT/{id}                   # Dataflow metadata
+│       ├── datastructure/ESTAT/{id}              # Data structure definitions
+│       ├── codelist/ESTAT/{id}                   # Code lists
+│       ├── conceptscheme/ESTAT/{id}              # Concept schemes
+│       └── dataconstraint/ESTAT/{id}             # Data constraints
+├── catalogue/
+│   └── toc/xml                                   # Table of contents (dataset catalog)
+└── files/
+    └── inventory?type=codelist                   # Codelist inventory
+```
+
 ## Parameter Definitions
 
 - `{id}` - Dataset identifier (e.g., `tag00038`, `tec00114`)
@@ -20,11 +40,19 @@ This document defines the URI structure and patterns used by the Linked Eurostat
 ### Endpoints
 
 - `/cl/{dim}` - Code Lists (SKOS Concept Schemes and Concepts)
+  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/codelist/ESTAT/{clid}`
 - `/cs/{id}` - Concept Schemes
+  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/conceptscheme/ESTAT/{id}`
 - `/ds/{id}` - Data Structure Definitions
+  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/datastructure/ESTAT/{id}`
 - `/df/{id}` - Data Flows
+  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/dataflow/ESTAT/{id}`
 - `/dc/{id}` - Data Constraints
+  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/dataconstraint/ESTAT/{id}`
 - `/da/{id}` - Data Observations
+  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/data/dataflow/ESTAT/{id}/1.0?format=tsv&compress=false`
+- ToC servlet - Table of Contents
+  - → `https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml`
 
 ### Document URIs vs Fragment Identifiers
 
@@ -84,38 +112,3 @@ rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 - **Code Lists (`/cl/{dim}#cl-{clid}`)**: `skos:ConceptScheme` - Controlled vocabularies
   - Referenced by dimension properties in DSDs
 
-## Examples
-
-### Dataflow URI Pattern (Catalog Metadata)
-```
-Document URI: https://estatwrap.ontologycentral.com/df/tag00038
-Resource URI: https://estatwrap.ontologycentral.com/df/tag00038#df
-Resource Type: dcat:Dataset
-Source ref:   https://estatwrap.ontologycentral.com/df/apro_mk_pobta#df
-Note: No qb:structure - this is catalog metadata, not a data cube
-```
-
-### Data Observations URI Pattern (Actual Data Cube)
-```
-Document URI: https://estatwrap.ontologycentral.com/da/tag00038
-Resource URI: https://estatwrap.ontologycentral.com/da/tag00038#dataset
-Resource Type: qb:DataSet
-Structure ref: https://estatwrap.ontologycentral.com/ds/tag00038#ds
-```
-
-### Data Structure URI Pattern (Cube Schema)
-```
-Document URI: https://estatwrap.ontologycentral.com/ds/tag00038
-DSD URI:      https://estatwrap.ontologycentral.com/ds/tag00038#ds
-Resource Type: qb:DataStructureDefinition
-Component:    https://estatwrap.ontologycentral.com/ds/tag00038#component-GEO
-Dimension:    https://estatwrap.ontologycentral.com/ds/tag00038#dim-GEO
-```
-
-### Code List URI Pattern (Controlled Vocabulary)
-```
-Document URI: https://estatwrap.ontologycentral.com/cl/geo
-Scheme URI:   https://estatwrap.ontologycentral.com/cl/geo#cl-CL_GEO
-Resource Type: skos:ConceptScheme
-Code URI:     https://estatwrap.ontologycentral.com/cl/geo#code-EU27
-```
