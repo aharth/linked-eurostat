@@ -69,6 +69,7 @@ https://ec.europa.eu/eurostat/api/dissemination/
 - `/df/{id}#df` - The dataflow resource
 - `/dc/{id}#constraint` - The data constraint resource
 - `/cl/{dim}#cl-{clid}` - The codelist scheme resource
+- `/da/{id}#ds` - The data set resource
 
 ### Sub-Resources
 - `/cl/{dim}#code-{value}` - Individual code resources (e.g., `#code-EU27`)
@@ -92,7 +93,7 @@ Document URIs (without fragments) are not assigned explicit RDF classes. They ar
 - `/df/{id}#df` → `dcat:Dataset`
 - `/dc/{id}#constraint` → `qb:DataConstraint`
 - `/cl/{dim}#cl-{clid}` → `skos:ConceptScheme`
-- `/da/{id}#dataset` → `qb:DataSet`
+- `/da/{id}#ds` → `qb:DataSet`
 
 #### Sub-Resources
 - `/cl/{dim}#code-{value}` → `skos:Concept`
@@ -102,26 +103,6 @@ Document URIs (without fragments) are not assigned explicit RDF classes. They ar
 - `/ds/{id}#attr-{compid}` → `qb:AttributeProperty`
 - `/ds/{id}#measure-{compid}` → `qb:MeasureProperty`
 
-### Resource Types and Relationships
-
-- **Dataflows (`/df/{id}#df`)**: `dcat:Dataset` - Catalog metadata describing publication configurations
-  - Use `dcterms:source` to reference source datasets
-  - Do NOT use `qb:structure` (they are metadata, not data cubes)
-
-- **Data Observations (`/da/{id}#dataset`)**: `qb:DataSet` - Actual statistical data cubes
-  - Use `qb:structure` to reference data structure definitions
-  - Contains the actual observations and measurements
-
-- **Data Structure Definitions (`/ds/{id}#ds`)**: `qb:DataStructureDefinition` - Cube schemas
-  - Define dimensions, measures, and attributes
-  - Referenced by data cubes via `qb:structure`
-
-- **Code Lists (`/cl/{dim}#cl-{clid}`)**: `skos:ConceptScheme` - Controlled vocabularies
-  - Referenced by dimension properties in DSDs
-
-- **Concept Schemes (`/cs/{id}#cs`)**: `skos:ConceptScheme` - Semantic definitions and concepts
-
-- **Data Constraints (`/dc/{id}#constraint`)**: `qb:DataConstraint` - Validation rules and constraints
 
 ## Design Principles
 
