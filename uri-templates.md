@@ -45,8 +45,10 @@ https://ec.europa.eu/eurostat/api/dissemination/
   - → `/sdmx/3.0/structure/dataconstraint/ESTAT/{id}`
 - `/da/{id}` - Data Observations
   - → `/sdmx/3.0/data/dataflow/ESTAT/{id}/1.0?format=tsv&compress=false`
-- ToC servlet - Table of Contents
+- `/toc.html` / `/toc.rdf` - Table of Contents (Datasets Catalog)
   - → `/catalogue/toc/xml`
+- `/codelists.html` / `/codelists.rdf` - Codelists Inventory (SKOS Concept Schemes Catalog)
+  - → `/files/inventory?type=codelist`
 
 ## URI Structure Fragments
 

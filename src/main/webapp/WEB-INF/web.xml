@@ -65,6 +65,10 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<servlet-class>com.ontologycentral.estatwrap.webapp.TocServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>codelists</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.CodelistsServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>sparql</servlet-name>
 		<servlet-class>com.ontologycentral.estatwrap.webapp.SparqlServlet</servlet-class>
 	</servlet>
@@ -130,6 +134,16 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 	<servlet-mapping>
 		<servlet-name>toc</servlet-name>
 		<url-pattern>/toc.rdf</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>codelists</servlet-name>
+		<url-pattern>/codelists.html</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>codelists</servlet-name>
+		<url-pattern>/codelists.rdf</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

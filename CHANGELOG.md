@@ -2,6 +2,9 @@
 
 All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
 
+## [2025-09-27]
+- Add inventory of codelists (available at /codelists.html and /codelists.rdf)
+
 ## [2025-09-26]
 - Update URI patterns: simplify fragment IDs, add rdfs:seeAlso links, and fix README.md inconsistencies
 - Add SPARQL query interface endpoint (/sparql) with HTML form and Jena ARQ backend

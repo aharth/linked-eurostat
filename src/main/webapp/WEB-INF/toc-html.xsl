@@ -37,16 +37,17 @@
 	<h1>Table of Contents</h1>
 
 	<p>
-	  Generated from
-	  <a>
-	    <xsl:attribute name="href">http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&amp;file=table_of_contents.xml</xsl:attribute>
-	    ec.europa.eu
-	  </a>
-	    at <xsl:value-of  select="current-dateTime()"/>.
+	  See also: <a href="https://ec.europa.eu/eurostat/web/main/data/database">Eurostat Database</a> for interactive data browsing.
 	</p>
 
 	<p>
-	  See also: <a href="https://ec.europa.eu/eurostat/web/main/data/database">Eurostat Database</a> for interactive data browsing.
+	  Total: <xsl:value-of select="count(.//nt:leaf)"/> datasets
+	</p>
+
+	<p>
+	  Generated from
+	  <a href="https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml">Eurostat table of contents</a>
+	  at <xsl:value-of  select="current-dateTime()"/>.
 	</p>
 
 	<xsl:apply-templates/>

@@ -14,7 +14,6 @@
    xmlns:dcat="http://www.w3.org/ns/dcat#"
    xmlns:adms="http://www.w3.org/ns/adms#"
    xmlns:owl="http://www.w3.org/2002/07/owl#"
-   xmlns:void="http://rdfs.org/ns/void#"
    xmlns:prov="http://www.w3.org/ns/prov#"
    xmlns:m="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message"
    xmlns:s="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/structure"
@@ -231,7 +230,7 @@
 
       <!-- Observation count -->
       <xsl:when test="c:AnnotationType = 'OBS_COUNT'">
-        <void:triples rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="c:AnnotationTitle"/></void:triples>
+        <dcterms:extent><xsl:value-of select="c:AnnotationTitle"/> observations</dcterms:extent>
       </xsl:when>
 
       <!-- Source dataset -->

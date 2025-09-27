@@ -52,15 +52,17 @@ public class DfServlet extends HttpServlet {
 
             conn.setRequestProperty("User-Agent", "estatwrap.ontologycentral.com");
 
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                resp.sendError(responseCode);
+                return;
+            }
+
             InputStream is = null;
             if (url.toString().contains("compressed=true") || url.toString().contains("compress=true")) {
                 is = new GZIPInputStream(conn.getInputStream());
             } else {
                 is = conn.getInputStream();
-            }
-
-            if (conn.getResponseCode() != 200) {
-                resp.sendError(conn.getResponseCode());
             }
 
             String encoding = "UTF-8"; // Default to UTF-8 for SDMX API responses

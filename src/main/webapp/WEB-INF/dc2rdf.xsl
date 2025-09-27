@@ -9,7 +9,6 @@
    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
    xmlns:foaf="http://xmlns.com/foaf/0.1/"
    xmlns:dcat="http://www.w3.org/ns/dcat#"
-   xmlns:void="http://rdfs.org/ns/void#"
    xmlns:prov="http://www.w3.org/ns/prov#"
    xmlns:m="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/message"
    xmlns:s="http://www.sdmx.org/resources/sdmxml/schemas/v3_0/structure"
@@ -73,7 +72,7 @@
   </xsl:template>
 
   <xsl:template match='s:DataConstraint'>
-    <void:Dataset>
+    <qb:DataConstraint>
       <xsl:attribute name="rdf:about">#constraint</xsl:attribute>
 
       <!-- Basic identifiers -->
@@ -103,9 +102,9 @@
       <!-- Count available values for statistics -->
       <xsl:variable name="totalValues" select="count(s:CubeRegion/s:KeyValue/s:Value)"/>
       <xsl:if test="$totalValues > 0">
-        <void:distinctSubjects rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"><xsl:value-of select="$totalValues"/></void:distinctSubjects>
+        <dcterms:extent><xsl:value-of select="$totalValues"/> constraint values</dcterms:extent>
       </xsl:if>
-    </void:Dataset>
+    </qb:DataConstraint>
   </xsl:template>
 
   <!-- Template for Names -->
