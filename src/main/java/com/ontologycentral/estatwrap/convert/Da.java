@@ -407,6 +407,7 @@ public class Da {
 
         writer.write("@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n");
         writer.write("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n");
+        writer.write("@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n");
         writer.write("@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n");
         writer.write("@prefix qb: <http://purl.org/linked-data/cube#> .\n");
         writer.write("@prefix sdmx-measure: <http://purl.org/linked-data/sdmx/2009/measure#> .\n");
