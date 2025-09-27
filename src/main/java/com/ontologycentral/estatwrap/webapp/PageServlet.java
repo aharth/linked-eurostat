@@ -110,7 +110,7 @@ public class PageServlet extends HttpServlet {
             String query =
                     "BASE <https://estatwrap.ontologycentral.com/>\nPREFIX dim: <ds/" + id + "#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX qb: <http://purl.org/linked-data/cube#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\nSELECT ?time ?value ?geo\nFROM <da/"
                             + id
-                            + ">\nFROM <cl/geo>\nWHERE {\n\t?s qb:dataSet <id/"
+                            + ">\nFROM <cl/geo>\nWHERE {\n\t?s qb:dataSet <da/"
                             + id
                             + "#ds> .\n\t?s dim:dim-TIME_PERIOD ?time .\n\t?s dim:dim-geo ?g .\n\t?g skos:prefLabel ?geo .\n\t?s <ds/" + id + "#measure-OBS_VALUE> ?value .\n\tFILTER (lang(?geo) = \"en\")\n}\nORDER BY ?geo";
             // String query =

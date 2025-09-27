@@ -227,7 +227,7 @@ public class SparqlServlet extends HttpServlet {
         out.println("SELECT ?time ?value ?geo");
         out.println("FROM <da/tag00038>");
         out.println("WHERE {");
-        out.println("    ?s qb:dataSet <id/tag00038#ds> .");
+        out.println("    ?s qb:dataSet <da/tag00038#ds> .");
         out.println("    ?s dim:dim-TIME_PERIOD ?time .");
         out.println("    ?s dim:dim-geo ?geo .");
         out.println("    ?s <ds/tag00038#measure-OBS_VALUE> ?value .");
