@@ -164,9 +164,6 @@
       <xsl:apply-templates select="c:Name"/>
       <xsl:apply-templates select="c:Description"/>
 
-      <!-- License -->
-      <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
-
       <!-- PROV: Derived from original SDMX source -->
       <prov:wasDerivedFrom>
         <xsl:attribute name="rdf:resource">https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/dataflow/ESTAT/<xsl:value-of select="@id"/></xsl:attribute>

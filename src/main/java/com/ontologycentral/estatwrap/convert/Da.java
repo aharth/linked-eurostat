@@ -433,7 +433,6 @@ public class Da {
         writer.write("<#ds>\n");
         writer.write("    a qb:DataSet ;\n");
         writer.write("    rdfs:comment \"Source: Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/).\" ;\n");
-        writer.write("    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;\n");
         writer.write("    foaf:page <> ;\n");
         writer.write("    foaf:homepage <https://ec.europa.eu/eurostat/web/products-datasets/-/" + id + "> ;\n");
         writer.write("    qb:structure <../ds/" + id + "#ds> .\n");
