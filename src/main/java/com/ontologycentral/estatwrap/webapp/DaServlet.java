@@ -62,6 +62,11 @@ public class DaServlet extends HttpServlet {
             conn.setUseCaches(true);
             conn.setRequestProperty("User-Agent", "estatwrap.ontologycentral.com");
 
+            if (conn.getResponseCode() != 200) {
+                resp.sendError(conn.getResponseCode());
+                return;
+            }
+
             InputStream is;
             // Check if response is compressed despite compress=false parameter
             String contentEncoding = conn.getHeaderField("Content-Encoding");
@@ -69,11 +74,6 @@ public class DaServlet extends HttpServlet {
                 is = new GZIPInputStream(conn.getInputStream());
             } else {
                 is = conn.getInputStream();
-            }
-
-            if (conn.getResponseCode() != 200) {
-                resp.sendError(conn.getResponseCode());
-                return;
             }
 
             String encoding = conn.getContentEncoding();

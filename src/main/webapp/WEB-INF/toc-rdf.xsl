@@ -30,8 +30,7 @@
         <xsl:value-of select="$date"/>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:template></xsl:parameter>
-</invoke>
+  </xsl:template>
 
   <xsl:template match="nt:tree">
     <rdf:RDF>
