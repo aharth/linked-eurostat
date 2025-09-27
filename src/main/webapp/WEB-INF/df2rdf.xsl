@@ -235,9 +235,9 @@
 
       <!-- Source dataset -->
       <xsl:when test="c:AnnotationType = 'DISSEMINATION_SOURCE_DATASET'">
-        <dcterms:source>
-          <xsl:attribute name="rdf:resource">../df/<xsl:value-of select="translate(c:AnnotationTitle, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>#df</xsl:attribute>
-        </dcterms:source>
+        <xsl:call-template name="split-source-datasets">
+          <xsl:with-param name="datasets" select="c:AnnotationTitle"/>
+        </xsl:call-template>
       </xsl:when>
 
       <!-- Metadata links -->
@@ -267,6 +267,33 @@
           </dcterms:publisher>
         </xsl:for-each>
       </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Template to split comma-separated source datasets -->
+  <xsl:template name="split-source-datasets">
+    <xsl:param name="datasets"/>
+    <xsl:choose>
+      <xsl:when test="contains($datasets, ',')">
+        <!-- Process first dataset -->
+        <xsl:variable name="first" select="normalize-space(substring-before($datasets, ','))"/>
+        <dcterms:source>
+          <xsl:attribute name="rdf:resource">../df/<xsl:value-of select="translate($first, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>#df</xsl:attribute>
+        </dcterms:source>
+        <!-- Recursively process remaining datasets -->
+        <xsl:call-template name="split-source-datasets">
+          <xsl:with-param name="datasets" select="substring-after($datasets, ',')"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- Process single/last dataset -->
+        <xsl:variable name="dataset" select="normalize-space($datasets)"/>
+        <xsl:if test="$dataset != ''">
+          <dcterms:source>
+            <xsl:attribute name="rdf:resource">../df/<xsl:value-of select="translate($dataset, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>#df</xsl:attribute>
+          </dcterms:source>
+        </xsl:if>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
