@@ -27,26 +27,24 @@ https://ec.europa.eu/eurostat/api/dissemination/
     └── inventory?type=codelist                   # Codelist inventory
 ```
 
-## URI Structure
+## URI Structure Documents
 
 ### Endpoints
 
 - `/cl/{dim}` - Code Lists (SKOS Concept Schemes and Concepts)
-  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/codelist/ESTAT/{dim}`
+  - → `/sdmx/3.0/structure/codelist/ESTAT/{dim}`
 - `/cs/{id}` - Concept Schemes
-  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/conceptscheme/ESTAT/{id}`
+  - → `/sdmx/3.0/structure/conceptscheme/ESTAT/{id}`
 - `/ds/{id}` - Data Structure Definitions
-  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/datastructure/ESTAT/{id}`
+  - → `/sdmx/3.0/structure/datastructure/ESTAT/{id}`
 - `/df/{id}` - Data Flows
-  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/dataflow/ESTAT/{id}`
+  - → `/sdmx/3.0/structure/dataflow/ESTAT/{id}`
 - `/dc/{id}` - Data Constraints
-  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/dataconstraint/ESTAT/{id}`
+  - → `/sdmx/3.0/structure/dataconstraint/ESTAT/{id}`
 - `/da/{id}` - Data Observations
-  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/data/dataflow/ESTAT/{id}/1.0?format=tsv&compress=false`
+  - → `/sdmx/3.0/data/dataflow/ESTAT/{id}/1.0?format=tsv&compress=false`
 - ToC servlet - Table of Contents
-  - → `https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml`
-
-### Document URIs vs Fragment Identifiers
+  - → `/catalogue/toc/xml`
 
 **Document URIs** (without fragments) refer to entire RDF documents and are used in `rdfs:seeAlso` links:
 ```turtle
@@ -56,7 +54,7 @@ rdfs:seeAlso <../df/{id}> ;     # Link to dataflow document
 rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 ```
 
-**Fragment Identifiers** (with `#`) refer to specific resources within documents and are used in property values:
+## URI Structure Fragments
 
 ### Additional Parameter Definitions
 
@@ -69,14 +67,16 @@ rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 - Codelist ID: `CL_GEO` → used in `#cl-CL_GEO`, codelist references
 - Dimension name: `geo` → used in `/cl/geo` URL path
 
-#### Main Resources
+**Fragment Identifiers** (with `#`) refer to specific resources within documents and are used in property values:
+
+### Main Resources
 - `/cs/{id}#cs` - The concept scheme resource
 - `/ds/{id}#ds` - The data structure definition resource
 - `/df/{id}#df` - The dataflow resource
 - `/dc/{id}#constraint` - The data constraint resource
 - `/cl/{dim}#cl-{clid}` - The codelist scheme resource
 
-#### Sub-Resources
+### Sub-Resources
 - `/cl/{dim}#code-{value}` - Individual code resources (e.g., `#code-EU27`)
 - `/cs/{id}#concept-{value}` - Individual concepts (e.g., `#concept-2020`)
 - `/ds/{id}#component-{compid}` - Data structure components (e.g., `#component-FREQ`)
