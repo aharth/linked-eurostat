@@ -81,6 +81,8 @@ https://ec.europa.eu/eurostat/api/dissemination/
 
 ## Semantic Model
 
+The application uses well-known vocabularies to describe the resources, including the W3C Data Cube vocabulary (qb:), SKOS vocabulary (skos:), and DCAT vocabulary (dcat:).
+
 ### Document URI Classes
 
 Document URIs (without fragments) are not assigned explicit RDF classes. They are described with properties like `rdfs:comment`, `dcterms:publisher`, and `foaf:topic` pointing to the main fragment resource.
