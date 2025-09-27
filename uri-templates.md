@@ -99,7 +99,7 @@ Document URIs (without fragments) are not assigned explicit RDF classes. They ar
 - `/cs/{id}#cs` → `skos:ConceptScheme`
 - `/ds/{id}#ds` → `qb:DataStructureDefinition`
 - `/df/{id}#df` → `dcat:Dataset`
-- `/dc/{id}#constraint` → `qb:DataConstraint`
+- `/dc/{id}#dc` → `qb:DataConstraint`
 - `/cl/{dim}#cl-{clid}` → `skos:ConceptScheme`
 - `/da/{id}#ds` → `qb:DataSet`
 - `/feed.rdf#update-{id}-{timestamp}` → `prov:Activity`

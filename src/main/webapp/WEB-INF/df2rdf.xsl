@@ -166,6 +166,15 @@
       <!-- Link to data structure definition -->
       <xsl:apply-templates select="s:Structure"/>
 
+      <!-- Link to actual data observations -->
+      <dcat:distribution>
+        <dcat:Distribution rdf:about="../da/{@id}#ds">
+          <dcterms:title>Data observations for <xsl:value-of select="@id"/></dcterms:title>
+          <dcterms:format>RDF/XML</dcterms:format>
+          <dcat:mediaType>application/rdf+xml</dcat:mediaType>
+        </dcat:Distribution>
+      </dcat:distribution>
+
       <!-- Process annotations -->
       <xsl:apply-templates select="c:Annotations"/>
     </dcat:Dataset>

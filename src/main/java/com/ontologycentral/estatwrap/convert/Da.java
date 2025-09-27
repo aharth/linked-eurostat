@@ -76,7 +76,7 @@ public class Da {
                 out.writeStartElement("qb:Observation");
 
                 out.writeStartElement("qb:dataSet");
-                out.writeAttribute("rdf:resource", "../id/" + id + "#ds");
+                out.writeAttribute("rdf:resource", "#ds");
                 out.writeEndElement();
 
                 for (int j = 0; j < hd1.size(); j++) {
@@ -178,7 +178,7 @@ public class Da {
 
                 out.write(obsId + "\n");
                 out.write("    a qb:Observation ;\n");
-                out.write("    qb:dataSet <../id/" + id + "#ds> ;\n");
+                out.write("    qb:dataSet <#ds> ;\n");
 
                 for (int j = 0; j < hd1.size(); j++) {
                     out.write("    dim:dim-" + hd1.get(j) + " ");
@@ -367,7 +367,7 @@ public class Da {
         ch.writeEndElement();
 
         ch.writeStartElement("qb:DataSet");
-        ch.writeAttribute("rdf:about", "../id/" + id + "#ds");
+        ch.writeAttribute("rdf:about", "#ds");
 
         ch.writeStartElement("rdfs:comment");
         ch.writeCharacters(
@@ -424,7 +424,7 @@ public class Da {
         writer.write("    prov:wasGeneratedBy <#transformation> .\n");
         writer.write("\n");
 
-        writer.write("<../id/" + id + "#ds>\n");
+        writer.write("<#ds>\n");
         writer.write("    a qb:DataSet ;\n");
         writer.write("    rdfs:comment \"Source: Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/).\" ;\n");
         writer.write("    rdfs:seeAlso <http://epp.eurostat.ec.europa.eu/portal/page/portal/about_eurostat/corporate/copyright_licence_policy> ;\n");

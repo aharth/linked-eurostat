@@ -145,34 +145,16 @@ public class PageServlet extends HttpServlet {
 
             ch.writeStartElement("dt");
             ch.writeStartElement("a");
-            ch.writeAttribute("href", "../da/" + id);
-            ch.writeCharacters("../da/" + id);
+            ch.writeAttribute("href", "../df/" + id);
+            ch.writeCharacters("../df/" + id);
             ch.writeEndElement();
             ch.writeEndElement();
             ch.writeStartElement("dd");
-            ch.writeCharacters("Data observations (");
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_21 + "/data/" + id);
-            ch.writeCharacters("SDMX");
-            ch.writeEndElement();
-            ch.writeCharacters(")");
-            ch.writeEndElement();
-
-            ch.writeStartElement("dt");
-            ch.writeStartElement("a");
-            ch.writeAttribute("href", "../cs/" + id);
-            ch.writeCharacters("../cs/" + id);
-            ch.writeEndElement();
-            ch.writeEndElement();
-            ch.writeStartElement("dd");
-            ch.writeCharacters("Concept scheme (");
+            ch.writeCharacters("Dataflow (");
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3
-                            + "/structure/conceptscheme/ESTAT/"
-                            + id
-                            + "?compressed=false");
+                    Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX");
             ch.writeEndElement();
             ch.writeCharacters(")");
@@ -200,16 +182,19 @@ public class PageServlet extends HttpServlet {
 
             ch.writeStartElement("dt");
             ch.writeStartElement("a");
-            ch.writeAttribute("href", "../df/" + id);
-            ch.writeCharacters("../df/" + id);
+            ch.writeAttribute("href", "../cs/" + id);
+            ch.writeCharacters("../cs/" + id);
             ch.writeEndElement();
             ch.writeEndElement();
             ch.writeStartElement("dd");
-            ch.writeCharacters("Dataflow (");
+            ch.writeCharacters("Concept scheme (");
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id + "?compressed=false");
+                    Main.URI_PREFIX_3
+                            + "/structure/conceptscheme/ESTAT/"
+                            + id
+                            + "?compressed=false");
             ch.writeCharacters("SDMX");
             ch.writeEndElement();
             ch.writeCharacters(")");
@@ -230,6 +215,21 @@ public class PageServlet extends HttpServlet {
                             + "/structure/dataconstraint/ESTAT/"
                             + id
                             + "?compressed=false");
+            ch.writeCharacters("SDMX");
+            ch.writeEndElement();
+            ch.writeCharacters(")");
+            ch.writeEndElement();
+
+            ch.writeStartElement("dt");
+            ch.writeStartElement("a");
+            ch.writeAttribute("href", "../da/" + id);
+            ch.writeCharacters("../da/" + id);
+            ch.writeEndElement();
+            ch.writeEndElement();
+            ch.writeStartElement("dd");
+            ch.writeCharacters("Data observations (");
+            ch.writeStartElement("a");
+            ch.writeAttribute("href", Main.URI_PREFIX_21 + "/data/" + id);
             ch.writeCharacters("SDMX");
             ch.writeEndElement();
             ch.writeCharacters(")");

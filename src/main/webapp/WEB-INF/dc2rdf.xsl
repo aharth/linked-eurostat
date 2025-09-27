@@ -73,7 +73,7 @@
 
   <xsl:template match='s:DataConstraint'>
     <qb:DataConstraint>
-      <xsl:attribute name="rdf:about">#constraint</xsl:attribute>
+      <xsl:attribute name="rdf:about">#dc</xsl:attribute>
 
       <!-- Basic identifiers -->
       <dcterms:identifier><xsl:value-of select="@id"/></dcterms:identifier>
