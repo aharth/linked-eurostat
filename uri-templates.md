@@ -29,6 +29,8 @@ https://ec.europa.eu/eurostat/api/dissemination/
 
 ## URI Structure Documents
 
+**Document URIs** (without fragments) refer to entire RDF documents.
+
 ### Endpoints
 
 - `/cl/{dim}` - Code Lists (SKOS Concept Schemes and Concepts)
@@ -46,15 +48,9 @@ https://ec.europa.eu/eurostat/api/dissemination/
 - ToC servlet - Table of Contents
   - → `/catalogue/toc/xml`
 
-**Document URIs** (without fragments) refer to entire RDF documents and are used in `rdfs:seeAlso` links:
-```turtle
-rdfs:seeAlso <../cs/{id}> ;     # Link to concept scheme document
-rdfs:seeAlso <../ds/{id}> ;     # Link to data structure document
-rdfs:seeAlso <../df/{id}> ;     # Link to dataflow document
-rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
-```
-
 ## URI Structure Fragments
+
+**Fragment Identifiers** (with `#`) refer to specific resources within documents and are used in property values.
 
 ### Additional Parameter Definitions
 
@@ -66,8 +62,6 @@ rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 - Component ID: `GEO` → used in `#component-GEO`, `#dim-GEO`
 - Codelist ID: `CL_GEO` → used in `#cl-CL_GEO`, codelist references
 - Dimension name: `geo` → used in `/cl/geo` URL path
-
-**Fragment Identifiers** (with `#`) refer to specific resources within documents and are used in property values:
 
 ### Main Resources
 - `/cs/{id}#cs` - The concept scheme resource
@@ -84,19 +78,29 @@ rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 - `/ds/{id}#attr-{compid}` - Attribute properties (e.g., `#attr-OBS_STATUS`)
 - `/ds/{id}#measure-{compid}` - Measure properties (e.g., `#measure-OBS_VALUE`)
 
-## Special Notes
-
-- **Data Observations (`/da/{id}`):** Outputs Turtle format instead of RDF/XML for better relative URI support
-- **Cross-references:** Use relative paths like `../cl/{dim}#code-{value}` or `../ds/{id}#ds`
-
-## Design Principles
-
-- **Relative paths:** All cross-references use `../` relative paths
-- **Case preservation:** Fragment identifiers preserve original case
-- **Semantic prefixing:** Clear prefixes identify resource types
-- **Consistency:** Uniform patterns across all endpoints
-
 ## Semantic Model
+
+### Document URI Classes
+
+Document URIs (without fragments) are not assigned explicit RDF classes. They are described with properties like `rdfs:comment`, `dcterms:publisher`, and `foaf:topic` pointing to the main fragment resource.
+
+### Fragment URI Classes
+
+#### Main Resources
+- `/cs/{id}#cs` → `skos:ConceptScheme`
+- `/ds/{id}#ds` → `qb:DataStructureDefinition`
+- `/df/{id}#df` → `dcat:Dataset`
+- `/dc/{id}#constraint` → `qb:DataConstraint`
+- `/cl/{dim}#cl-{clid}` → `skos:ConceptScheme`
+- `/da/{id}#dataset` → `qb:DataSet`
+
+#### Sub-Resources
+- `/cl/{dim}#code-{value}` → `skos:Concept`
+- `/cs/{id}#concept-{value}` → `skos:Concept`
+- `/ds/{id}#component-{compid}` → `qb:ComponentSpecification`
+- `/ds/{id}#dim-{compid}` → `qb:DimensionProperty`
+- `/ds/{id}#attr-{compid}` → `qb:AttributeProperty`
+- `/ds/{id}#measure-{compid}` → `qb:MeasureProperty`
 
 ### Resource Types and Relationships
 
@@ -114,4 +118,15 @@ rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 
 - **Code Lists (`/cl/{dim}#cl-{clid}`)**: `skos:ConceptScheme` - Controlled vocabularies
   - Referenced by dimension properties in DSDs
+
+- **Concept Schemes (`/cs/{id}#cs`)**: `skos:ConceptScheme` - Semantic definitions and concepts
+
+- **Data Constraints (`/dc/{id}#constraint`)**: `qb:DataConstraint` - Validation rules and constraints
+
+## Design Principles
+
+- **Relative paths:** All cross-references use `../` relative paths
+- **Case preservation:** Fragment identifiers preserve original case
+- **Semantic prefixing:** Clear prefixes identify resource types
+- **Consistency:** Uniform patterns across all endpoints
 
