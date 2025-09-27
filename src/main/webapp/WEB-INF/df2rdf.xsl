@@ -150,7 +150,6 @@
           <adms:schemeAgency><xsl:value-of select="@agencyID"/></adms:schemeAgency>
         </adms:Identifier>
       </adms:identifier>
-      <owl:versionInfo><xsl:value-of select="@version"/></owl:versionInfo>
 
       <!-- Process names and descriptions -->
       <xsl:apply-templates select="c:Name"/>
@@ -163,6 +162,9 @@
       <prov:wasGeneratedBy rdf:resource="#transformation"/>
 
       <!-- Note: qb:structure removed - dataflows are catalog metadata, not data cubes -->
+
+      <!-- Link to data structure definition -->
+      <xsl:apply-templates select="s:Structure"/>
 
       <!-- Process annotations -->
       <xsl:apply-templates select="c:Annotations"/>
@@ -207,8 +209,27 @@
         <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="c:AnnotationTitle"/></dcterms:modified>
       </xsl:when>
 
+      <!-- Data update -->
       <xsl:when test="c:AnnotationType = 'UPDATE_DATA'">
         <dcat:updateDate rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="c:AnnotationTitle"/></dcat:updateDate>
+        <prov:wasGeneratedBy>
+          <prov:Activity rdf:about="#{generate-id(.)}-data-update">
+            <rdfs:label>Data update</rdfs:label>
+            <dcterms:type>data update</dcterms:type>
+            <prov:endedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="c:AnnotationTitle"/></prov:endedAtTime>
+          </prov:Activity>
+        </prov:wasGeneratedBy>
+      </xsl:when>
+
+      <!-- Structure update -->
+      <xsl:when test="c:AnnotationType = 'UPDATE_STRUCTURE'">
+        <prov:wasGeneratedBy>
+          <prov:Activity rdf:about="#{generate-id(.)}-structure-update">
+            <rdfs:label>Structure update</rdfs:label>
+            <dcterms:type>structure update</dcterms:type>
+            <prov:endedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="c:AnnotationTitle"/></prov:endedAtTime>
+          </prov:Activity>
+        </prov:wasGeneratedBy>
       </xsl:when>
 
       <!-- Time coverage -->
@@ -295,6 +316,35 @@
         </xsl:if>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <!-- Template to handle structure references -->
+  <xsl:template match="s:Structure">
+    <!-- Extract dataset ID from URN like urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=ESTAT:TAG00038(27.0) -->
+    <xsl:variable name="datasetId">
+      <xsl:choose>
+        <xsl:when test="contains(., '=ESTAT:')">
+          <xsl:variable name="after-estat" select="substring-after(., '=ESTAT:')"/>
+          <xsl:choose>
+            <xsl:when test="contains($after-estat, '(')">
+              <xsl:value-of select="translate(substring-before($after-estat, '('), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="translate($after-estat, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:if test="$datasetId != ''">
+      <dcat:conformsTo>
+        <xsl:attribute name="rdf:resource">../ds/<xsl:value-of select="$datasetId"/>#ds</xsl:attribute>
+      </dcat:conformsTo>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="*"/>

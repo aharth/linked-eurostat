@@ -19,6 +19,25 @@
   <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
   <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
+  <!-- Template to convert SDMX codelist URN to Linked Eurostat URI -->
+  <xsl:template name="urn-to-cl-uri">
+    <xsl:param name="urn"/>
+    <xsl:if test="contains($urn, '=ESTAT:')">
+      <xsl:variable name="after-estat" select="substring-after($urn, '=ESTAT:')"/>
+      <xsl:variable name="codelist-id">
+        <xsl:choose>
+          <xsl:when test="contains($after-estat, '(')">
+            <xsl:value-of select="substring-before($after-estat, '(')"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$after-estat"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:value-of select="concat('../cl/', translate($codelist-id, $uppercase, $lowercase), '#cl-', $codelist-id)"/>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match='m:Structure'>
     <rdf:RDF>
       <rdf:Description rdf:about="">
@@ -123,10 +142,13 @@
 
       <!-- Add information about core representation if present -->
       <xsl:if test="s:CoreRepresentation/s:Enumeration">
-        <skos:note>
-          <xsl:text>Core representation: </xsl:text>
-          <xsl:value-of select="s:CoreRepresentation/s:Enumeration"/>
-        </skos:note>
+        <skos:related>
+          <xsl:attribute name="rdf:resource">
+            <xsl:call-template name="urn-to-cl-uri">
+              <xsl:with-param name="urn" select="s:CoreRepresentation/s:Enumeration"/>
+            </xsl:call-template>
+          </xsl:attribute>
+        </skos:related>
       </xsl:if>
 
       <xsl:if test="s:CoreRepresentation/s:TextFormat">
