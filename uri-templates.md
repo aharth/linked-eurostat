@@ -2,6 +2,11 @@
 
 This document defines the URI structure and patterns used by the Linked Eurostat application.
 
+## Parameter Definitions
+
+- `{id}` - Dataset identifier (e.g., `tag00038`, `tec00114`)
+- `{dim}` - Dimension name (e.g., `geo`, `time`, `freq`) - lowercase version of component ID
+
 ## Upstream Eurostat API Structure
 
 The application maps to Eurostat's API which has three main branches:
@@ -13,7 +18,7 @@ https://ec.europa.eu/eurostat/api/dissemination/
 │   └── structure/
 │       ├── dataflow/ESTAT/{id}                   # Dataflow metadata
 │       ├── datastructure/ESTAT/{id}              # Data structure definitions
-│       ├── codelist/ESTAT/{id}                   # Code lists
+│       ├── codelist/ESTAT/{dim}                  # Code lists
 │       ├── conceptscheme/ESTAT/{id}              # Concept schemes
 │       └── dataconstraint/ESTAT/{id}             # Data constraints
 ├── catalogue/
@@ -22,25 +27,12 @@ https://ec.europa.eu/eurostat/api/dissemination/
     └── inventory?type=codelist                   # Codelist inventory
 ```
 
-## Parameter Definitions
-
-- `{id}` - Dataset identifier (e.g., `tag00038`, `tec00114`)
-- `{dim}` - Dimension name (e.g., `geo`, `time`, `freq`) - lowercase version of component ID
-- `{clid}` - Codelist identifier (e.g., `CL_GEO`, `CL_TIME`, `CL_FREQ`) - component ID with "CL_" prefix
-- `{compid}` - Component identifier (e.g., `FREQ`, `GEO`, `OBS_STATUS`, `OBS_VALUE`) - raw SDMX component ID
-- `{value}` - Code or concept value (e.g., `EU27`, `AT`, `2020`, `A` for annual frequency)
-
-**Parameter Relationships:** For a geographic dimension:
-- Component ID: `GEO` → used in `#component-GEO`, `#dim-GEO`
-- Codelist ID: `CL_GEO` → used in `#cl-CL_GEO`, codelist references
-- Dimension name: `geo` → used in `/cl/geo` URL path
-
 ## URI Structure
 
 ### Endpoints
 
 - `/cl/{dim}` - Code Lists (SKOS Concept Schemes and Concepts)
-  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/codelist/ESTAT/{clid}`
+  - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/codelist/ESTAT/{dim}`
 - `/cs/{id}` - Concept Schemes
   - → `https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/structure/conceptscheme/ESTAT/{id}`
 - `/ds/{id}` - Data Structure Definitions
@@ -65,6 +57,17 @@ rdfs:seeAlso <../dc/{id}> ;     # Link to data constraint document
 ```
 
 **Fragment Identifiers** (with `#`) refer to specific resources within documents and are used in property values:
+
+### Additional Parameter Definitions
+
+- `{clid}` - Codelist identifier (e.g., `CL_GEO`, `CL_TIME`, `CL_FREQ`) - component ID with "CL_" prefix
+- `{compid}` - Component identifier (e.g., `FREQ`, `GEO`, `OBS_STATUS`, `OBS_VALUE`) - raw SDMX component ID
+- `{value}` - Code or concept value (e.g., `EU27`, `AT`, `2020`, `A` for annual frequency)
+
+**Parameter Relationships:** For a geographic dimension:
+- Component ID: `GEO` → used in `#component-GEO`, `#dim-GEO`
+- Codelist ID: `CL_GEO` → used in `#cl-CL_GEO`, codelist references
+- Dimension name: `geo` → used in `/cl/geo` URL path
 
 #### Main Resources
 - `/cs/{id}#cs` - The concept scheme resource
