@@ -39,10 +39,18 @@
 	<rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/codelists.rdf"/>
 	<rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/feed.rdf"/>
 	<rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/help/copyright-notice"/>
-	<rdfs:seeAlso rdf:resource="../cs/{//s:Dataflow/@id}"/>
-	<rdfs:seeAlso rdf:resource="../ds/{//s:Dataflow/@id}"/>
-	<rdfs:seeAlso rdf:resource="../da/{//s:Dataflow/@id}"/>
-	<rdfs:seeAlso rdf:resource="../dc/{//s:Dataflow/@id}"/>
+	<rdfs:seeAlso>
+	  <xsl:attribute name="rdf:resource">../cs/<xsl:value-of select="lower-case(//s:Dataflow/@id)"/></xsl:attribute>
+	</rdfs:seeAlso>
+	<rdfs:seeAlso>
+	  <xsl:attribute name="rdf:resource">../ds/<xsl:value-of select="lower-case(//s:Dataflow/@id)"/></xsl:attribute>
+	</rdfs:seeAlso>
+	<rdfs:seeAlso>
+	  <xsl:attribute name="rdf:resource">../da/<xsl:value-of select="lower-case(//s:Dataflow/@id)"/></xsl:attribute>
+	</rdfs:seeAlso>
+	<rdfs:seeAlso>
+	  <xsl:attribute name="rdf:resource">../dc/<xsl:value-of select="lower-case(//s:Dataflow/@id)"/></xsl:attribute>
+	</rdfs:seeAlso>
 	<dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
 	<foaf:topic rdf:resource="#df"/>
 	<prov:wasGeneratedBy rdf:resource="#transformation"/>
@@ -180,7 +188,8 @@
 
       <!-- Link to actual data observations -->
       <dcat:distribution>
-        <dcat:Distribution rdf:about="../da/{@id}#ds">
+        <dcat:Distribution>
+          <xsl:attribute name="rdf:about">../da/<xsl:value-of select="lower-case(@id)"/>#ds</xsl:attribute>
           <dcterms:title>Data observations for <xsl:value-of select="@id"/></dcterms:title>
           <dcterms:format>RDF/XML</dcterms:format>
           <dcat:mediaType>application/rdf+xml</dcat:mediaType>

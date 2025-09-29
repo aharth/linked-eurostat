@@ -47,10 +47,18 @@
         <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/codelists.rdf"/>
         <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/feed.rdf"/>
         <rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/help/copyright-notice"/>
-        <rdfs:seeAlso rdf:resource="../ds/{//s:ConceptScheme/@id}"/>
-        <rdfs:seeAlso rdf:resource="../df/{//s:ConceptScheme/@id}"/>
-        <rdfs:seeAlso rdf:resource="../da/{//s:ConceptScheme/@id}"/>
-        <rdfs:seeAlso rdf:resource="../dc/{//s:ConceptScheme/@id}"/>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../ds/<xsl:value-of select="lower-case(//s:ConceptScheme/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../df/<xsl:value-of select="lower-case(//s:ConceptScheme/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../da/<xsl:value-of select="lower-case(//s:ConceptScheme/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../dc/<xsl:value-of select="lower-case(//s:ConceptScheme/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
         <foaf:topic rdf:resource="#cs"/>
         <prov:wasGeneratedBy rdf:resource="#transformation"/>
       </rdf:Description>

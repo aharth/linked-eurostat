@@ -27,10 +27,18 @@
         <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/codelists.rdf"/>
         <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/feed.rdf"/>
         <rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/help/copyright-notice"/>
-        <rdfs:seeAlso rdf:resource="../cs/{//s:DataConstraint/@id}"/>
-        <rdfs:seeAlso rdf:resource="../ds/{//s:DataConstraint/@id}"/>
-        <rdfs:seeAlso rdf:resource="../df/{//s:DataConstraint/@id}"/>
-        <rdfs:seeAlso rdf:resource="../da/{//s:DataConstraint/@id}"/>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../cs/<xsl:value-of select="lower-case(//s:DataConstraint/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../ds/<xsl:value-of select="lower-case(//s:DataConstraint/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../df/<xsl:value-of select="lower-case(//s:DataConstraint/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../da/<xsl:value-of select="lower-case(//s:DataConstraint/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
         <foaf:topic rdf:resource="#dc"/>
         <prov:wasGeneratedBy rdf:resource="#transformation"/>
       </rdf:Description>

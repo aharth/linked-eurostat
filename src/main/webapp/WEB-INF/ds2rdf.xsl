@@ -76,10 +76,18 @@
         <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/codelists.rdf"/>
         <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/feed.rdf"/>
         <rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/help/copyright-notice"/>
-        <rdfs:seeAlso rdf:resource="../cs/{//s:DataStructure/@id}"/>
-        <rdfs:seeAlso rdf:resource="../df/{//s:DataStructure/@id}"/>
-        <rdfs:seeAlso rdf:resource="../da/{//s:DataStructure/@id}"/>
-        <rdfs:seeAlso rdf:resource="../dc/{//s:DataStructure/@id}"/>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../cs/<xsl:value-of select="lower-case(//s:DataStructure/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../df/<xsl:value-of select="lower-case(//s:DataStructure/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../da/<xsl:value-of select="lower-case(//s:DataStructure/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">../dc/<xsl:value-of select="lower-case(//s:DataStructure/@id)"/></xsl:attribute>
+        </rdfs:seeAlso>
         <foaf:topic rdf:resource="#ds"/>
         <prov:wasGeneratedBy rdf:resource="#transformation"/>
       </rdf:Description>
