@@ -46,6 +46,14 @@
         <dcterms:description>Service for converting Eurostat SDMX data to RDF</dcterms:description>
       </prov:SoftwareAgent>
 
+      <!-- Main codelist resource (linked from document) -->
+      <rdf:Description rdf:about="#cl">
+        <foaf:page rdf:resource=""/>
+        <rdfs:seeAlso>
+          <xsl:attribute name="rdf:resource">#cl-<xsl:value-of select="//s:Codelist/@id"/></xsl:attribute>
+        </rdfs:seeAlso>
+      </rdf:Description>
+
       <!-- Process codelists -->
       <xsl:apply-templates select="m:Structures/s:Codelists"/>
 

@@ -138,6 +138,9 @@
       <dcterms:creator><xsl:value-of select="@agencyID"/></dcterms:creator>
       <dcterms:hasVersion><xsl:value-of select="@version"/></dcterms:hasVersion>
 
+      <!-- Link back to document -->
+      <foaf:page rdf:resource=""/>
+
       <!-- Process names -->
       <xsl:apply-templates select="c:Name"/>
 

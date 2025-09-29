@@ -92,6 +92,9 @@
         <dcterms:type><xsl:value-of select="@role"/></dcterms:type>
       </xsl:if>
 
+      <!-- Link back to document -->
+      <foaf:page rdf:resource=""/>
+
       <!-- Process names -->
       <xsl:apply-templates select="c:Name"/>
 

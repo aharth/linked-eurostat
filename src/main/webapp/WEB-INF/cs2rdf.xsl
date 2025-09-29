@@ -106,6 +106,9 @@
         <dcterms:creator><xsl:value-of select="@agencyID"/></dcterms:creator>
       </xsl:if>
 
+      <!-- Link back to document -->
+      <foaf:page rdf:resource=""/>
+
       <!-- Apply templates for scheme name -->
       <xsl:apply-templates select="c:Name" mode="scheme-label"/>
 

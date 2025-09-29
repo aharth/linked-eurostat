@@ -160,6 +160,9 @@
         </adms:Identifier>
       </adms:identifier>
 
+      <!-- Link back to document -->
+      <foaf:page rdf:resource=""/>
+
       <!-- Process names and descriptions -->
       <xsl:apply-templates select="c:Name"/>
       <xsl:apply-templates select="c:Description"/>

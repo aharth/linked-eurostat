@@ -95,3 +95,54 @@ This document lists external RDF/Linked Data classifications that could be mappe
 2. **Add NACE** - Critical for economic data mapping
 3. **Investigate ISCO/ISCED/COFOG** through Euro SDMX registry for additional coverage
 4. **Consider versioning** - Classifications may have multiple versions/years available
+
+## FOAF Linking Patterns with External Sources
+
+The system implements bidirectional FOAF linking to connect internal RDF resources with external sources:
+
+### Internal Linking Pattern
+- **Document URI** (`/da/id`) ↔ **Fragment URI** (`/da/id#ds`) via `foaf:topic`/`foaf:page`
+- Creates bidirectional navigation between documents and their main resources
+
+### External Source Linking
+
+#### 1. Original Data Sources (foaf:homepage)
+**Implementation**: `Da.java` conversion
+```turtle
+<#ds> foaf:homepage <https://ec.europa.eu/eurostat/web/products-datasets/-/{id}> .
+```
+- Links from internal dataset fragments to original Eurostat dataset pages
+- Uses `foaf:homepage` for primary external page reference
+
+#### 2. Download Links (foaf:page)
+**Implementation**: `toc-rdf.xsl` transformation
+```xml
+<foaf:page rdf:resource="{downloadLink}"/>
+```
+- Links from table of contents entries to external Eurostat download URLs
+- Enables direct access to TSV/CSV data files
+
+#### 3. Internal Resource References (foaf:page)
+**Implementation**: `codelists-rdf.xsl` transformation
+```xml
+<foaf:page rdf:resource="./cl/{codelist-id}"/>
+```
+- Links from catalog entries to corresponding internal codelist resources
+- Creates navigation within the linked data space
+
+### FOAF Property Usage
+
+| Property | Purpose | Cardinality | Usage |
+|----------|---------|-------------|--------|
+| `foaf:topic` | Document → Main Resource | 1:1 | Internal navigation |
+| `foaf:page` | Resource → Document | 1:1 | Internal bidirectional |
+| `foaf:page` | Resource → External Pages | 1:n | External downloads |
+| `foaf:homepage` | Resource → Primary Page | 1:1 | Original source |
+
+### Implementation Files
+- **Bidirectional linking**: All `*2rdf.xsl` files (ds, cs, cl, df, dc)
+- **External homepage links**: `Da.java` conversion class
+- **Download page links**: `toc-rdf.xsl`, `codelists-rdf.xsl`
+- **Service homepage**: All transformation files link to `http://estatwrap.ontologycentral.com/`
+
+This creates a comprehensive web of references connecting internal RDF resources to their external Eurostat sources and related pages.
