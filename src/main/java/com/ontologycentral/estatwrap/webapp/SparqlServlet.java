@@ -227,10 +227,10 @@ public class SparqlServlet extends HttpServlet {
         out.println("SELECT ?time ?value ?geo");
         out.println("FROM <da/tag00038>");
         out.println("WHERE {");
-        out.println("    ?s qb:dataSet <da/tag00038#ds> .");
-        out.println("    ?s dim:dim-TIME_PERIOD ?time .");
-        out.println("    ?s dim:dim-geo ?geo .");
-        out.println("    ?s <ds/tag00038#measure-OBS_VALUE> ?value .");
+        out.println("    ?obs qb:dataSet <da/tag00038#ds> .");
+        out.println("    ?obs dim:dim-TIME_PERIOD ?time .");
+        out.println("    ?obs dim:dim-geo ?geo .");
+        out.println("    ?obs <ds/tag00038#measure-OBS_VALUE> ?value .");
         out.println("}");
         out.println("LIMIT 10</textarea>");
         out.println("      </div>");

@@ -31,10 +31,10 @@ PREFIX qb: &lt;http://purl.org/linked-data/cube#&gt;
 SELECT ?time ?value ?geo
 FROM &lt;da/tag00038&gt;
 WHERE {
-    ?s qb:dataSet &lt;id/tag00038#ds&gt; .
-    ?s dim:dim-TIME_PERIOD ?time .
-    ?s dim:dim-geo ?geo .
-    ?s &lt;ds/tag00038#measure-OBS_VALUE&gt; ?value .
+    ?obs qb:dataSet &lt;id/tag00038#ds&gt; .
+    ?obs dim:dim-TIME_PERIOD ?time .
+    ?obs dim:dim-geo ?geo .
+    ?obs &lt;ds/tag00038#measure-OBS_VALUE&gt; ?value .
 }
 </textarea>
       </div>
