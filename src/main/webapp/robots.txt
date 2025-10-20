@@ -1,6 +1,5 @@
 User-Agent: *
 Disallow: /
-Allow: /index.html
 Allow: /$
-Allow: /id/
-Allow: /page/
+Allow: /index.html
+Allow: /toc.html
