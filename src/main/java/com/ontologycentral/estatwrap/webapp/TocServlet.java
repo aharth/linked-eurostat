@@ -64,9 +64,11 @@ public class TocServlet extends HttpServlet {
             HttpURLConnection conn = (HttpURLConnection) tocUrl.openConnection();
             conn.setRequestProperty("User-Agent", "LinkedEurostat/1.0");
 
-            if (conn.getResponseCode() != 200) {
-                _log.log(Level.SEVERE, "Failed to fetch TOC XML: HTTP {0}", conn.getResponseCode());
-                resp.sendError(502, "Failed to fetch table of contents from Eurostat API");
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                _log.log(Level.SEVERE, "Failed to fetch TOC XML: HTTP {0}", responseCode);
+                // Pass through the original status code instead of always returning 502
+                resp.sendError(responseCode, "Upstream API returned: " + conn.getResponseMessage());
                 return;
             }
 

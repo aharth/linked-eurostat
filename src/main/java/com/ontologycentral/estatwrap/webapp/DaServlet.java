@@ -62,8 +62,9 @@ public class DaServlet extends HttpServlet {
             conn.setUseCaches(true);
             conn.setRequestProperty("User-Agent", "estatwrap.ontologycentral.com");
 
-            if (conn.getResponseCode() != 200) {
-                resp.sendError(conn.getResponseCode());
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                resp.sendError(responseCode, "Upstream API returned: " + conn.getResponseMessage());
                 return;
             }
 
