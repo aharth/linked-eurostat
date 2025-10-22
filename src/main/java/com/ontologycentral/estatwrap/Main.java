@@ -35,9 +35,6 @@ import org.apache.commons.cli.ParseException;
  * @author aharth
  */
 public class Main {
-    // Updated to use SDMX API
-    public static String URI_PREFIX_21 = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1";
-    public static String URI_PREFIX_3 = "https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0";
 
     // Thread-safe date formatters using ThreadLocal
     public static final ThreadLocal<SimpleDateFormat> ISO8601 = new ThreadLocal<SimpleDateFormat>() {
@@ -85,13 +82,18 @@ public class Main {
         Option helpO = new Option("h", "help", false, "print help");
         options.addOption(helpO);
 
+        Option versionO = new Option("v", "version", false, "show version information");
+        options.addOption(versionO);
+
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = null;
 
         try {
             cmd = parser.parse(options, args);
 
-            if (!(cmd.hasOption("i") || cmd.hasOption("cs") || cmd.hasOption("cl") || cmd.hasOption("ds") || cmd.hasOption("df") || cmd.hasOption("dc") || cmd.hasOption("da"))) {
+            // Skip validation if help or version is requested
+            if (!(cmd.hasOption("h") || cmd.hasOption("v")) &&
+                !(cmd.hasOption("i") || cmd.hasOption("cs") || cmd.hasOption("cl") || cmd.hasOption("ds") || cmd.hasOption("df") || cmd.hasOption("dc") || cmd.hasOption("da"))) {
                 throw new ParseException("specify either -i, -cs, -cl, -ds, -df, -dc, or -da");
             }
         } catch (ParseException e) {
@@ -104,6 +106,11 @@ public class Main {
         if (cmd.hasOption("h")) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("parameters:", options);
+            return;
+        }
+
+        if (cmd.hasOption("v")) {
+            printVersion();
             return;
         }
 
@@ -125,52 +132,36 @@ public class Main {
 
         if (cmd.hasOption("i")) {
             id = cmd.getOptionValue("i");
-            url = new URL(URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
+            url = new URL(UrlBuilder.buildLegacyDataUrl(id));
         } else if (cmd.hasOption("cs")) {
             id = cmd.getOptionValue("cs");
-            url = new URL(Main.URI_PREFIX_3 + "/structure/conceptscheme/ESTAT/" + id);
+            url = new URL(UrlBuilder.buildConceptSchemeUrl(id));
         } else if (cmd.hasOption("cl")) {
             id = cmd.getOptionValue("cl");
-            url = new URL(Main.URI_PREFIX_3 + "/structure/codelist/ESTAT/" + id.toUpperCase());
+            url = new URL(UrlBuilder.buildCodeListUrl(id));
         } else if (cmd.hasOption("ds")) {
             id = cmd.getOptionValue("ds");
-            url = new URL(Main.URI_PREFIX_3 + "/structure/datastructure/ESTAT/" + id);
+            url = new URL(UrlBuilder.buildDataStructureUrl(id));
         } else if (cmd.hasOption("df")) {
             id = cmd.getOptionValue("df");
-            url = new URL(Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id);
+            url = new URL(UrlBuilder.buildDataflowUrl(id));
         } else if (cmd.hasOption("dc")) {
             id = cmd.getOptionValue("dc");
-            url = new URL(Main.URI_PREFIX_3 + "/structure/dataconstraint/ESTAT/" + id);
+            url = new URL(UrlBuilder.buildDataConstraintUrl(id));
         } else if (cmd.hasOption("da")) {
             id = cmd.getOptionValue("da");
-            url = new URL(Main.URI_PREFIX_3 + "/data/dataflow/ESTAT/" + id + "/1.0?format=tsv&compress=false");
+            url = new URL(UrlBuilder.buildDataUrl(id));
         }
 
         // Handle data and dictionary processing
         System.out.println(url);
 
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = HttpClientUtil.createConnection(url.toString());
 
-        InputStream is = null;
+        HttpClientUtil.checkResponseCode(conn, "Eurostat API");
 
-        if (url.toString().contains("compressed=true")
-                || url.toString().contains("compress=true")) {
-            is = new GZIPInputStream(conn.getInputStream());
-        } else {
-            is = conn.getInputStream();
-        }
-        if (conn.getResponseCode() != 200) {
-            throw new IOException("Response code: " + conn.getResponseCode());
-        }
-
-        String encoding = "UTF-8"; // Default to UTF-8 for SDMX API responses
-        String contentType = conn.getContentType();
-        if (contentType != null && contentType.contains("charset=")) {
-            encoding = contentType.substring(contentType.indexOf("charset=") + 8);
-            if (encoding.contains(";")) {
-                encoding = encoding.substring(0, encoding.indexOf(";"));
-            }
-        }
+        InputStream is = HttpClientUtil.getInputStream(conn);
+        String encoding = HttpClientUtil.getEncoding(conn, "UTF-8");
 
         BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
 
@@ -230,5 +221,14 @@ public class Main {
 
         out.close();
         in.close();
+    }
+
+    private static void printVersion() {
+        System.out.println(BuildInfo.getName() + " " + BuildInfo.getVersion());
+        System.out.println("User-Agent: " + BuildInfo.getUserAgent());
+        System.out.println("Build timestamp: " + BuildInfo.getBuildTimestamp());
+        System.out.println();
+        System.out.println("Eurostat SDMX Linked Data Command Line Tool");
+        System.out.println("Project: https://github.com/aharth/linked-eurostat");
     }
 }

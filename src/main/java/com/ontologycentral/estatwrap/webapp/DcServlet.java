@@ -1,6 +1,7 @@
 package com.ontologycentral.estatwrap.webapp;
 
-import com.ontologycentral.estatwrap.Main;
+import com.ontologycentral.estatwrap.HttpClientUtil;
+import com.ontologycentral.estatwrap.UrlBuilder;
 import com.ontologycentral.estatwrap.convert.Dc;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +15,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
@@ -33,7 +33,8 @@ public class DcServlet extends HttpServlet {
         }
         id = id.substring(dcIndex + "/dc/".length());
 
-        URL url = new URL(Main.URI_PREFIX_3 + "/structure/dataconstraint/ESTAT/" + id);
+        String urlString = UrlBuilder.buildDataConstraintUrl(id);
+        URL url = new URL(urlString);
 
         ServletContext ctx = getServletContext();
         Transformer t = (Transformer) ctx.getAttribute(Listener.DC_T);
@@ -45,12 +46,7 @@ public class DcServlet extends HttpServlet {
         try {
             Dc dc = new Dc();
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(55 * 1000);
-            conn.setReadTimeout(55 * 1000);
-            conn.setUseCaches(true);
-
-            conn.setRequestProperty("User-Agent", "estatwrap.ontologycentral.com");
+            HttpURLConnection conn = HttpClientUtil.createConnection(urlString);
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
@@ -58,21 +54,8 @@ public class DcServlet extends HttpServlet {
                 return;
             }
 
-            InputStream is = null;
-            if (url.toString().contains("compressed=true") || url.toString().contains("compress=true")) {
-                is = new GZIPInputStream(conn.getInputStream());
-            } else {
-                is = conn.getInputStream();
-            }
-
-            String encoding = "UTF-8"; // Default to UTF-8 for SDMX API responses
-            String contentType = conn.getContentType();
-            if (contentType != null && contentType.contains("charset=")) {
-                encoding = contentType.substring(contentType.indexOf("charset=") + 8);
-                if (encoding.contains(";")) {
-                    encoding = encoding.substring(0, encoding.indexOf(";"));
-                }
-            }
+            InputStream is = HttpClientUtil.getInputStream(conn);
+            String encoding = HttpClientUtil.getEncoding(conn, "UTF-8");
 
             BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
 

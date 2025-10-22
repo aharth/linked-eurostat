@@ -1,6 +1,7 @@
 package com.ontologycentral.estatwrap.webapp;
 
-import com.ontologycentral.estatwrap.Main;
+import com.ontologycentral.estatwrap.HttpClientUtil;
+import com.ontologycentral.estatwrap.UrlBuilder;
 import com.ontologycentral.estatwrap.convert.Da;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +18,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -29,7 +29,7 @@ public class DaServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getServerName().contains("estatwrap.appspot.com")) {
             try {
-                URI re = new URI("http://estatwrap.ontologycentral.com/" + req.getRequestURI());
+                URI re = new URI("http://com.ontologycentral.estatwrap.BuildInfo.getUserAgent()/" + req.getRequestURI());
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
@@ -53,14 +53,11 @@ public class DaServlet extends HttpServlet {
         ServletContext ctx = getServletContext();
 
         // Use SDMX 3.0 API for data observations with format=tsv&compress=false
-        URL url = new URL(Main.URI_PREFIX_3 + "/data/dataflow/ESTAT/" + id + "/1.0?format=tsv&compress=false");
+        String urlString = UrlBuilder.buildDataUrl(id);
+        URL url = new URL(urlString);
 
         try {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(55 * 1000);
-            conn.setReadTimeout(55 * 1000);
-            conn.setUseCaches(true);
-            conn.setRequestProperty("User-Agent", "estatwrap.ontologycentral.com");
+            HttpURLConnection conn = HttpClientUtil.createConnection(urlString);
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
@@ -68,19 +65,8 @@ public class DaServlet extends HttpServlet {
                 return;
             }
 
-            InputStream is;
-            // Check if response is compressed despite compress=false parameter
-            String contentEncoding = conn.getHeaderField("Content-Encoding");
-            if ("gzip".equals(contentEncoding)) {
-                is = new GZIPInputStream(conn.getInputStream());
-            } else {
-                is = conn.getInputStream();
-            }
-
-            String encoding = conn.getContentEncoding();
-            if (encoding == null) {
-                encoding = Listener.DEFAULT_ENCODING;
-            }
+            InputStream is = HttpClientUtil.getInputStream(conn);
+            String encoding = HttpClientUtil.getEncoding(conn, Listener.DEFAULT_ENCODING);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
 

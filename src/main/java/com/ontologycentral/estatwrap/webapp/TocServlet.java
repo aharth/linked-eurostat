@@ -13,6 +13,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.ontologycentral.estatwrap.HttpClientUtil;
+import com.ontologycentral.estatwrap.UrlBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -23,7 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 public class TocServlet extends HttpServlet {
     Logger _log = Logger.getLogger(this.getClass().getName());
 
-    private static final String TOC_XML_URL = "https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml";
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -60,9 +62,9 @@ public class TocServlet extends HttpServlet {
 
         try {
             // Fetch XML from Eurostat API
-            URL tocUrl = new URL(TOC_XML_URL);
-            HttpURLConnection conn = (HttpURLConnection) tocUrl.openConnection();
-            conn.setRequestProperty("User-Agent", "LinkedEurostat/1.0");
+            String tocUrlString = UrlBuilder.getTocUrl();
+            URL tocUrl = new URL(tocUrlString);
+            HttpURLConnection conn = HttpClientUtil.createConnection(tocUrlString);
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {

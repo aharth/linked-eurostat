@@ -2,6 +2,9 @@
 
 All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
 
+## [2025-10-22]
+- Refactor HTTP client code to eliminate duplication between CLI and webapp
+
 ## [2025-09-27]
 - Add inventory of codelists (available at /codelists.html and /codelists.rdf)
 - Add RSS/RDF feed of recent dataset updates (available at /feed.rdf)

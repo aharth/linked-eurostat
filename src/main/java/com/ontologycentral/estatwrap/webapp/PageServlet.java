@@ -1,6 +1,6 @@
 package com.ontologycentral.estatwrap.webapp;
 
-import com.ontologycentral.estatwrap.Main;
+import com.ontologycentral.estatwrap.ApiConstants;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -154,7 +154,7 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id + "?compressed=false");
+                    ApiConstants.URI_PREFIX_3 + "/structure/dataflow/ESTAT/" + id + "?compressed=false");
             ch.writeCharacters("SDMX");
             ch.writeEndElement();
             ch.writeCharacters(")");
@@ -171,7 +171,7 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3
+                    ApiConstants.URI_PREFIX_3
                             + "/structure/datastructure/ESTAT/"
                             + id
                             + "?compressed=false");
@@ -191,7 +191,7 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3
+                    ApiConstants.URI_PREFIX_3
                             + "/structure/conceptscheme/ESTAT/"
                             + id
                             + "?compressed=false");
@@ -211,7 +211,7 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3
+                    ApiConstants.URI_PREFIX_3
                             + "/structure/dataconstraint/ESTAT/"
                             + id
                             + "?compressed=false");
@@ -229,7 +229,7 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("dd");
             ch.writeCharacters("Data observations (");
             ch.writeStartElement("a");
-            ch.writeAttribute("href", Main.URI_PREFIX_21 + "/data/" + id);
+            ch.writeAttribute("href", ApiConstants.URI_PREFIX_21 + "/data/" + id);
             ch.writeCharacters("SDMX");
             ch.writeEndElement();
             ch.writeCharacters(")");
@@ -399,7 +399,7 @@ public class PageServlet extends HttpServlet {
 
             ch.writeStartElement("a");
             ch.writeAttribute(
-                    "href", Main.URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
+                    "href", ApiConstants.URI_PREFIX_21 + "/data/" + id + "/?format=TSV&compressed=true");
             ch.writeCharacters("TSV (for Excel)");
             ch.writeEndElement();
 
@@ -408,7 +408,7 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3
+                    ApiConstants.URI_PREFIX_3
                             + "/structure/categoryscheme/ESTAT/"
                             + id
                             + "?compressed=false");
@@ -420,7 +420,7 @@ public class PageServlet extends HttpServlet {
             ch.writeStartElement("a");
             ch.writeAttribute(
                     "href",
-                    Main.URI_PREFIX_3
+                    ApiConstants.URI_PREFIX_3
                             + "/structure/categorisation/ESTAT/"
                             + id
                             + "?compressed=false");
