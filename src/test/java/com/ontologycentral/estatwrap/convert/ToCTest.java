@@ -17,16 +17,12 @@ public class ToCTest extends TestCase {
     Logger _log = Logger.getLogger(this.getClass().getName());
 
     public void testData() throws Exception {
-        URL u =
-                new URL(
-                        "http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&file=table_of_contents_en.txt");
-
-        // URL u = new URL("http://europa.eu/estatref/download/everybody/table_of_contents.txt");
+        URL u = new URL(com.ontologycentral.estatwrap.ApiConstants.TOC_XML_URL);
 
         HttpURLConnection conn = (HttpURLConnection) u.openConnection();
         InputStream is = conn.getInputStream();
 
-        ToC toc = new ToC(is, null);
+        ToC toc = new ToC(is, "utf-8");
 
         Map<String, String> map = toc.convert();
 

@@ -2,6 +2,13 @@
 
 All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
 
+## [2026-06-30]
+- Fix stale integration tests to use current SDMX 3.0 / catalogue endpoints (`CreateToCTest`, `ToCTest`, `TestEncoding`)
+
+## [2026-06-15] CORS
+
+- Add a permissive `CorsFilter` (allows `Accept, Content-Type, Authorization, DPoP`) so a Solid SPA can fetch resources cross-origin; an `OPTIONS` preflight is answered `204`.
+
 ## [2025-10-22]
 - Refactor HTTP client code to eliminate duplication between CLI and webapp
 

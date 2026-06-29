@@ -1,11 +1,11 @@
 package com.ontologycentral.estatwrap.convert;
 
-import com.ontologycentral.estatwrap.Main;
+import com.ontologycentral.estatwrap.HttpClientUtil;
+import com.ontologycentral.estatwrap.UrlBuilder;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import org.junit.Test;
 
 /**
@@ -17,28 +17,23 @@ public class TestEncoding {
 
     @Test
     public void test() throws Exception {
-        String lang = "en";
         String id = "cities";
 
-        URL url = new URL(Main.URI_PREFIX_21 + "/codelist/CL_" + id.toUpperCase() + "/?format=SDMX-ML&lang=" + lang);
+        String url = UrlBuilder.buildCodeListUrl(id);
 
         System.out.println("looking up " + url);
 
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        InputStream is = conn.getInputStream();
+        HttpURLConnection conn = HttpClientUtil.createConnection(url);
 
         if (conn.getResponseCode() != 200) {
             System.err.println("Error: " + conn.getResponseCode());
             return;
         }
 
-        String encoding = conn.getContentEncoding();
+        InputStream is = HttpClientUtil.getInputStream(conn);
+        String encoding = HttpClientUtil.getEncoding(conn, "UTF-8");
 
         System.err.println("Encoding: " + encoding);
-
-        if (encoding == null) {
-            encoding = "UTF-8";
-        }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(is, encoding));
         String l;

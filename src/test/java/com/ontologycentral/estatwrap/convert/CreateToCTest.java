@@ -23,7 +23,7 @@ public class CreateToCTest extends TestCase {
     /** */
     public void testCreateToC() throws Exception {
         for (String format : new String[] {"rdf", "html"}) {
-            URL u = new URL("https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml");
+            URL u = new URL(com.ontologycentral.estatwrap.ApiConstants.TOC_XML_URL);
 
             HttpURLConnection conn = (HttpURLConnection) u.openConnection();
             InputStream is = conn.getInputStream();
@@ -33,7 +33,9 @@ public class CreateToCTest extends TestCase {
                             "net.sf.saxon.TransformerFactoryImpl",
                             Thread.currentThread().getContextClassLoader());
 
-            Transformer t = tf.newTransformer(new StreamSource("contrib/toc-" + format + ".xsl"));
+            Transformer t =
+                    tf.newTransformer(
+                            new StreamSource("src/main/webapp/WEB-INF/toc-" + format + ".xsl"));
 
             FileOutputStream fos =
                     new FileOutputStream("src/main/webapp/table_of_contents." + format);
