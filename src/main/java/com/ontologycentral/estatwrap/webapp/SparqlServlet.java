@@ -1,11 +1,16 @@
 package com.ontologycentral.estatwrap.webapp;
 
+import com.ontologycentral.estatwrap.HttpClientUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URLDecoder;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
@@ -15,12 +20,21 @@ import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.sparql.util.DatasetUtils;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.riot.RDFParser;
 import org.apache.jena.query.DatasetFactory;
 
 @SuppressWarnings("serial")
 public class SparqlServlet extends HttpServlet {
     Logger _log = Logger.getLogger(this.getClass().getName());
+
+    // Queries load entire FROM graphs into heap; one at a time keeps memory bounded.
+    private static final Semaphore QUERY_SLOT = new Semaphore(1);
+
+    // Per-graph cap; enforced via Content-Length when present and while streaming otherwise.
+    static final long MAX_GRAPH_BYTES = 10L * 1024 * 1024;
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         handleSparqlRequest(req, resp);
@@ -48,106 +62,219 @@ public class SparqlServlet extends HttpServlet {
             // URL decode the query if needed
             queryString = URLDecoder.decode(queryString, "UTF-8");
 
-
-            // Parse the SPARQL query
-            Query query = QueryFactory.create(queryString);
-
-            // Resolve relative URIs in the query string itself
-            String resolvedQueryString = queryString;
-            for (String fromUri : query.getGraphURIs()) {
-                String absoluteUri = resolveUri(fromUri, req);
-                resolvedQueryString = resolvedQueryString.replace("<" + fromUri + ">", "<" + absoluteUri + ">");
+            if (!QUERY_SLOT.tryAcquire()) {
+                resp.setHeader("Retry-After", "10");
+                resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                        "Another query is currently executing, please retry shortly");
+                return;
             }
-            for (String namedGraphUri : query.getNamedGraphURIs()) {
-                String absoluteUri = resolveUri(namedGraphUri, req);
-                resolvedQueryString = resolvedQueryString.replace("<" + namedGraphUri + ">", "<" + absoluteUri + ">");
-            }
-
-            // Reparse the query with resolved URIs
-            query = QueryFactory.create(resolvedQueryString);
-
-            // Go back to DatasetUtils approach since it loads data correctly
-            java.util.List<String> defaultGraphList = new java.util.ArrayList<>();
-            java.util.List<String> namedGraphList = new java.util.ArrayList<>();
-
-            // Convert relative URIs to absolute URIs for FROM clauses
-            for (String fromUri : query.getGraphURIs()) {
-                String absoluteUri = resolveUri(fromUri, req);
-                defaultGraphList.add(absoluteUri);
-            }
-
-            // Convert relative URIs to absolute URIs for FROM NAMED clauses
-            for (String namedGraphUri : query.getNamedGraphURIs()) {
-                String absoluteUri = resolveUri(namedGraphUri, req);
-                namedGraphList.add(absoluteUri);
-            }
-
-            Dataset dataset;
-            if (!defaultGraphList.isEmpty() || !namedGraphList.isEmpty()) {
-                dataset = DatasetUtils.createDataset(defaultGraphList, namedGraphList);
-            } else {
-                dataset = DatasetFactory.create();
-            }
-
-
-            // Remove FROM clauses from query since we pre-loaded the data into the dataset
-            String queryStringForExecution = resolvedQueryString;
-            if (!query.getGraphURIs().isEmpty()) {
-                // Remove all FROM clauses since data is pre-loaded
-                queryStringForExecution = queryStringForExecution.replaceAll("FROM\\s+<[^>]+>", "");
-            }
-            Query queryForExecution = QueryFactory.create(queryStringForExecution);
-
-            try (QueryExecution qexec = QueryExecutionFactory.create(queryForExecution, dataset)) {
-                // Determine output format
-                String acceptHeader = req.getHeader("Accept");
-                String format = getOutputFormat(acceptHeader, req.getParameter("format"));
-
-                resp.setCharacterEncoding("UTF-8");
-
-                if (queryForExecution.isSelectType()) {
-                    ResultSet results = qexec.execSelect();
-
-                    java.io.OutputStream outputStream = resp.getOutputStream();
-                    if ("json".equals(format)) {
-                        resp.setContentType("application/sparql-results+json");
-                        ResultSetFormatter.outputAsJSON(outputStream, results);
-                    } else if ("xml".equals(format)) {
-                        resp.setContentType("application/sparql-results+xml");
-                        ResultSetFormatter.outputAsXML(outputStream, results);
-                    } else {
-                        // Default to TSV
-                        resp.setContentType("text/tab-separated-values");
-                        ResultSetFormatter.outputAsTSV(outputStream, results);
-                    }
-                    outputStream.flush();
-                } else if (queryForExecution.isConstructType()) {
-                    Model result = qexec.execConstruct();
-                    resp.setContentType("text/turtle");
-                    java.io.OutputStream outputStream = resp.getOutputStream();
-                    result.write(outputStream, "TTL");
-                    outputStream.flush();
-                } else if (queryForExecution.isDescribeType()) {
-                    Model result = qexec.execDescribe();
-                    resp.setContentType("text/turtle");
-                    java.io.OutputStream outputStream = resp.getOutputStream();
-                    result.write(outputStream, "TTL");
-                    outputStream.flush();
-                } else if (queryForExecution.isAskType()) {
-                    boolean result = qexec.execAsk();
-                    resp.setContentType("application/sparql-results+json");
-                    PrintWriter out = resp.getWriter();
-                    out.println("{\"boolean\": " + result + "}");
-                    out.flush();
-                } else {
-                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unsupported query type");
-                }
+            try {
+                executeQuery(queryString, req, resp);
+            } finally {
+                QUERY_SLOT.release();
             }
 
         } catch (Exception e) {
+            GraphTooLargeException tooLarge = findGraphTooLarge(e);
+            if (tooLarge != null) {
+                _log.warning(tooLarge.getMessage());
+                resp.sendError(413, tooLarge.getMessage());
+                return;
+            }
             _log.severe("Error executing SPARQL query: " + e.getMessage());
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error executing query: " + e.getMessage());
+        }
+    }
+
+    /** Jena may wrap stream errors (e.g. in RiotException); walk the cause chain. */
+    private static GraphTooLargeException findGraphTooLarge(Throwable e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t instanceof GraphTooLargeException) {
+                return (GraphTooLargeException) t;
+            }
+        }
+        return null;
+    }
+
+    private void executeQuery(String queryString, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // Parse the SPARQL query
+        Query query = QueryFactory.create(queryString);
+
+        // Resolve relative URIs in the query string itself
+        String resolvedQueryString = queryString;
+        for (String fromUri : query.getGraphURIs()) {
+            String absoluteUri = resolveUri(fromUri, req);
+            resolvedQueryString = resolvedQueryString.replace("<" + fromUri + ">", "<" + absoluteUri + ">");
+        }
+        for (String namedGraphUri : query.getNamedGraphURIs()) {
+            String absoluteUri = resolveUri(namedGraphUri, req);
+            resolvedQueryString = resolvedQueryString.replace("<" + namedGraphUri + ">", "<" + absoluteUri + ">");
+        }
+
+        // Reparse the query with resolved URIs
+        query = QueryFactory.create(resolvedQueryString);
+
+        // Go back to DatasetUtils approach since it loads data correctly
+        java.util.List<String> defaultGraphList = new java.util.ArrayList<>();
+        java.util.List<String> namedGraphList = new java.util.ArrayList<>();
+
+        // Convert relative URIs to absolute URIs for FROM clauses
+        for (String fromUri : query.getGraphURIs()) {
+            String absoluteUri = resolveUri(fromUri, req);
+            defaultGraphList.add(absoluteUri);
+        }
+
+        // Convert relative URIs to absolute URIs for FROM NAMED clauses
+        for (String namedGraphUri : query.getNamedGraphURIs()) {
+            String absoluteUri = resolveUri(namedGraphUri, req);
+            namedGraphList.add(absoluteUri);
+        }
+
+        // Load graphs ourselves (instead of DatasetUtils) so each fetch is size-capped.
+        Dataset dataset = DatasetFactory.create();
+        for (String uri : defaultGraphList) {
+            dataset.getDefaultModel().add(loadGraphCapped(uri));
+        }
+        for (String uri : namedGraphList) {
+            dataset.addNamedModel(uri, loadGraphCapped(uri));
+        }
+
+
+        // Remove FROM clauses from query since we pre-loaded the data into the dataset
+        String queryStringForExecution = resolvedQueryString;
+        if (!query.getGraphURIs().isEmpty()) {
+            // Remove all FROM clauses since data is pre-loaded
+            queryStringForExecution = queryStringForExecution.replaceAll("FROM\\s+<[^>]+>", "");
+        }
+        Query queryForExecution = QueryFactory.create(queryStringForExecution);
+
+        try (QueryExecution qexec = QueryExecutionFactory.create(queryForExecution, dataset)) {
+            // Determine output format
+            String acceptHeader = req.getHeader("Accept");
+            String format = getOutputFormat(acceptHeader, req.getParameter("format"));
+
+            resp.setCharacterEncoding("UTF-8");
+
+            if (queryForExecution.isSelectType()) {
+                ResultSet results = qexec.execSelect();
+
+                java.io.OutputStream outputStream = resp.getOutputStream();
+                if ("json".equals(format)) {
+                    resp.setContentType("application/sparql-results+json");
+                    ResultSetFormatter.outputAsJSON(outputStream, results);
+                } else if ("xml".equals(format)) {
+                    resp.setContentType("application/sparql-results+xml");
+                    ResultSetFormatter.outputAsXML(outputStream, results);
+                } else {
+                    // Default to TSV
+                    resp.setContentType("text/tab-separated-values");
+                    ResultSetFormatter.outputAsTSV(outputStream, results);
+                }
+                outputStream.flush();
+            } else if (queryForExecution.isConstructType()) {
+                Model result = qexec.execConstruct();
+                resp.setContentType("text/turtle");
+                java.io.OutputStream outputStream = resp.getOutputStream();
+                result.write(outputStream, "TTL");
+                outputStream.flush();
+            } else if (queryForExecution.isDescribeType()) {
+                Model result = qexec.execDescribe();
+                resp.setContentType("text/turtle");
+                java.io.OutputStream outputStream = resp.getOutputStream();
+                result.write(outputStream, "TTL");
+                outputStream.flush();
+            } else if (queryForExecution.isAskType()) {
+                boolean result = qexec.execAsk();
+                resp.setContentType("application/sparql-results+json");
+                PrintWriter out = resp.getWriter();
+                out.println("{\"boolean\": " + result + "}");
+                out.flush();
+            } else {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unsupported query type");
+            }
+        }
+    }
+
+    /**
+     * Fetches a FROM graph and parses it into a Model, enforcing MAX_GRAPH_BYTES.
+     * Rejects via Content-Length when the server provides one, and by counting
+     * bytes while streaming otherwise (chunked responses).
+     */
+    private Model loadGraphCapped(String uri) throws IOException {
+        HttpURLConnection conn = HttpClientUtil.createConnection(uri);
+        conn.setRequestProperty("Accept",
+                "application/rdf+xml, text/turtle;q=0.9, application/n-triples;q=0.8");
+        HttpClientUtil.checkResponseCode(conn, uri);
+
+        long contentLength = conn.getContentLengthLong();
+        if (contentLength > MAX_GRAPH_BYTES) {
+            throw new GraphTooLargeException("Graph <" + uri + "> is too large to query: "
+                    + contentLength + " bytes (Content-Length) exceeds the limit of "
+                    + MAX_GRAPH_BYTES + " bytes (10 MB). Query a smaller dataset or slice.");
+        }
+
+        String contentType = conn.getContentType();
+        if (contentType != null && contentType.indexOf(';') >= 0) {
+            contentType = contentType.substring(0, contentType.indexOf(';')).trim();
+        }
+        Lang lang = contentType == null ? null : RDFLanguages.contentTypeToLang(contentType);
+
+        Model model = ModelFactory.createDefaultModel();
+        try (InputStream is = new CappedInputStream(HttpClientUtil.getInputStream(conn), MAX_GRAPH_BYTES, uri)) {
+            RDFParser.create()
+                    .source(is)
+                    .lang(lang != null ? lang : Lang.RDFXML)
+                    .base(uri)
+                    .parse(model);
+        }
+        return model;
+    }
+
+    /** A FROM graph exceeded MAX_GRAPH_BYTES. */
+    static class GraphTooLargeException extends IOException {
+        GraphTooLargeException(String message) {
+            super(message);
+        }
+    }
+
+    /** Throws GraphTooLargeException once more than {@code limit} bytes have been read. */
+    static class CappedInputStream extends FilterInputStream {
+        private final long limit;
+        private final String uri;
+        private long count;
+
+        CappedInputStream(InputStream in, long limit, String uri) {
+            super(in);
+            this.limit = limit;
+            this.uri = uri;
+        }
+
+        @Override
+        public int read() throws IOException {
+            int b = super.read();
+            if (b >= 0) {
+                bump(1);
+            }
+            return b;
+        }
+
+        @Override
+        public int read(byte[] buf, int off, int len) throws IOException {
+            int n = super.read(buf, off, len);
+            if (n > 0) {
+                bump(n);
+            }
+            return n;
+        }
+
+        private void bump(int n) throws IOException {
+            count += n;
+            if (count > limit) {
+                throw new GraphTooLargeException("Graph <" + uri + "> is too large to query: "
+                        + "response exceeded the limit of " + limit
+                        + " bytes (10 MB) while streaming. Query a smaller dataset or slice.");
+            }
         }
     }
 

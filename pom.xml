@@ -59,6 +59,12 @@
       <artifactId>jena-arq</artifactId>
       <version>5.5.0</version>
     </dependency>
+    <!-- Token-bucket rate limiting in RateLimitFilter -->
+    <dependency>
+      <groupId>com.bucket4j</groupId>
+      <artifactId>bucket4j-core</artifactId>
+      <version>8.10.1</version>
+    </dependency>
   </dependencies>
 
   <!-- build an executable jar -->
