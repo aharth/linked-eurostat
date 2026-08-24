@@ -1,34 +1,30 @@
 package com.ontologycentral.estatwrap.convert;
 
-import java.util.Date;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.configuration.MutableConfiguration;
-import javax.cache.expiry.AccessedExpiryPolicy;
-import javax.cache.expiry.Duration;
 import junit.framework.TestCase;
 
 /**
+ * Smoke test for the caffeine cache (replaced the JSR107 RI, which nothing in
+ * production used either — this documents the intended caching setup).
+ *
  * @author aharth
  */
 public class TestCache extends TestCase {
     Logger _log = Logger.getLogger(this.getClass().getName());
 
     public void testCache() throws Exception {
-        //      CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
-        CacheManager cmanager = Caching.getCachingProvider().getCacheManager();
-
-        MutableConfiguration<String, Date> config = new MutableConfiguration<String, Date>();
-        config.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.ONE_DAY))
-                .setStatisticsEnabled(true);
-
-        Cache cache = cmanager.createCache("cache", config);
+        Cache<String, String> cache = Caffeine.newBuilder()
+                .expireAfterAccess(Duration.ofDays(1))
+                .recordStats()
+                .build();
 
         cache.put("foo", "bar");
-        String result = (String) cache.get("foo");
+        String result = cache.getIfPresent("foo");
+        assertEquals("bar", result);
         _log.log(Level.INFO, "{0}", result);
     }
 }

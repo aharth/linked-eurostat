@@ -1,7 +1,5 @@
 # Changelog
 
-All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
-
 ## [2026-08-24] Loopback exempt from the rate limiter
 
 A smoke suite is longer than one 50-request window, so a local run tripped the
@@ -16,6 +14,17 @@ being loopback AND no forwarding header being present at all. Behind the reverse
 proxy every request carries one, so public traffic can never be exempted.
 
 All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
+
+## [2026-07-23] Fix a literal-string User-Agent; drop the GitHub URI
+
+- **`FeedServlet` and `CodelistsServlet` sent the literal string
+  `"com.ontologycentral.estatwrap.BuildInfo.getUserAgent()"` as their
+  User-Agent** — the call was quoted, so Eurostat's access log recorded a Java
+  expression instead of an identifiable client. Both now call the method.
+  `HttpClientUtil` was always correct.
+- **`project.user.agent` and the `BuildInfo` fallback now advertise
+  `https://ontologycentral.com/bot#s`** instead of the GitHub repository, so
+  the URI resolves to a page with a contact address (`bot@ontologycentral.com`).
 
 ## [2026-06-30]
 - Fix stale integration tests to use current SDMX 3.0 / catalogue endpoints (`CreateToCTest`, `ToCTest`, `TestEncoding`)

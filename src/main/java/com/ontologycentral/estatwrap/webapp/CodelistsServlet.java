@@ -65,7 +65,7 @@ public class CodelistsServlet extends HttpServlet {
             // Fetch CSV from Eurostat API
             URL inventoryUrl = new URL(CODELISTS_INVENTORY_URL);
             HttpURLConnection conn = (HttpURLConnection) inventoryUrl.openConnection();
-            conn.setRequestProperty("User-Agent", "com.ontologycentral.estatwrap.BuildInfo.getUserAgent()");
+            conn.setRequestProperty("User-Agent", com.ontologycentral.estatwrap.BuildInfo.getUserAgent());
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {

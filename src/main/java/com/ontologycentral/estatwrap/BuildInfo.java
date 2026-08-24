@@ -42,7 +42,7 @@ public class BuildInfo {
      * Get the User-Agent string
      */
     public static String getUserAgent() {
-        return PROPERTIES.getProperty("project.user.agent", "linked-eurostat/unknown (+https://github.com/aharth/linked-eurostat)");
+        return PROPERTIES.getProperty("project.user.agent", "linked-eurostat/unknown (+https://ontologycentral.com/bot#s)");
     }
 
     /**
