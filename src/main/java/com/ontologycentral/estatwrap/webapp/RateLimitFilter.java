@@ -97,7 +97,7 @@ public class RateLimitFilter implements Filter {
 
         String ip = clientIp(req);
 
-        if (!isExempt(ip) && !hasValidKey(req)) {
+        if (!isExempt(ip) && !isLoopbackRequest(req) && !hasValidKey(req)) {
             Bucket bucket = buckets.computeIfAbsent(ip, k ->
                     Bucket.builder()
                           .addLimit(Bandwidth.builder()
@@ -160,6 +160,38 @@ public class RateLimitFilter implements Filter {
             return (comma >= 0 ? xff.substring(0, comma) : xff).trim();
         }
         return req.getRemoteAddr();
+    }
+
+    /**
+     * A request that genuinely originated on this machine.
+     *
+     * <p>Exempted so a local smoke run does not trip the limiter halfway and
+     * report throttling as breakage. Every suite in this family is longer than
+     * one window.
+     *
+     * <p><strong>Loopback is deliberately NOT in {@link #isExempt}.</strong>
+     * That
+     * set is tested against the client IP, which prefers
+     * {@code X-Forwarded-For}
+     * — a header anybody may send. Putting 127.0.0.1 there would let a request
+     * from the internet claim the exemption by writing one line of its own
+     * headers. The test here is narrower and unspoofable from outside: the
+     * connection's own peer address is loopback AND there is no forwarding
+     * header at all. Behind a reverse proxy every request carries one, so this
+     * can never
+     * exempt public traffic.
+     */
+    static boolean isLoopbackRequest(HttpServletRequest req) {
+        if (req.getHeader("X-Forwarded-For") != null
+                || req.getHeader("X-Real-IP") != null) {
+            return false;
+        }
+        try {
+            return java.net.InetAddress.getByName(req.getRemoteAddr())
+                    .isLoopbackAddress();
+        } catch (java.net.UnknownHostException e) {
+            return false;
+        }
     }
 
     static boolean isExempt(String ip) {

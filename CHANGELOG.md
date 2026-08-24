@@ -2,6 +2,21 @@
 
 All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
 
+## [2026-08-24] Loopback exempt from the rate limiter
+
+A smoke suite is longer than one 50-request window, so a local run tripped the
+limiter halfway and reported throttling as breakage. `isLoopbackRequest` now
+exempts requests that genuinely originate on this machine.
+
+Deliberately NOT by adding 127.0.0.1 to the IP exemption set: that set is tested
+against the client IP, which prefers `X-Forwarded-For` — a header anybody may
+send — so it would have let any request on the internet opt out of rate limiting
+with one line of its own headers. The test is the connection's own peer address
+being loopback AND no forwarding header being present at all. Behind the reverse
+proxy every request carries one, so public traffic can never be exempted.
+
+All notable changes to the Eurostat Linked Data Wrapper project will be documented in this file.
+
 ## [2026-06-30]
 - Fix stale integration tests to use current SDMX 3.0 / catalogue endpoints (`CreateToCTest`, `ToCTest`, `TestEncoding`)
 
