@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026-10-03] Bypass keys from settings.xml; Jena 6.2.0; .gitignore repaired
+
+- The `api-keys` context-param in `web.xml` is now `${api.keys}`, filtered in
+  at package time (`filteringDeploymentDescriptors`) from `~/.m2/settings.xml`;
+  `pom.xml` declares it empty. No key is in the repository, as across the
+  family since the shared token was rotated on 2026-08-26.
+- Apache Jena 6.1.0 → 6.2.0 (`jena-arq`), the family's current release.
+- `.gitignore`: the family's standard rules had been appended without a
+  newline, merging the old `~` line into `~env.sh`, so `env.sh` was NOT
+  ignored. Repaired, and the generated `table_of_contents.{html,rdf}` (out
+  of git since 4cec05a) and a local `apache-jena-*/` distribution are now
+  ignored too.
+- `CLAUDE.md` added.
+
 ## [2026-10-02] CORS exposes Link, ETag, Last-Modified, Location
 
 `CorsFilter` now sends `Access-Control-Expose-Headers: Link, ETag,

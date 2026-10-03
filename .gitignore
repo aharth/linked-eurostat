@@ -4,4 +4,21 @@
 
 deploy.sh
 
-~
+env.sh
+*.pdf
+target/
+pom-smoke.xml
+*.war
+*.class
+*~
+node_modules/
+TODO.md
+DONE.md
+ISSUES.md
+
+# --- Generated or downloaded, never committed -------------------------------
+# Written by CreateToCTest; removed from git in 4cec05a ("generate toc on demand").
+src/main/webapp/table_of_contents.html
+src/main/webapp/table_of_contents.rdf
+# A local Apache Jena distribution (command-line tools), 27 MB.
+apache-jena-*/

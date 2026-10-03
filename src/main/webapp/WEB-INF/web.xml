@@ -5,6 +5,14 @@ xmlns:web="https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
 xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		    https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" version="6.0">
   <display-name>Linked Eurostat</display-name>
+  <!-- Comma-separated bypass keys (RateLimitFilter). Injected from
+       ~/.m2/settings.xml at package time; the environment variable takes
+       precedence. Never hardcode a value here. -->
+  <context-param>
+    <param-name>api-keys</param-name>
+    <param-value>${api.keys}</param-value>
+  </context-param>
+
 
   <filter>
     <filter-name>cors</filter-name>
