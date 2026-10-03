@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026-10-02] CORS exposes Link, ETag, Last-Modified, Location
+
+`CorsFilter` now sends `Access-Control-Expose-Headers: Link, ETag,
+Last-Modified, Location`. Without it a browser script fetching cross-origin
+could read none of them: CORS hides every header outside a short safelist.
+
 ## [2026-08-24] Loopback exempt from the rate limiter
 
 A smoke suite is longer than one 50-request window, so a local run tripped the
