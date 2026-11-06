@@ -37,7 +37,7 @@ public class CodelistsServlet extends HttpServlet {
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
-                resp.sendError(500, e.getMessage());
+                ServletUtil.sendError(resp, 500, e.getMessage());
             }
             return;
         }
@@ -54,7 +54,7 @@ public class CodelistsServlet extends HttpServlet {
             format = "rdf";
             contentType = "application/rdf+xml;charset=UTF-8";
         } else {
-            resp.sendError(404, "Format not supported");
+            ServletUtil.sendError(resp, 404, "Format not supported");
             return;
         }
 
@@ -70,7 +70,7 @@ public class CodelistsServlet extends HttpServlet {
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
                 _log.log(Level.SEVERE, "Failed to fetch codelists inventory: HTTP {0}", responseCode);
-                resp.sendError(502, "Failed to fetch codelists inventory from Eurostat API");
+                ServletUtil.sendError(resp, 502, "Failed to fetch codelists inventory from Eurostat API");
                 return;
             }
 
@@ -88,7 +88,7 @@ public class CodelistsServlet extends HttpServlet {
             InputStream xslStream = getServletContext().getResourceAsStream("/WEB-INF/codelists-" + format + ".xsl");
             if (xslStream == null) {
                 _log.log(Level.SEVERE, "XSLT stylesheet not found: /WEB-INF/codelists-{0}.xsl", format);
-                resp.sendError(500, "XSLT stylesheet not found");
+                ServletUtil.sendError(resp, 500, "XSLT stylesheet not found");
                 return;
             }
 
@@ -105,10 +105,10 @@ public class CodelistsServlet extends HttpServlet {
 
         } catch (TransformerException e) {
             _log.log(Level.SEVERE, "XSLT transformation failed", e);
-            resp.sendError(500, "Failed to transform codelists catalog: " + e.getMessage());
+            ServletUtil.sendError(resp, 500, "Failed to transform codelists catalog: " + e.getMessage());
         } catch (IOException e) {
             _log.log(Level.SEVERE, "I/O error while generating codelists catalog", e);
-            resp.sendError(502, "Error accessing Eurostat API: " + e.getMessage());
+            ServletUtil.sendError(resp, 502, "Error accessing Eurostat API: " + e.getMessage());
         }
     }
 

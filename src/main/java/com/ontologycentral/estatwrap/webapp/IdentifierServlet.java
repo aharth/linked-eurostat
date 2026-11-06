@@ -20,7 +20,7 @@ public class IdentifierServlet extends HttpServlet {
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
-                resp.sendError(500, e.getMessage());
+                ServletUtil.sendError(resp, 500, e.getMessage());
             }
             return;
         }
@@ -32,13 +32,13 @@ public class IdentifierServlet extends HttpServlet {
 
         String id = req.getRequestURI();
         if (id == null) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            ServletUtil.sendError(resp, HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
         int idIndex = id.indexOf("/id/");
         if (idIndex == -1) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            ServletUtil.sendError(resp, HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         id = id.substring(idIndex + "/id/".length());
@@ -50,7 +50,7 @@ public class IdentifierServlet extends HttpServlet {
         // EXPENSIVE!
         //		Map<String, String> toc = (Map<String, String>)ctx.getAttribute(Listener.TOC);
         //		if (toc != null && !toc.containsKey(id)) {
-        //			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        //			ServletUtil.sendError(resp, HttpServletResponse.SC_NOT_FOUND);
         //			return;
         //		}
 

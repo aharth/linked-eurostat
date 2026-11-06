@@ -36,7 +36,7 @@ public class TocServlet extends HttpServlet {
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
-                resp.sendError(500, e.getMessage());
+                ServletUtil.sendError(resp, 500, e.getMessage());
             }
             return;
         }
@@ -53,7 +53,7 @@ public class TocServlet extends HttpServlet {
             format = "rdf";
             contentType = "application/rdf+xml;charset=UTF-8";
         } else {
-            resp.sendError(404, "Format not supported");
+            ServletUtil.sendError(resp, 404, "Format not supported");
             return;
         }
 
@@ -70,7 +70,7 @@ public class TocServlet extends HttpServlet {
             if (responseCode != 200) {
                 _log.log(Level.SEVERE, "Failed to fetch TOC XML: HTTP {0}", responseCode);
                 // Pass through the original status code instead of always returning 502
-                resp.sendError(responseCode, "Upstream API returned: " + conn.getResponseMessage());
+                ServletUtil.sendError(resp, responseCode, "Upstream API returned: " + conn.getResponseMessage());
                 return;
             }
 
@@ -84,7 +84,7 @@ public class TocServlet extends HttpServlet {
             InputStream xslStream = getServletContext().getResourceAsStream("/WEB-INF/toc-" + format + ".xsl");
             if (xslStream == null) {
                 _log.log(Level.SEVERE, "XSLT stylesheet not found: /WEB-INF/toc-{0}.xsl", format);
-                resp.sendError(500, "XSLT stylesheet not found");
+                ServletUtil.sendError(resp, 500, "XSLT stylesheet not found");
                 return;
             }
 
@@ -102,10 +102,10 @@ public class TocServlet extends HttpServlet {
 
         } catch (TransformerException e) {
             _log.log(Level.SEVERE, "XSLT transformation failed", e);
-            resp.sendError(500, "Failed to transform table of contents: " + e.getMessage());
+            ServletUtil.sendError(resp, 500, "Failed to transform table of contents: " + e.getMessage());
         } catch (IOException e) {
             _log.log(Level.SEVERE, "I/O error while generating table of contents", e);
-            resp.sendError(502, "Error accessing Eurostat API: " + e.getMessage());
+            ServletUtil.sendError(resp, 502, "Error accessing Eurostat API: " + e.getMessage());
         }
     }
 }

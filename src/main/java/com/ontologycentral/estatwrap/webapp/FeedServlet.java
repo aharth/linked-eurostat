@@ -30,7 +30,7 @@ public class FeedServlet extends HttpServlet {
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
-                resp.sendError(500, e.getMessage());
+                ServletUtil.sendError(resp, 500, e.getMessage());
             }
             return;
         }
@@ -48,7 +48,7 @@ public class FeedServlet extends HttpServlet {
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
-                resp.sendError(responseCode);
+                ServletUtil.sendError(resp, responseCode);
                 return;
             }
 
@@ -71,7 +71,7 @@ public class FeedServlet extends HttpServlet {
                 InputStream xslStream = getServletContext().getResourceAsStream("/WEB-INF/feed-rss2rdf.xsl");
                 if (xslStream == null) {
                     _log.severe("XSLT stylesheet not found: /WEB-INF/feed-rss2rdf.xsl");
-                    resp.sendError(500, "XSLT stylesheet not found");
+                    ServletUtil.sendError(resp, 500, "XSLT stylesheet not found");
                     return;
                 }
 
@@ -88,16 +88,16 @@ public class FeedServlet extends HttpServlet {
 
             } catch (TransformerException e) {
                 _log.severe("XSLT transformation failed: " + e.getMessage());
-                resp.sendError(500, "Failed to transform RSS feed: " + e.getMessage());
+                ServletUtil.sendError(resp, 500, "Failed to transform RSS feed: " + e.getMessage());
             }
 
 
         } catch (IOException e) {
-            resp.sendError(500, url + ": " + e.getMessage());
+            ServletUtil.sendError(resp, 500, url + ": " + e.getMessage());
             e.printStackTrace();
             return;
         } catch (RuntimeException e) {
-            resp.sendError(500, url + ": " + e.getMessage());
+            ServletUtil.sendError(resp, 500, url + ": " + e.getMessage());
             e.printStackTrace();
             return;
         }

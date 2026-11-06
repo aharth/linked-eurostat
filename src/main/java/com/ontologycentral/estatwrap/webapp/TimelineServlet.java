@@ -25,7 +25,7 @@ public class TimelineServlet extends HttpServlet {
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
-                resp.sendError(500, e.getMessage());
+                ServletUtil.sendError(resp, 500, e.getMessage());
             }
             return;
         }
@@ -152,11 +152,11 @@ public class TimelineServlet extends HttpServlet {
 
             ch.close();
         } catch (XMLStreamException e) {
-            resp.sendError(500, e.getMessage());
+            ServletUtil.sendError(resp, 500, e.getMessage());
             e.printStackTrace();
             return;
         } catch (RuntimeException e) {
-            resp.sendError(500, e.getMessage());
+            ServletUtil.sendError(resp, 500, e.getMessage());
             e.printStackTrace();
             return;
         }

@@ -29,11 +29,11 @@ public class DaServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (req.getServerName().contains("estatwrap.appspot.com")) {
             try {
-                URI re = new URI("http://com.ontologycentral.estatwrap.BuildInfo.getUserAgent()/" + req.getRequestURI());
+                URI re = new URI("http://estatwrap.ontologycentral.com/" + req.getRequestURI());
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
-                resp.sendError(500, e.getMessage());
+                ServletUtil.sendError(resp, 500, e.getMessage());
             }
             return;
         }
@@ -45,7 +45,7 @@ public class DaServlet extends HttpServlet {
         String id = req.getRequestURI();
         int daIndex = id.indexOf("/da/");
         if (daIndex == -1) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            ServletUtil.sendError(resp, HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         id = id.substring(daIndex + "/da/".length());
@@ -61,7 +61,7 @@ public class DaServlet extends HttpServlet {
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
-                resp.sendError(responseCode, "Upstream API returned: " + conn.getResponseMessage());
+                ServletUtil.sendError(resp, responseCode, "Upstream API returned: " + conn.getResponseMessage());
                 return;
             }
 
@@ -78,11 +78,11 @@ public class DaServlet extends HttpServlet {
             // Convert SDMX 3.0 TSV data to Turtle using SDMX 3.0 identifiers
             Da.convertWithSdmx3IdentifiersToTurtle(os, toc, id, in);
         } catch (IOException e) {
-            resp.sendError(500, url + ": " + e.getMessage());
+            ServletUtil.sendError(resp, 500, url + ": " + e.getMessage());
             e.printStackTrace();
             return;
         } catch (RuntimeException e) {
-            resp.sendError(500, url + ": " + e.getMessage());
+            ServletUtil.sendError(resp, 500, url + ": " + e.getMessage());
             e.printStackTrace();
             return;
         }

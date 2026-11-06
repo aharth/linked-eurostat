@@ -28,7 +28,7 @@ public class CsServlet extends HttpServlet {
         String id = req.getRequestURI();
         int csIndex = id.indexOf("/cs/");
         if (csIndex == -1) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            ServletUtil.sendError(resp, HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         id = id.substring(csIndex + "/cs/".length());
@@ -50,7 +50,7 @@ public class CsServlet extends HttpServlet {
 
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
-                resp.sendError(responseCode);
+                ServletUtil.sendError(resp, responseCode);
                 return;
             }
 
@@ -62,14 +62,14 @@ public class CsServlet extends HttpServlet {
             cs.convert(in, os, t);
         } catch (TransformerException e) {
             e.printStackTrace();
-            resp.sendError(500, e.getMessage());
+            ServletUtil.sendError(resp, 500, e.getMessage());
             return;
         } catch (IOException e) {
-            resp.sendError(500, "Error processing concept scheme for " + id + ": " + e.getMessage());
+            ServletUtil.sendError(resp, 500, "Error processing concept scheme for " + id + ": " + e.getMessage());
             e.printStackTrace();
             return;
         } catch (RuntimeException e) {
-            resp.sendError(500, "Error processing concept scheme for " + id + ": " + e.getMessage());
+            ServletUtil.sendError(resp, 500, "Error processing concept scheme for " + id + ": " + e.getMessage());
             e.printStackTrace();
             return;
         }

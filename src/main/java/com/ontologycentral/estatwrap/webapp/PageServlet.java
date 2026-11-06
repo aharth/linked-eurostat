@@ -27,7 +27,7 @@ public class PageServlet extends HttpServlet {
                 re = re.normalize();
                 resp.sendRedirect(re.toString());
             } catch (URISyntaxException e) {
-                resp.sendError(500, e.getMessage());
+                ServletUtil.sendError(resp, 500, e.getMessage());
             }
             return;
         }
@@ -40,7 +40,7 @@ public class PageServlet extends HttpServlet {
         String id = req.getRequestURI();
         int pageIndex = id.indexOf("/page/");
         if (pageIndex == -1) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            ServletUtil.sendError(resp, HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         id = id.substring(pageIndex + "/page/".length());
@@ -446,11 +446,11 @@ public class PageServlet extends HttpServlet {
 
             ch.close();
         } catch (XMLStreamException e) {
-            resp.sendError(500, e.getMessage());
+            ServletUtil.sendError(resp, 500, e.getMessage());
             e.printStackTrace();
             return;
         } catch (RuntimeException e) {
-            resp.sendError(500, e.getMessage());
+            ServletUtil.sendError(resp, 500, e.getMessage());
             e.printStackTrace();
             return;
         }

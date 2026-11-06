@@ -54,7 +54,7 @@ public class SparqlServlet extends HttpServlet {
                     showSparqlForm(req, resp);
                     return;
                 } else {
-                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing 'query' parameter");
+                    ServletUtil.sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Missing 'query' parameter");
                     return;
                 }
             }
@@ -64,7 +64,7 @@ public class SparqlServlet extends HttpServlet {
 
             if (!QUERY_SLOT.tryAcquire()) {
                 resp.setHeader("Retry-After", "10");
-                resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                ServletUtil.sendError(resp, HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                         "Another query is currently executing, please retry shortly");
                 return;
             }
@@ -78,12 +78,12 @@ public class SparqlServlet extends HttpServlet {
             GraphTooLargeException tooLarge = findGraphTooLarge(e);
             if (tooLarge != null) {
                 _log.warning(tooLarge.getMessage());
-                resp.sendError(413, tooLarge.getMessage());
+                ServletUtil.sendError(resp, 413, tooLarge.getMessage());
                 return;
             }
             _log.severe("Error executing SPARQL query: " + e.getMessage());
             e.printStackTrace();
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error executing query: " + e.getMessage());
+            ServletUtil.sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error executing query: " + e.getMessage());
         }
     }
 
@@ -191,7 +191,7 @@ public class SparqlServlet extends HttpServlet {
                 out.println("{\"boolean\": " + result + "}");
                 out.flush();
             } else {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unsupported query type");
+                ServletUtil.sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Unsupported query type");
             }
         }
     }
