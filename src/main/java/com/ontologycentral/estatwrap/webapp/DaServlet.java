@@ -72,7 +72,7 @@ public class DaServlet extends HttpServlet {
         try {
             HttpURLConnection conn = HttpClientUtil.createConnection(urlString);
 
-            int responseCode = conn.getResponseCode();
+            int responseCode = HttpClientUtil.respond(conn);
             if (responseCode != 200) {
                 String fault = upstreamFault(conn);
                 _log.warning(urlString + " -> " + responseCode + " " + fault);

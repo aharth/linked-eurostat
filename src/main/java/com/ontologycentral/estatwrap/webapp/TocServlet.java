@@ -66,7 +66,7 @@ public class TocServlet extends HttpServlet {
             URL tocUrl = new URL(tocUrlString);
             HttpURLConnection conn = HttpClientUtil.createConnection(tocUrlString);
 
-            int responseCode = conn.getResponseCode();
+            int responseCode = HttpClientUtil.respond(conn);
             if (responseCode != 200) {
                 _log.log(Level.SEVERE, "Failed to fetch TOC XML: HTTP {0}", responseCode);
                 // Pass through the original status code instead of always returning 502

@@ -1,5 +1,6 @@
 package com.ontologycentral.estatwrap.webapp;
 
+import com.ontologycentral.estatwrap.HttpClientUtil;
 import com.ontologycentral.estatwrap.convert.ToC;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,10 @@ public class Listener implements ServletContextListener {
 
     public static String FACTORY = "f";
     public static String TOC = "t";
+    /** When the TOC was loaded (epoch millis), absent if it never was. */
+    public static String TOC_TIME = "t.time";
+    /** Why the TOC failed to load, absent if it did not fail. */
+    public static String TOC_ERROR = "t.error";
     public static String CS_T = "cs";
     public static String CL_T = "cl";
     public static String DS_T = "ds";
@@ -72,33 +76,24 @@ Transformer csT =
             throw new RuntimeException(e);
         }
 
-        Map<String, String> map = null;
+        // The dataset titles, fetched once at startup. On failure the wrapper runs with an
+        // empty map; /status says so (TOC_ERROR) instead of leaving it to be noticed.
+        Map<String, String> map;
+        String tocUrl = "https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml";
+        try {
+            HttpURLConnection conn = HttpClientUtil.createConnection(tocUrl);
+            HttpClientUtil.checkResponseCode(conn, tocUrl);
+            InputStream is = conn.getInputStream();
 
-        if (map == null) {
-            try {
-                // Use new XML API endpoint instead of old text format
-                URL u =
-                        new URL(
-                                "https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml");
-                HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-                InputStream is = conn.getInputStream();
-
-                // Parse XML ToC using existing ToC class
-                ToC toc = new ToC(is, "utf-8");
-                map = toc.convert();
-            } catch (MalformedURLException e) {
-                _log.severe(e.getMessage());
-                e.printStackTrace();
-                map = new HashMap<String, String>();
-            } catch (IOException e) {
-                _log.severe(e.getMessage());
-                e.printStackTrace();
-                map = new HashMap<String, String>();
-            } catch (XMLStreamException e) {
-                _log.severe(e.getMessage());
-                e.printStackTrace();
-                map = new HashMap<String, String>();
-            }
+            // Parse XML ToC using existing ToC class
+            ToC toc = new ToC(is, "utf-8");
+            map = toc.convert();
+            ctx.setAttribute(TOC_TIME, System.currentTimeMillis());
+        } catch (IOException | XMLStreamException e) {
+            _log.severe("table of contents not loaded, dataset titles missing until restart: " + e);
+            e.printStackTrace();
+            map = new HashMap<String, String>();
+            ctx.setAttribute(TOC_ERROR, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
         ctx.setAttribute(TOC, map);
     }

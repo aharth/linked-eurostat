@@ -48,7 +48,7 @@ public class DfServlet extends HttpServlet {
 
             HttpURLConnection conn = HttpClientUtil.createConnection(urlString);
 
-            int responseCode = conn.getResponseCode();
+            int responseCode = HttpClientUtil.respond(conn);
             if (responseCode != 200) {
                 ServletUtil.sendError(resp, responseCode);
                 return;

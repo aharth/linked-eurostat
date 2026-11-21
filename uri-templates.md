@@ -59,6 +59,9 @@ https://ec.europa.eu/eurostat/api/dissemination/
   - → `/files/inventory?type=codelist`
 - `/feed.rdf` - RSS/RDF Feed of Recent Dataset Update Events
   - → `/catalogue/rss/en/statistics-update.rss`
+- `/status`, `/status.json` - What the wrapper has seen of Eurostat per kind of
+  call (`data`, `structure`, `catalogue`, `self`) and the TOC; never calls
+  upstream. 200 when data is servable, else 503.
 
 ## URI Structure Fragments
 

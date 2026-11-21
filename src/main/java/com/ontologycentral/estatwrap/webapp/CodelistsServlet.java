@@ -67,7 +67,7 @@ public class CodelistsServlet extends HttpServlet {
             HttpURLConnection conn = (HttpURLConnection) inventoryUrl.openConnection();
             conn.setRequestProperty("User-Agent", com.ontologycentral.estatwrap.BuildInfo.getUserAgent());
 
-            int responseCode = conn.getResponseCode();
+            int responseCode = com.ontologycentral.estatwrap.HttpClientUtil.respond(conn);
             if (responseCode != 200) {
                 _log.log(Level.SEVERE, "Failed to fetch codelists inventory: HTTP {0}", responseCode);
                 ServletUtil.sendError(resp, 502, "Failed to fetch codelists inventory from Eurostat API");

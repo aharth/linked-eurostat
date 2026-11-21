@@ -100,6 +100,10 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 		<servlet-name>sparql</servlet-name>
 		<servlet-class>com.ontologycentral.estatwrap.webapp.SparqlServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>status</servlet-name>
+		<servlet-class>com.ontologycentral.estatwrap.webapp.StatusServlet</servlet-class>
+	</servlet>
 
 
 	<servlet-mapping>
@@ -176,6 +180,13 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
 	<servlet-mapping>
 		<servlet-name>sparql</servlet-name>
 		<url-pattern>/sparql</url-pattern>
+	</servlet-mapping>
+
+	<!-- not rate-limited: reports only what was seen, never calls Eurostat, safe to poll -->
+	<servlet-mapping>
+		<servlet-name>status</servlet-name>
+		<url-pattern>/status</url-pattern>
+		<url-pattern>/status.json</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

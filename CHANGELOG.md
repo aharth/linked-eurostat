@@ -1,5 +1,31 @@
 # Changelog
 
+## [2026-11-21] `/status` and `/status.json`: what the wrapper has seen of Eurostat
+
+Suggested by linked-regionalstatistik, same shape. There, data calls timed
+out for hours while the catalogue answered in under a second, and nothing
+showed it.
+
+- `UpstreamHealth` records every upstream call per kind, taken from the URL:
+  `data` (SDMX data), `structure` (SDMX structure), `catalogue` (TOC, RSS,
+  codelist inventory) and `self` (SPARQL fetching its `FROM` graphs). Each kind
+  has its state (`ok`, `failing`, `unknown`), last success, last failure, the
+  error and failed URL, and failures in a row.
+- Recorded in one place, `HttpClientUtil.respond(conn)`, which replaces
+  `getResponseCode()` at all nine servlets' call sites and inside
+  `checkResponseCode`. A failure is an exception, a 5xx or a 429. A 400 or 404
+  means Eurostat answered. A failure while streaming the body is not recorded,
+  since it cannot be told apart from the client hanging up.
+- `/status` never calls Eurostat, so it is safe to poll, and is not rate-limited.
+  200 when data is servable, 503 when the last `data` call failed. JSON
+  (`.json` or no preference) or `text/plain` if ranked higher, else 406;
+  `Cache-Control: no-store`.
+- It reports the table of contents too: number of datasets, when it was loaded,
+  or why it failed. Before, a failed TOC fetch at startup left an empty map until
+  the next restart, visible only in the log. That fetch now also goes through
+  `HttpClientUtil`, so it has timeouts and the User-Agent.
+- Tests, offline: `UpstreamHealthTest`, `StatusServletTest`.
+
 ## [2026-11-21] Dimension filters on `/da/{id}`, passed through to Eurostat
 
 Asked for by linked-transit: from a region or city code to its figures without

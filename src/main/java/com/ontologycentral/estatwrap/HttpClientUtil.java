@@ -77,6 +77,35 @@ public final class HttpClientUtil {
     }
 
     /**
+     * Sends the request and returns the status, recording the outcome in {@link UpstreamHealth}
+     * for {@code /status}. Use instead of {@code getResponseCode()} for every upstream call.
+     * A failure is an exception (timeout, refused connection), a 5xx or a 429; any other status,
+     * a 400 for a bad filter or a 404 for an unknown dataset included, means upstream answered.
+     * A failure while streaming the body afterwards is not recorded: it cannot be told apart
+     * from the client hanging up.
+     *
+     * @param connection the configured HTTP connection
+     * @return the HTTP status code
+     * @throws IOException if no response arrived (recorded, then rethrown)
+     */
+    public static int respond(HttpURLConnection connection) throws IOException {
+        String url = connection.getURL().toString();
+        int code;
+        try {
+            code = connection.getResponseCode();
+        } catch (IOException | RuntimeException e) {
+            UpstreamHealth.failure(url, e);
+            throw e;
+        }
+        if (code >= 500 || code == 429) {
+            UpstreamHealth.failure(url, new IOException("HTTP " + code + " " + connection.getResponseMessage()));
+        } else {
+            UpstreamHealth.success(url);
+        }
+        return code;
+    }
+
+    /**
      * Checks HTTP response code and throws IOException for non-200 responses.
      *
      * @param connection the HTTP connection to check
@@ -84,7 +113,7 @@ public final class HttpClientUtil {
      * @throws IOException if response code is not 200
      */
     public static void checkResponseCode(HttpURLConnection connection, String context) throws IOException {
-        int responseCode = connection.getResponseCode();
+        int responseCode = respond(connection);
         if (responseCode != 200) {
             throw new IOException("HTTP " + responseCode + " from " + context + ": " + connection.getResponseMessage());
         }

@@ -46,7 +46,7 @@ public class FeedServlet extends HttpServlet {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("User-Agent", com.ontologycentral.estatwrap.BuildInfo.getUserAgent());
 
-            int responseCode = conn.getResponseCode();
+            int responseCode = com.ontologycentral.estatwrap.HttpClientUtil.respond(conn);
             if (responseCode != 200) {
                 ServletUtil.sendError(resp, responseCode);
                 return;
