@@ -66,6 +66,17 @@ public final class UrlBuilder {
     }
 
     /**
+     * Builds URL for data observations restricted by dimension filters, which Eurostat applies.
+     *
+     * @param id the dataset ID
+     * @param filter the dimension filters
+     * @return complete API URL
+     */
+    public static String buildDataUrl(String id, DataFilter filter) {
+        return buildDataUrl(id) + filter.toUpstreamQuery();
+    }
+
+    /**
      * Builds URL for legacy TSV data using SDMX 2.1 API.
      *
      * @param id the dataset ID

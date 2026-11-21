@@ -46,6 +46,13 @@ https://ec.europa.eu/eurostat/api/dissemination/
   - → `/sdmx/3.0/structure/dataconstraint/ESTAT/{id}`
 - `/da/{id}` - Data Observations
   - → `/sdmx/3.0/data/dataflow/ESTAT/{id}/1.0?format=tsv&compress=false`
+- `/da/{id}{?dim,…}` - Data Observations filtered by dimension codes, e.g.
+  `/da/demo_r_pjanaggr3?geo=DE254,DE255&TIME_PERIOD=ge:2022`
+  - → the same, plus `&c[{dim}]={value}` per parameter (percent-encoded)
+  - Codes match exactly; a comma lists alternatives. `TIME_PERIOD` also takes
+    `ge:`, `gt:`, `le:`, `lt:`, and `+` for a range (`ge:2015+le:2020`).
+  - No prefixes, no filter on values: Eurostat answers 400 to both.
+  - Advertised in each `/da/{id}` document as `<{id}#ds> hydra:search`.
 - `/toc.html` / `/toc.rdf` - Table of Contents (Datasets Catalog)
   - → `/catalogue/toc/xml`
 - `/codelists.html` / `/codelists.rdf` - Codelists Inventory (SKOS Concept Schemes Catalog)

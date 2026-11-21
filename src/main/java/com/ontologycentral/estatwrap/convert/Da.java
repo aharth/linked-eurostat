@@ -18,6 +18,11 @@ public class Da {
 
     BufferedReader _in;
 
+    /** Dimensions of the TSV header, in order; the last is the column dimension (TIME_PERIOD). */
+    List<String> _dims = new java.util.ArrayList<>();
+    /** One value per dimension, from the first observation: the templates' skos:example. */
+    Map<String, String> _examples = new java.util.LinkedHashMap<>();
+
     public static int MAX_COLS = 8 * 10;
     public static int MAX_ROWS = 1024 * 8 * 10;
 
@@ -126,6 +131,7 @@ public class Da {
     }
 
     public void convert(Writer out, String id) throws IOException {
+        String ds = "<" + id + "#ds>";
         String line = null;
 
         int rows = 0;
@@ -140,6 +146,8 @@ public class Da {
             }
 
             h = new Header(line);
+            _dims.addAll(h.getDim1());
+            _dims.add(h.getDim2());
         }
 
         int obsCount = 0;
@@ -176,9 +184,18 @@ public class Da {
 
                 String obsId = "_:obs" + (++obsCount);
 
+                if (_examples.isEmpty()) {
+                    for (int j = 0; j < hd1.size(); j++) {
+                        _examples.put(hd1.get(j), ld1.get(j));
+                    }
+                    _examples.put(h.getDim2(), hcol.get(i));
+                }
+
                 out.write(obsId + "\n");
                 out.write("    a qb:Observation ;\n");
-                out.write("    qb:dataSet <#ds> ;\n");
+                // the dataset, not this (possibly filtered) document: <{id}#ds> resolves
+                // against /da/{id}?geo=... to /da/{id}#ds
+                out.write("    qb:dataSet " + ds + " ;\n");
 
                 for (int j = 0; j < hd1.size(); j++) {
                     out.write("    dim:dim-" + hd1.get(j) + " ");
@@ -275,6 +292,51 @@ public class Da {
             case "z": return "z (not applicable)";
             default: return flag;
         }
+    }
+
+    /**
+     * A Hydra template on the dataset for its dimension filters, one optional variable per
+     * dimension of the TSV header, each with the value of the first observation as example.
+     * Relative to the document, so the host never appears. Written after the observations
+     * because only then is the header known; Turtle does not care about order.
+     */
+    void writeSearchTemplate(Writer out, String id) throws IOException {
+        if (_dims.isEmpty()) {
+            return;
+        }
+        out.write("<" + id + "#ds> hydra:search [\n");
+        out.write("    a hydra:IriTemplate ;\n");
+        out.write("    hydra:template \"" + escapeString(id + "{?" + String.join(",", _dims) + "}") + "\" ;\n");
+        out.write("    hydra:variableRepresentation hydra:BasicRepresentation ;\n");
+        out.write("    rdfs:comment \"Observations restricted by dimension codes, matched exactly by Eurostat."
+                + " A comma lists alternatives (geo=DE254,DE255). TIME_PERIOD also takes ge:, gt:, le:, lt:,"
+                + " and + for a range (ge:2015+le:2020). No prefix matching and no filter on values:"
+                + " Eurostat supports neither.\" ;\n");
+        for (int k = 0; k < _dims.size(); k++) {
+            String dim = _dims.get(k);
+            boolean time = dim.equalsIgnoreCase(com.ontologycentral.estatwrap.DataFilter.TIME);
+            out.write("    hydra:mapping [\n");
+            out.write("        a hydra:IriTemplateMapping ;\n");
+            out.write("        hydra:variable \"" + escapeString(dim) + "\" ;\n");
+            out.write("        hydra:required false ;\n");
+            out.write("        hydra:property dim:dim-" + dim + " ;\n");
+            out.write("        sh:pattern \"" + escapeString(time
+                    ? com.ontologycentral.estatwrap.DataFilter.TIME_PATTERN
+                    : com.ontologycentral.estatwrap.DataFilter.CODE_PATTERN) + "\"");
+            String example = _examples.get(dim);
+            if (example != null && !example.isEmpty()) {
+                out.write(" ;\n        skos:example \"" + escapeString(example) + "\"");
+            }
+            out.write("\n    ] ;\n");
+        }
+        out.write("    hydra:operation [\n");
+        out.write("        a hydra:Operation ;\n");
+        out.write("        hydra:method \"GET\" ;\n");
+        out.write("        hydra:returns qb:Observation ;\n");
+        out.write("        hydra:possibleStatus [ hydra:statusCode 200 ], [ hydra:statusCode 400 ],"
+                + " [ hydra:statusCode 404 ], [ hydra:statusCode 500 ]\n");
+        out.write("    ]\n");
+        out.write("] .\n");
     }
 
     private String convertTime(String time) {
@@ -403,6 +465,14 @@ public class Da {
 
     public static void convertWithSdmx3IdentifiersToTurtle(OutputStream os, Map<String, String> toc, String id, Reader in)
             throws IOException {
+        convertWithSdmx3IdentifiersToTurtle(os, toc, id, in, com.ontologycentral.estatwrap.UrlBuilder.buildDataUrl(id));
+    }
+
+    /**
+     * @param upstream the Eurostat URL the data was read from, with any dimension filters
+     */
+    public static void convertWithSdmx3IdentifiersToTurtle(OutputStream os, Map<String, String> toc, String id, Reader in,
+            String upstream) throws IOException {
         Writer writer = new OutputStreamWriter(os, "utf-8");
 
         writer.write("@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n");
@@ -413,6 +483,9 @@ public class Da {
         writer.write("@prefix sdmx-measure: <http://purl.org/linked-data/sdmx/2009/measure#> .\n");
         writer.write("@prefix dcterms: <http://purl.org/dc/terms/> .\n");
         writer.write("@prefix prov: <http://www.w3.org/ns/prov#> .\n");
+        writer.write("@prefix hydra: <http://www.w3.org/ns/hydra/core#> .\n");
+        writer.write("@prefix sh: <http://www.w3.org/ns/shacl#> .\n");
+        writer.write("@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n");
         writer.write("@prefix dim: <../ds/" + id + "#> .\n");
         writer.write("\n");
 
@@ -430,10 +503,10 @@ public class Da {
         writer.write("    prov:wasGeneratedBy <#transformation> .\n");
         writer.write("\n");
 
-        writer.write("<#ds>\n");
+        writer.write("<" + id + "#ds>\n");
         writer.write("    a qb:DataSet ;\n");
         writer.write("    rdfs:comment \"Source: Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/).\" ;\n");
-        writer.write("    foaf:page <> ;\n");
+        writer.write("    foaf:page <" + id + "> ;\n");
         writer.write("    foaf:homepage <https://ec.europa.eu/eurostat/web/products-datasets/-/" + id + "> ;\n");
         writer.write("    qb:structure <../ds/" + id + "#ds> .\n");
         writer.write("\n");
@@ -441,7 +514,7 @@ public class Da {
         writer.write("<#transformation>\n");
         writer.write("    a prov:Activity ;\n");
         writer.write("    rdfs:label \"SDMX to RDF Data Transformation\" ;\n");
-        writer.write("    prov:used <https://ec.europa.eu/eurostat/api/dissemination/sdmx/3.0/data/dataflow/ESTAT/" + id + "/1.0?format=tsv&compress=false> ;\n");
+        writer.write("    prov:used <" + upstream + "> ;\n");
         writer.write("    prov:wasAssociatedWith <#estatwrap> ;\n");
         writer.write("    dcterms:date \"" + Main.ISO8601.get().format(new java.util.Date()) + "\"^^xsd:dateTime .\n");
         writer.write("\n");
@@ -455,6 +528,7 @@ public class Da {
 
         Da d = new Da(in);
         d.convert(writer, id);
+        d.writeSearchTemplate(writer, id);
 
         writer.flush();
     }

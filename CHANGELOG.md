@@ -1,5 +1,35 @@
 # Changelog
 
+## [2026-11-21] Dimension filters on `/da/{id}`, passed through to Eurostat
+
+Asked for by linked-transit: from a region or city code to its figures without
+crawling. `/da/{id}?geo=DE254` (NUTS), `/da/urb_cpop1?cities=DE014C` (Urban
+Audit; Nürnberg is `DE014C`, not `DE003C`, which is München) and any other
+dimension of the TSV header become Eurostat's `c[dim]=…`. A comma lists
+alternatives; `TIME_PERIOD` also takes `ge:`/`gt:`/`le:`/`lt:` and `+` for a
+range. Eurostat does the filtering; the wrapper checks the syntax (`DataFilter`)
+and answers 400 on a malformed name or value.
+
+- Not offered, by decision: prefix matching (`DE2*`) and filters on the value.
+  Eurostat rejects both (HTTP 400, `sw:` and `c[OBS_VALUE]` tested), and doing
+  them in the wrapper would drop upstream rows. A client gets a prefix's codes
+  from `/dc/{id}` and sends them as a list: two requests, not one per region.
+- No LAU lookup: Eurostat's dissemination API has no dataset keyed by LAU code.
+- No links to linked-gisco: shared ids stay strings (checklist). Each code
+  already carries its string as `dcterms:identifier` in `/cl/{dim}`.
+- The dataset carries a `hydra:search` template, `{id}{?dim1,…,TIME_PERIOD}`,
+  one optional `hydra:IriTemplateMapping` per dimension with `hydra:property`,
+  `sh:pattern` and the first observation's value as `skos:example`.
+- Observations name `<{id}#ds>` instead of `<#ds>`, so a filtered view's
+  observations still belong to the one dataset `/da/{id}#ds`.
+- `prov:used` is the actual upstream URL, filters included.
+- An upstream error passes on Eurostat's `faultstring` (e.g. "values for
+  dimension are not allowed: GEO=XX999") instead of only the reason phrase.
+- Tests, offline: `DataFilterTest` (syntax, encoding, rejected prefixes, value
+  filters and injection), `DaTurtleTest` (a recorded filtered answer parsed
+  against a filtered base: observations in `/da/{id}#ds`, every template
+  example matches its own pattern, no host), `DaServletTest` (fault text).
+
 ## [2026-10-03] Bypass keys from settings.xml; Jena 6.2.0; .gitignore repaired
 
 - The `api-keys` context-param in `web.xml` is now `${api.keys}`, filtered in
