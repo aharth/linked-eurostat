@@ -71,10 +71,10 @@
     <rdf:RDF>
       <rdf:Description rdf:about="">
         <rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
-        <dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
-        <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/toc.rdf"/>
-        <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/codelists.rdf"/>
-        <rdfs:seeAlso rdf:resource="https://estatwrap.ontologycentral.com/feed.rdf"/>
+        <dcterms:publisher>Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat</dcterms:publisher>
+        <rdfs:seeAlso rdf:resource="../toc.rdf"/>
+        <rdfs:seeAlso rdf:resource="../codelists.rdf"/>
+        <rdfs:seeAlso rdf:resource="../feed.rdf"/>
         <rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/help/copyright-notice"/>
         <rdfs:seeAlso>
           <xsl:attribute name="rdf:resource">../cs/<xsl:value-of select="lower-case(//s:DataStructure/@id)"/></xsl:attribute>
@@ -105,7 +105,7 @@
       <!-- PROV: Agent (estatwrap service) -->
       <prov:SoftwareAgent rdf:about="#estatwrap">
         <rdfs:label>Linked Eurostat (estatwrap)</rdfs:label>
-        <foaf:homepage rdf:resource="http://estatwrap.ontologycentral.com/"/>
+        <foaf:homepage rdf:resource="../"/>
         <dcterms:description>Service for converting Eurostat SDMX data to RDF</dcterms:description>
       </prov:SoftwareAgent>
 

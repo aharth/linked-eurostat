@@ -20,7 +20,7 @@
       <!-- Document description -->
       <rdf:Description rdf:about="">
         <rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
-        <dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
+        <dcterms:publisher>Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat</dcterms:publisher>
         <dcterms:title>Eurostat Codelists Catalog</dcterms:title>
         <dcterms:description>Comprehensive catalog of all SKOS concept schemes (codelists) available in the Eurostat system</dcterms:description>
         <rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/api/dissemination/files/inventory?type=codelist"/>
@@ -60,7 +60,7 @@
       <!-- PROV: Agent (estatwrap service) -->
       <prov:SoftwareAgent rdf:about="#estatwrap">
         <rdfs:label>Linked Eurostat (estatwrap)</rdfs:label>
-        <foaf:homepage rdf:resource="http://estatwrap.ontologycentral.com/"/>
+        <foaf:homepage rdf:resource="./"/>
         <dcterms:description>Service for converting Eurostat data to RDF</dcterms:description>
       </prov:SoftwareAgent>
 

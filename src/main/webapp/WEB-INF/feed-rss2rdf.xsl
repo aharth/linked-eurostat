@@ -18,7 +18,7 @@
       <!-- Document description -->
       <rdf:Description rdf:about="">
         <rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
-        <dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
+        <dcterms:publisher>Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat</dcterms:publisher>
         <dcterms:title>Linked Eurostat - Recent Dataset Updates</dcterms:title>
         <dcterms:description>RSS/RDF feed of recent Eurostat dataset update events</dcterms:description>
         <prov:wasDerivedFrom rdf:resource="https://ec.europa.eu/eurostat/api/dissemination/catalogue/rss/en/statistics-update.rss"/>
@@ -36,14 +36,14 @@
       <!-- PROV: Agent (estatwrap service) -->
       <prov:SoftwareAgent rdf:about="#estatwrap">
         <rdfs:label>Linked Eurostat (estatwrap)</rdfs:label>
-        <rdfs:seeAlso rdf:resource="http://estatwrap.ontologycentral.com/"/>
+        <rdfs:seeAlso rdf:resource="./"/>
         <dcterms:description>Service for converting Eurostat data to RDF</dcterms:description>
       </prov:SoftwareAgent>
 
       <!-- RSS 1.0 Channel -->
-      <rss:channel rdf:about="http://estatwrap.ontologycentral.com/feed.rdf">
+      <rss:channel rdf:about="">
         <rss:title>Linked Eurostat Updates</rss:title>
-        <rss:link>http://estatwrap.ontologycentral.com/</rss:link>
+        <rss:link>https://estatwrap.ontologycentral.com/</rss:link>
         <rss:description>RSS feed of recent Eurostat dataset update events</rss:description>
         <dc:language>en</dc:language>
         <dc:creator>Linked Eurostat</dc:creator>
@@ -79,7 +79,7 @@
       </rss:channel>
 
       <!-- Also keep as DCAT Catalog for semantic web compatibility -->
-      <dcat:Catalog rdf:about="http://estatwrap.ontologycentral.com/feed.rdf">
+      <dcat:Catalog rdf:about="">
         <dcterms:title>Linked Eurostat Updates</dcterms:title>
         <dcterms:description>RSS feed of recent Eurostat dataset update events</dcterms:description>
         <dcterms:publisher rdf:resource="http://epp.eurostat.ec.europa.eu/"/>
@@ -124,7 +124,7 @@
 
       <rss:title><xsl:value-of select="description"/></rss:title>
       <rss:link>
-        <xsl:value-of select="concat('http://estatwrap.ontologycentral.com/df/', $datasetId)"/>
+        <xsl:value-of select="concat('https://estatwrap.ontologycentral.com/df/', $datasetId)"/>
       </rss:link>
       <rss:description>
         <xsl:choose>
@@ -201,7 +201,7 @@
       </xsl:choose>
     </xsl:variable>
 
-    <xsl:value-of select="concat('http://estatwrap.ontologycentral.com/id/', $datasetId)"/>
+    <xsl:value-of select="concat('id/', $datasetId)"/>
   </xsl:template>
 
   <!-- Template to format RSS date to ISO datetime -->

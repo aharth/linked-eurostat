@@ -18,6 +18,11 @@ public class Da {
 
     BufferedReader _in;
 
+    /** Whether rows were cut at MAX_ROWS. */
+    boolean _truncatedRows = false;
+    /** The number of periods before cutting to the newest MAX_COLS, or 0 if none were cut. */
+    int _colsTotal = 0;
+
     /** Dimensions of the TSV header, in order; the last is the column dimension (TIME_PERIOD). */
     List<String> _dims = new java.util.ArrayList<>();
     /** One value per dimension, from the first observation: the templates' skos:example. */
@@ -55,7 +60,8 @@ public class Da {
             }
 
             if (rows > MAX_ROWS) {
-                System.err.println("MAX_ROWS limit reached: " + MAX_ROWS);
+                _log.warning(id + ": MAX_ROWS limit reached: " + MAX_ROWS);
+                _truncatedRows = true;
                 break;
             }
 
@@ -67,10 +73,17 @@ public class Da {
             List<String> hcol = h.getCols();
             List<String> lcol = l.getCols();
 
+            // Periods ascend left to right; keep the newest MAX_COLS. colOffset maps a kept
+            // column back to its position in the raw line (for the status flag).
+            int colOffset = 0;
             if (hcol.size() > MAX_COLS) {
-                System.err.println("MAX_COLS limit reached: " + MAX_COLS);
-                hcol = hcol.subList(0, MAX_COLS);
-                lcol = lcol.subList(0, MAX_COLS);
+                if (_colsTotal == 0) {
+                    _log.warning(id + ": MAX_COLS limit reached: " + MAX_COLS + " of " + hcol.size());
+                }
+                _colsTotal = hcol.size();
+                colOffset = hcol.size() - MAX_COLS;
+                hcol = hcol.subList(colOffset, hcol.size());
+                lcol = lcol.subList(Math.min(colOffset, lcol.size()), lcol.size());
             }
 
             for (int i = 0; i < hcol.size(); i++) {
@@ -118,7 +131,7 @@ public class Da {
                     out.writeEndElement();
                 }
 
-                String status = extractStatusFlag(line, i);
+                String status = extractStatusFlag(line, i + colOffset);
                 if (status != null && !status.isEmpty()) {
                     out.writeStartElement("rdfs:comment");
                     out.writeCharacters(getStatusDescription(status));
@@ -159,7 +172,8 @@ public class Da {
             }
 
             if (rows > MAX_ROWS) {
-                System.err.println("MAX_ROWS limit reached: " + MAX_ROWS);
+                _log.warning(id + ": MAX_ROWS limit reached: " + MAX_ROWS);
+                _truncatedRows = true;
                 break;
             }
 
@@ -171,10 +185,17 @@ public class Da {
             List<String> hcol = h.getCols();
             List<String> lcol = l.getCols();
 
+            // Periods ascend left to right; keep the newest MAX_COLS. colOffset maps a kept
+            // column back to its position in the raw line (for the status flag).
+            int colOffset = 0;
             if (hcol.size() > MAX_COLS) {
-                System.err.println("MAX_COLS limit reached: " + MAX_COLS);
-                hcol = hcol.subList(0, MAX_COLS);
-                lcol = lcol.subList(0, MAX_COLS);
+                if (_colsTotal == 0) {
+                    _log.warning(id + ": MAX_COLS limit reached: " + MAX_COLS + " of " + hcol.size());
+                }
+                _colsTotal = hcol.size();
+                colOffset = hcol.size() - MAX_COLS;
+                hcol = hcol.subList(colOffset, hcol.size());
+                lcol = lcol.subList(Math.min(colOffset, lcol.size()), lcol.size());
             }
 
             for (int i = 0; i < hcol.size(); i++) {
@@ -228,7 +249,7 @@ public class Da {
                         out.write("\"" + escapeString(val) + "\"");
                     }
 
-                    String status = extractStatusFlag(line, i);
+                    String status = extractStatusFlag(line, i + colOffset);
                     if (status != null && !status.isEmpty()) {
                         out.write(" ;\n");
                         out.write("    rdfs:comment \"" + escapeString(getStatusDescription(status)) + "\"");
@@ -339,6 +360,23 @@ public class Da {
         out.write("] .\n");
     }
 
+    /**
+     * States a cut in the provenance record, after the observations because only then is it
+     * known (Turtle does not care about order). Silent when nothing was cut.
+     */
+    void writeTruncation(Writer out) throws IOException {
+        if (_truncatedRows) {
+            out.write("<#transformation> rdfs:comment \"Incomplete: stopped after " + MAX_ROWS
+                    + " lines of the upstream TSV; the rest of the dataset is not in this document."
+                    + " Filter by dimension (see hydra:search on the dataset) to get it in parts.\" .\n");
+        }
+        if (_colsTotal > 0) {
+            out.write("<#transformation> rdfs:comment \"Incomplete: only the newest " + MAX_COLS
+                    + " of " + _colsTotal + " periods; the older ones are not in this document."
+                    + " Filter by TIME_PERIOD (e.g. le:...) to get them.\" .\n");
+        }
+    }
+
     private String convertTime(String time) {
         if (time.equals(":")) {
             return "";
@@ -413,12 +451,12 @@ public class Da {
 
         ch.writeStartElement("dcterms:publisher");
         ch.writeCharacters(
-                "Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)");
+                "Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat");
         ch.writeEndElement();
 
         ch.writeStartElement("rdfs:seeAlso");
         ch.writeAttribute(
-                "rdf:resource", "http://estatwrap.ontologycentral.com/table_of_contents.rdf");
+                "rdf:resource", "../toc.rdf");
         ch.writeEndElement();
 
         ch.writeStartElement("dcterms:date");
@@ -433,7 +471,7 @@ public class Da {
 
         ch.writeStartElement("rdfs:comment");
         ch.writeCharacters(
-                "Source: Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/).");
+                "Source: Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat.");
         ch.writeEndElement();
 
         ch.writeStartElement("rdfs:seeAlso");
@@ -491,8 +529,8 @@ public class Da {
 
         writer.write("<>\n");
         writer.write("    rdfs:comment \"No guarantee of correctness! USE AT YOUR OWN RISK!\" ;\n");
-        writer.write("    dcterms:publisher \"Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)\" ;\n");
-        writer.write("    rdfs:seeAlso <http://estatwrap.ontologycentral.com/table_of_contents.rdf> ;\n");
+        writer.write("    dcterms:publisher \"Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat\" ;\n");
+        writer.write("    rdfs:seeAlso <../toc.rdf> ;\n");
         writer.write("    rdfs:seeAlso <https://ec.europa.eu/eurostat/web/main/help/copyright-notice> ;\n");
         writer.write("    rdfs:seeAlso <../cs/" + id + "> ;\n");
         writer.write("    rdfs:seeAlso <../ds/" + id + "> ;\n");
@@ -505,7 +543,7 @@ public class Da {
 
         writer.write("<" + id + "#ds>\n");
         writer.write("    a qb:DataSet ;\n");
-        writer.write("    rdfs:comment \"Source: Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/).\" ;\n");
+        writer.write("    rdfs:comment \"Source: Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat.\" ;\n");
         writer.write("    foaf:page <" + id + "> ;\n");
         writer.write("    foaf:homepage <https://ec.europa.eu/eurostat/web/products-datasets/-/" + id + "> ;\n");
         writer.write("    qb:structure <../ds/" + id + "#ds> .\n");
@@ -522,13 +560,14 @@ public class Da {
         writer.write("<#estatwrap>\n");
         writer.write("    a prov:SoftwareAgent ;\n");
         writer.write("    rdfs:label \"Linked Eurostat (estatwrap)\" ;\n");
-        writer.write("    foaf:homepage <http://estatwrap.ontologycentral.com/> ;\n");
+        writer.write("    foaf:homepage <../> ;\n");
         writer.write("    dcterms:description \"Service for converting Eurostat SDMX data to RDF\" .\n");
         writer.write("\n");
 
         Da d = new Da(in);
         d.convert(writer, id);
         d.writeSearchTemplate(writer, id);
+        d.writeTruncation(writer);
 
         writer.flush();
     }

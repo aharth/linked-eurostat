@@ -106,7 +106,7 @@ public class RateLimitFilter implements Filter {
                                   .build())
                           .build());
             if (!bucket.tryConsume(1)) {
-                resp.sendError(429, "Too Many Requests");
+                ServletUtil.sendError(resp, 429, "at most " + REQUESTS + " requests per " + WINDOW.toMinutes() + " minutes per address");
                 return;
             }
         }

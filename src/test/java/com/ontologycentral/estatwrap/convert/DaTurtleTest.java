@@ -81,6 +81,52 @@ public class DaTurtleTest {
 
     @Test
     public void hostNeverAppears() throws Exception {
-        assertFalse(turtle().contains("estatwrap.example"));
+        String ttl = turtle();
+        assertFalse(ttl.contains("estatwrap.example"));
+        assertFalse(ttl.contains("estatwrap.ontologycentral.com"));
+        Model m = parse(ttl, DOC);
+        assertTrue(m.contains(m.getResource(DOC), m.getProperty("http://www.w3.org/2000/01/rdf-schema#seeAlso"),
+                m.getResource("https://estatwrap.example/toc.rdf")));
+    }
+
+    @Test
+    public void timestampsAreValidDateTimes() throws Exception {
+        Model m = parse(turtle(), DOC);
+        var dates = m.listStatements(null, m.getProperty("http://purl.org/dc/terms/date"),
+                (org.apache.jena.rdf.model.RDFNode) null).toList();
+        assertEquals(2, dates.size()); // the document and the transformation
+        for (var d : dates) {
+            var lit = d.getObject().asLiteral();
+            assertTrue(lit.getLexicalForm(), lit.getDatatype().isValid(lit.getLexicalForm()));
+        }
+    }
+
+    @Test
+    public void aCutIsStatedInTheProvenanceAndKeepsTheNewestPeriods() throws Exception {
+        int cols = Da.MAX_COLS;
+        int rows = Da.MAX_ROWS;
+        try {
+            Da.MAX_COLS = 1;
+            Da.MAX_ROWS = 2; // the header and one data line
+            Model m = parse(turtle(), DOC);
+            var times = m.listObjectsOfProperty(
+                    m.getProperty("https://estatwrap.example/ds/demo_r_pjanaggr3#dim-TIME_PERIOD")).toList();
+            assertEquals(1, times.size());
+            assertEquals("2024", times.get(0).asLiteral().getString());
+            // 2024 of DE254 has no flag; the 2023 "b" must not be shifted onto it
+            assertFalse(m.contains(null, m.getProperty("http://www.w3.org/2000/01/rdf-schema#comment"),
+                    "b (break in time series)"));
+            var notes = m.listObjectsOfProperty(m.getResource(DOC + "#transformation"),
+                    m.getProperty("http://www.w3.org/2000/01/rdf-schema#comment")).toList();
+            String all = notes.toString();
+            assertTrue(all, all.contains("stopped after 2 lines"));
+            assertTrue(all, all.contains("only the newest 1 of 2 periods"));
+        } finally {
+            Da.MAX_COLS = cols;
+            Da.MAX_ROWS = rows;
+        }
+        Model m = parse(turtle(), DOC);
+        assertFalse(m.listObjectsOfProperty(m.getResource(DOC + "#transformation"),
+                m.getProperty("http://www.w3.org/2000/01/rdf-schema#comment")).toList().toString().contains("Incomplete"));
     }
 }

@@ -1,5 +1,33 @@
 # Changelog
 
+## [2026-11-21] Valid timestamps, truncation stated, relative self-links, plain-text errors
+
+- **Timestamps:** `dcterms:date` was `2026-11-21T18:44:27+0100`, which is not an
+  `xsd:dateTime` (Jena warned on every `/da/` document). `Main.ISO8601` now
+  writes `+01:00` (`XXX`, was `Z`).
+- **Truncation is stated in the provenance record.** When `Da.MAX_ROWS` or
+  `MAX_COLS` cuts a dataset, `<#transformation>` gets an `rdfs:comment` saying
+  what is missing and which filter gets it. Before, a cut showed only in the
+  log. The column cap now keeps the **newest** 80 periods instead of the oldest
+  80: periods ascend left to right, so long series used to lose their recent
+  data. Status flags follow the kept columns.
+- **No absolute self-links in RDF.** `/da/` and the stylesheets for `/cl/`,
+  `/cs/`, `/ds/`, `/df/`, `/dc/`, `/toc.rdf`, `/codelists.rdf` and `/feed.rdf`
+  pointed at `http://estatwrap.ontologycentral.com/…`, and `/da/` at the static
+  `table_of_contents.rdf`. All are now relative (`../toc.rdf`, `../`, `./`, `""`),
+  so they follow whatever host serves the document. Exceptions: the
+  feed's `rss:link` stays absolute (`https`) for feed readers, and so do the old
+  appspot redirects and the SPARQL `BASE` on HTML pages. The publisher text
+  names `https://ec.europa.eu/eurostat` instead of the old portal URL and no
+  longer names this host.
+- **Errors are one `text/plain` line**, e.g. `400 Bad Request: value of geo does
+  not match …`, instead of Tomcat's HTML page. They are sent with
+  `Cache-Control: no-store`; several servlets set a day's `max-age` before
+  fetching, so errors used to be cacheable that long. CORS headers stay. The
+  rate limiter's 429 goes the same way and says the limit.
+- Tests: `DaTurtleTest` (valid dates, the host, the cut, the newest periods,
+  status flags not shifted), `ServletUtilTest`.
+
 ## [2026-11-21] `/status` and `/status.json`: what the wrapper has seen of Eurostat
 
 Suggested by linked-regionalstatistik, same shape. There, data calls timed

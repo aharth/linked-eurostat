@@ -40,7 +40,7 @@ public class Main {
     public static final ThreadLocal<SimpleDateFormat> ISO8601 = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         }
     };
 

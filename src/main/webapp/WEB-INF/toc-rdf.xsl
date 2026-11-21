@@ -36,7 +36,7 @@
     <rdf:RDF>
       <rdf:Description rdf:about="">
         <rdfs:comment>No guarantee of correctness! USE AT YOUR OWN RISK!</rdfs:comment>
-        <dcterms:publisher>Eurostat (http://epp.eurostat.ec.europa.eu/) via Linked Eurostat (http://estatwrap.ontologycentral.com/)</dcterms:publisher>
+        <dcterms:publisher>Eurostat (https://ec.europa.eu/eurostat) via Linked Eurostat</dcterms:publisher>
         <dcterms:title>Eurostat Table of Contents</dcterms:title>
         <rdfs:seeAlso rdf:resource="https://ec.europa.eu/eurostat/web/main/data/database"/>
         <prov:wasGeneratedBy rdf:resource="#transformation"/>
@@ -53,7 +53,7 @@
       <!-- PROV: Agent (estatwrap service) -->
       <prov:SoftwareAgent rdf:about="#estatwrap">
         <rdfs:label>Linked Eurostat (estatwrap)</rdfs:label>
-        <foaf:homepage rdf:resource="http://estatwrap.ontologycentral.com/"/>
+        <foaf:homepage rdf:resource="./"/>
         <dcterms:description>Service for converting Eurostat data to RDF</dcterms:description>
       </prov:SoftwareAgent>
       <xsl:apply-templates/>
